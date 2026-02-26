@@ -1,5 +1,7 @@
 package com.croissant.CroissantClicker;
 
+import net.miginfocom.swing.MigLayout;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -14,13 +16,14 @@ public class ClickerUI extends JFrame {
     private final Timer clickCountRefreshTimer = new Timer(50, _->updateClickCount());
 
     JLabel clickCounterLabel;
-    JButton toggleIndicator;
-
+    JLabel toggleIndicator;
     JSpinner cpsSpinner;
     JSpinner clickLimitSpinner;
     JComboBox<String> mouseButtonSelector;
     JComboBox<String> clickModeSelector;
 
+    String colorGreen = "#388e3c";
+    String colorRed = "#d32f2f";
 
 
     public ClickerUI(ClickerConfig config, ClickerLogic logic) {
@@ -65,8 +68,7 @@ public class ClickerUI extends JFrame {
     private void updateStatus(){
         //turn on clicker
         if (config.isEnabled()){
-            toggleIndicator.setText("ON");
-            toggleIndicator.setBackground(Color.GREEN);
+            toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorGreen);
 
             commitAndValidateSpinnerInput();
             clickCountRefreshTimer.start();
@@ -80,8 +82,7 @@ public class ClickerUI extends JFrame {
         }
         //turn off clicker
         else {
-            toggleIndicator.setText("OFF");
-            toggleIndicator.setBackground(Color.RED);
+            toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
             logic.stop();
 
@@ -131,8 +132,130 @@ public class ClickerUI extends JFrame {
 
         }catch(java.text.ParseException _) {}
     }
-
     private void initUI() {
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
+
+        setLayout(new BorderLayout()); //splits screen into 5 areas -- north,south,center,east,west
+
+        //-----------------------------------------------------------------------------
+        JPanel headerPanel = new JPanel();
+
+        headerPanel.setLayout(new MigLayout(
+                "fill, insets 10 15 10 15",
+                "[left][left][grow,right][right]"
+        ));
+
+        JButton configMenuButton = new JButton("☰");
+        configMenuButton.putClientProperty("JButton.buttonType", "borderless");
+        configMenuButton.setFont(configMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
+
+        toggleIndicator = new JLabel("⬤");
+        toggleIndicator.setFont(configMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
+        toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
+
+        JLabel titleLabel = new JLabel("[F8] Croissant Clicker");
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.PLAIN, 16f));
+
+        JButton customizationMenuButton = new JButton("✎");
+        customizationMenuButton.putClientProperty("JButton.buttonType", "borderless");
+        customizationMenuButton.setFont(customizationMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
+
+        headerPanel.add(new JSeparator(), "dock north, growx");
+        headerPanel.add(configMenuButton);
+        headerPanel.add(titleLabel);
+        headerPanel.add(customizationMenuButton);
+        headerPanel.add(toggleIndicator);
+        headerPanel.add(new JSeparator(), "dock south, growx");
+
+        add(headerPanel, BorderLayout.NORTH);
+        //-----------------------------------------------------------------------------
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        //------------------------------------------------------------------------------
+        JPanel mainPanelLeft = new JPanel();
+
+        mainPanelLeft.setLayout(new MigLayout(
+                "fillx, insets 20 20 20 10, wrap 2",
+                "[left][fill]",
+                "[]10[]10[]10[]20[]5[]5[]push"
+        ));
+
+        JLabel clickLimitLabel = new JLabel("Click Limit:");
+
+        SpinnerNumberModel clickLimitSpinnerModel = new SpinnerNumberModel(config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX, 1);
+        clickLimitSpinner = new JSpinner(clickLimitSpinnerModel);
+        clickLimitSpinner.addChangeListener(_ -> config.setClickLimit((int)clickLimitSpinner.getValue()));
+
+        JLabel cpsLabel = new JLabel("CPS:");
+
+        SpinnerNumberModel cpsSpinnerModel = new SpinnerNumberModel(config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX, 1);
+        cpsSpinner = new JSpinner(cpsSpinnerModel);
+        cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
+
+        JLabel clickModeLabel = new JLabel("Mode:");
+
+        String[] modeStrings = {"Unlimited Clicks", "Limited Clicks"};
+        clickModeSelector = new JComboBox<>(modeStrings);
+        if (!config.isClickLimitMode()){
+            clickModeSelector.setSelectedIndex(0);
+        }
+        else{
+            clickModeSelector.setSelectedIndex(1);
+        }
+        clickModeSelector.addActionListener(_ -> config.setClickLimitMode(clickModeSelector.getSelectedIndex() != 0));
+
+        JLabel mouseButtonLabel = new JLabel("Mouse Button:");
+
+        String[] mouseButtonStrings = {"Left Click", "Right Click"};
+        mouseButtonSelector = new JComboBox<>(mouseButtonStrings);
+        if (config.getMouseButton() == InputEvent.BUTTON1_DOWN_MASK){
+            mouseButtonSelector.setSelectedIndex(0);
+        }
+        else{
+            mouseButtonSelector.setSelectedIndex(1);
+        }
+        mouseButtonSelector.addActionListener(_ -> {
+            if(mouseButtonSelector.getSelectedIndex() == 0){
+                config.setMouseButton(InputEvent.BUTTON1_DOWN_MASK);
+            }
+            else{
+                config.setMouseButton(InputEvent.BUTTON3_DOWN_MASK);
+            }
+        });
+
+        clickCounterLabel = new JLabel("Click Count: " + config.getClickCount());
+
+        mainPanelLeft.add(clickLimitLabel);
+        mainPanelLeft.add(clickLimitSpinner);
+        mainPanelLeft.add(cpsLabel);
+        mainPanelLeft.add(cpsSpinner);
+        mainPanelLeft.add(clickModeLabel);
+        mainPanelLeft.add(clickModeSelector);
+        mainPanelLeft.add(mouseButtonLabel);
+        mainPanelLeft.add(mouseButtonSelector);
+        mainPanelLeft.add(new JSeparator(), "growx, span 2");
+        mainPanelLeft.add(clickCounterLabel, "span 2");
+        mainPanelLeft.add(new JSeparator(), "growx, span 2");
+
+
+        mainPanel.add(mainPanelLeft, BorderLayout.WEST);
+        //------------------------------------------------------------------------------
+        JPanel mainPanelRight = new JPanel();
+
+
+
+        mainPanel.add(mainPanelRight, BorderLayout.EAST);
+        //------------------------------------------------------------------------------
+
+        add(mainPanel);
+
+    }
+
+    /*private void initUI2() {
 
         //JFrame setup (window)
         setTitle("CroissantClicker");
@@ -248,5 +371,5 @@ public class ClickerUI extends JFrame {
         column.add(row4);
 
         add(column, BorderLayout.CENTER); //add window with UI panels of autoclicker
-    }
+    }*/
 }

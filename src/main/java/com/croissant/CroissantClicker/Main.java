@@ -1,10 +1,13 @@
 package com.croissant.CroissantClicker;
 
 import java.awt.*;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 public class Main {
 
     public static void main(String[] args) throws AWTException {
+
+        FlatDarkLaf.setup();
 
         ClickerConfig config = new ClickerConfig();
         ClickerLogic logic = new ClickerLogic(config);
