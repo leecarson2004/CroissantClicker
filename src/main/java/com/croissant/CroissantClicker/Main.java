@@ -3,6 +3,9 @@ package com.croissant.CroissantClicker;
 import java.awt.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 
+//TDOO: theme switching, other button functionality, image
+
+
 public class Main {
 
     public static void main(String[] args) throws AWTException {

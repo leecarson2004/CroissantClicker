@@ -21,6 +21,7 @@ public class ClickerUI extends JFrame {
     JSpinner clickLimitSpinner;
     JComboBox<String> mouseButtonSelector;
     JComboBox<String> clickModeSelector;
+    JButton toggleIndicatorButton;
 
     String colorGreen = "#388e3c";
     String colorRed = "#d32f2f";
@@ -69,6 +70,7 @@ public class ClickerUI extends JFrame {
         //turn on clicker
         if (config.isEnabled()){
             toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorGreen);
+            toggleIndicatorButton.setText("ON");
 
             commitAndValidateSpinnerInput();
             clickCountRefreshTimer.start();
@@ -83,6 +85,7 @@ public class ClickerUI extends JFrame {
         //turn off clicker
         else {
             toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
+            toggleIndicatorButton.setText("OFF");
 
             logic.stop();
 
@@ -133,7 +136,8 @@ public class ClickerUI extends JFrame {
         }catch(java.text.ParseException _) {}
     }
     private void initUI() {
-        setSize(400, 300);
+        setTitle("Croissant Clicker v" + ClickerConfig.APP_VERSION);
+        setSize(400, 290);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -145,28 +149,36 @@ public class ClickerUI extends JFrame {
 
         headerPanel.setLayout(new MigLayout(
                 "fill, insets 10 15 10 15",
-                "[left][left][grow,right][right]"
+                "[left][left][left][grow,right][right]"
         ));
 
         JButton configMenuButton = new JButton("☰");
-        configMenuButton.putClientProperty("JButton.buttonType", "borderless");
+        configMenuButton.putClientProperty("JButton.buttonType", "square");
         configMenuButton.setFont(configMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
+        configMenuButton.setToolTipText("Save/Load");
 
         toggleIndicator = new JLabel("⬤");
         toggleIndicator.setFont(configMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
         toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
-        JLabel titleLabel = new JLabel("[F8] Croissant Clicker");
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.PLAIN, 16f));
+        JLabel hotKeyLabel = new JLabel("[F8]");
+        hotKeyLabel.setFont(hotKeyLabel.getFont().deriveFont(Font.PLAIN, 16f));
 
         JButton customizationMenuButton = new JButton("✎");
-        customizationMenuButton.putClientProperty("JButton.buttonType", "borderless");
+        customizationMenuButton.putClientProperty("JButton.buttonType", "square");
         customizationMenuButton.setFont(customizationMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
+        customizationMenuButton.setToolTipText("Edit Style");
+
+        JButton resetConfigButton = new JButton("↻");
+        resetConfigButton.putClientProperty("JButton.buttonType", "square");
+        resetConfigButton.setFont(resetConfigButton.getFont().deriveFont(Font.PLAIN, 16f));
+        resetConfigButton.setToolTipText("Reset");
 
         headerPanel.add(new JSeparator(), "dock north, growx");
         headerPanel.add(configMenuButton);
-        headerPanel.add(titleLabel);
         headerPanel.add(customizationMenuButton);
+        headerPanel.add(resetConfigButton);
+        headerPanel.add(hotKeyLabel);
         headerPanel.add(toggleIndicator);
         headerPanel.add(new JSeparator(), "dock south, growx");
 
@@ -179,9 +191,9 @@ public class ClickerUI extends JFrame {
         JPanel mainPanelLeft = new JPanel();
 
         mainPanelLeft.setLayout(new MigLayout(
-                "fillx, insets 20 20 20 10, wrap 2",
+                "fillx, insets 10 20 20 10, wrap 2",
                 "[left][fill]",
-                "[]10[]10[]10[]20[]5[]5[]push"
+                "15[]10[]10[]10[]15[]5[]5[]push"
         ));
 
         JLabel clickLimitLabel = new JLabel("Click Limit:");
@@ -227,8 +239,6 @@ public class ClickerUI extends JFrame {
             }
         });
 
-        clickCounterLabel = new JLabel("Click Count: " + config.getClickCount());
-
         mainPanelLeft.add(clickLimitLabel);
         mainPanelLeft.add(clickLimitSpinner);
         mainPanelLeft.add(cpsLabel);
@@ -237,139 +247,40 @@ public class ClickerUI extends JFrame {
         mainPanelLeft.add(clickModeSelector);
         mainPanelLeft.add(mouseButtonLabel);
         mainPanelLeft.add(mouseButtonSelector);
-        mainPanelLeft.add(new JSeparator(), "growx, span 2");
-        mainPanelLeft.add(clickCounterLabel, "span 2");
-        mainPanelLeft.add(new JSeparator(), "growx, span 2");
 
 
         mainPanel.add(mainPanelLeft, BorderLayout.WEST);
         //------------------------------------------------------------------------------
         JPanel mainPanelRight = new JPanel();
 
-
+        mainPanelRight.setLayout(new MigLayout(
+                "fillx, insets 10 20 20 10"
+        ));
 
         mainPanel.add(mainPanelRight, BorderLayout.EAST);
-        //------------------------------------------------------------------------------
 
+        //------------------------------------------------------------------------------
+        JPanel mainPanelSouth = new JPanel();
+
+        mainPanelSouth.setLayout(new MigLayout(
+                "fillx, insets 10 20 10 20, wrap 2",
+                "[left][right]"
+        ));
+
+        clickCounterLabel = new JLabel("Click Count: " + config.getClickCount());
+
+        toggleIndicatorButton = new JButton("OFF");
+        toggleIndicatorButton.putClientProperty("JButton.buttonType", "roundRect");
+        toggleIndicatorButton.addActionListener(_ -> config.setEnabled(!config.isEnabled()));
+
+        mainPanelSouth.add(new JSeparator(), "growx, span 2");
+        mainPanelSouth.add(clickCounterLabel);
+        mainPanelSouth.add(toggleIndicatorButton);
+        mainPanelSouth.add(new JSeparator(), "growx, span 2");
+
+        mainPanel.add(mainPanelSouth, BorderLayout.SOUTH);
+        //------------------------------------------------------------------------------
         add(mainPanel);
 
     }
-
-    /*private void initUI2() {
-
-        //JFrame setup (window)
-        setTitle("CroissantClicker");
-        setSize(340,250);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //exits when close button clicked
-        setLocationRelativeTo(null); // window centered on screen by default with null
-        setResizable(false);
-
-        Color darkerGray = new Color(48,48,48);
-        Color lighterGray = new Color(60,60,60);
-
-        //column
-        JPanel column = new JPanel();
-        column.setLayout(new BoxLayout(column, BoxLayout.Y_AXIS));
-        column.setBackground(darkerGray);
-
-        //----------------------------
-        JPanel row0 = new JPanel();
-        row0.setBackground(darkerGray);
-
-        String[] mouseButtonStrings = {"Left Click", "Right Click"};
-        mouseButtonSelector = new JComboBox<>(mouseButtonStrings);
-        if (config.getMouseButton() == InputEvent.BUTTON1_DOWN_MASK){
-            mouseButtonSelector.setSelectedIndex(0);
-        }
-        else{
-            mouseButtonSelector.setSelectedIndex(1);
-        }
-        mouseButtonSelector.addActionListener(_ -> {
-            if(mouseButtonSelector.getSelectedIndex() == 0){
-                config.setMouseButton(InputEvent.BUTTON1_DOWN_MASK);
-            }
-            else{
-                config.setMouseButton(InputEvent.BUTTON3_DOWN_MASK);
-            }
-        });
-        row0.add(mouseButtonSelector, BorderLayout.CENTER);
-
-        String[] modeStrings = {"Unlimited Clicks", "Limited Clicks"};
-        clickModeSelector = new JComboBox<>(modeStrings);
-        if (!config.isClickLimitMode()){
-            clickModeSelector.setSelectedIndex(0);
-        }
-        else{
-            clickModeSelector.setSelectedIndex(1);
-        }
-        clickModeSelector.addActionListener(_ -> config.setClickLimitMode(clickModeSelector.getSelectedIndex() != 0));
-        row0.add(clickModeSelector, BorderLayout.CENTER);
-
-        //----------------------------
-
-        JPanel row1 = new JPanel();
-        row1.setBackground(darkerGray);
-
-        JLabel clickLimitInstructionLabel = new JLabel("CLICK LIMIT:");
-        clickLimitInstructionLabel.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        clickLimitInstructionLabel.setForeground(Color.lightGray);
-        row1.add(clickLimitInstructionLabel,BorderLayout.CENTER);
-
-        SpinnerNumberModel clickLimitSpinnerModel = new SpinnerNumberModel(config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX, 1);
-        clickLimitSpinner = new JSpinner(clickLimitSpinnerModel);
-        clickLimitSpinner.setBackground(darkerGray);
-        clickLimitSpinner.addChangeListener(_ -> config.setClickLimit((int)clickLimitSpinner.getValue()));
-        row1.add(clickLimitSpinner, BorderLayout.CENTER);
-
-        clickCounterLabel = new JLabel("CLICK COUNT: " + config.getClickCount());
-        clickCounterLabel.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-        clickCounterLabel.setForeground(Color.lightGray);
-        row1.add(clickCounterLabel,BorderLayout.CENTER);
-
-        //----------------------------
-        JPanel row2 = new JPanel();
-        row2.setBackground(lighterGray);
-
-        JLabel hotkeyInstructionLabel = new JLabel("HOTKEY: F8");
-        hotkeyInstructionLabel.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-        hotkeyInstructionLabel.setForeground(Color.lightGray);
-        row2.add(hotkeyInstructionLabel, BorderLayout.CENTER);
-
-        //----------------------------
-        JPanel row3 = new JPanel();
-        row3.setBackground(lighterGray);
-
-        toggleIndicator = new JButton("OFF");
-        toggleIndicator.setFont(new Font("Times New Roman", Font.PLAIN, 40));
-        toggleIndicator.setFocusPainted(false); //no border around text
-        toggleIndicator.setForeground(Color.black);
-        toggleIndicator.setBackground(Color.red);
-        toggleIndicator.addActionListener(_ -> config.setEnabled(!config.isEnabled()));
-        row3.add(toggleIndicator, BorderLayout.CENTER);
-
-        //----------------------------
-        JPanel row4 = new JPanel();
-        row4.setBackground(darkerGray);
-
-        JLabel cpsInstructionsLabel = new JLabel("CPS: (1-50)");
-        cpsInstructionsLabel.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-        cpsInstructionsLabel.setForeground(Color.lightGray);
-        row4.add(cpsInstructionsLabel, BorderLayout.CENTER);
-
-        SpinnerNumberModel cpsSpinnerModel = new SpinnerNumberModel(config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX, 1);
-        cpsSpinner = new JSpinner(cpsSpinnerModel);
-        cpsSpinner.setBackground(darkerGray);
-        cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
-
-        row4.add(cpsSpinner, BorderLayout.CENTER);
-
-        //----------------------------
-        column.add(row0);
-        column.add(row1);
-        column.add(row2);
-        column.add(row3);
-        column.add(row4);
-
-        add(column, BorderLayout.CENTER); //add window with UI panels of autoclicker
-    }*/
 }

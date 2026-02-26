@@ -40,7 +40,7 @@ public class SaveDataManager {
 
             //save new config data into properties
             Properties configProps = new Properties();
-            configProps.setProperty("Version","14");
+            configProps.setProperty("Version",ClickerConfig.APP_VERSION);
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
             configProps.setProperty("clickLimitMode",String.valueOf(config.isClickLimitMode()));

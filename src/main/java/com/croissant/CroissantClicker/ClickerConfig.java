@@ -21,6 +21,7 @@ public class ClickerConfig {
     private volatile boolean enabled = false; //whether clicker is enabled or not enabled
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
     //----------------------------------------
+    public static final String APP_VERSION = "1.4";
     //User input bounds constants:
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
