@@ -1,7 +1,6 @@
 package com.croissant.CroissantClicker;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-
 import java.awt.event.InputEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -26,7 +25,7 @@ public class ClickerConfig {
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
     public static final int CLICK_LIMIT_MIN = 1;
-    public static final int CLICK_LIMIT_MAX = 9_999_999;
+    public static final int CLICK_LIMIT_MAX = 999_999;
     //default input values constants:
     public static final int MOUSE_BUTTON_DEFAULT = InputEvent.BUTTON1_DOWN_MASK;
     public static final int CPS_DEFAULT = 5;

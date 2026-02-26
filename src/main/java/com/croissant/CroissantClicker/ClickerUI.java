@@ -14,6 +14,9 @@ public class ClickerUI extends JFrame {
 
     //Timer updating click count 20 times/sec in UI
     private final Timer clickCountRefreshTimer = new Timer(50, _->updateClickCount());
+    //Timer for toggle count down when toggle button is clicked
+    private Timer toggleCountDownTimer;
+    private int countdown;
 
     JLabel clickCounterLabel;
     JLabel toggleIndicator;
@@ -48,7 +51,6 @@ public class ClickerUI extends JFrame {
     }
 
     private void refreshInputFields(PropertyChangeEvent evt) {
-        //System.out.println("Refreshing ui input fields...");
 
         if ("cps".equals(evt.getPropertyName())){
             cpsSpinner.setValue(config.getCps());
@@ -72,7 +74,13 @@ public class ClickerUI extends JFrame {
             toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorGreen);
             toggleIndicatorButton.setText("ON");
 
-            commitAndValidateSpinnerInput();
+            //ensure input valid
+            if (!commitAndValidateSpinnerInput()){
+                config.setEnabled(false);
+                System.out.println("invalid input");
+                return;
+            }
+
             clickCountRefreshTimer.start();
 
             try {
@@ -95,16 +103,28 @@ public class ClickerUI extends JFrame {
     }
 
     private void updateClickCount() {
-        clickCounterLabel.setText("CLICK COUNT: " + config.getClickCount());
+        clickCounterLabel.setText("Click Count: " + config.getClickCount());
     }
 
     //ensure any manually typed user input in spinners is updated in config
-    private void commitAndValidateSpinnerInput() {
-        commitAndValidateSpinnerInputHelper(cpsSpinner, config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX);
-        commitAndValidateSpinnerInputHelper(clickLimitSpinner, config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX);
+    private boolean commitAndValidateSpinnerInput() {
+
+        boolean isValidInput1 = commitAndValidateSpinnerInputHelper(cpsSpinner,
+                config.getCps(),
+                ClickerConfig.CPS_MIN,
+                ClickerConfig.CPS_MAX);
+        boolean isValidInput2 = commitAndValidateSpinnerInputHelper(clickLimitSpinner,
+                config.getClickLimit(),
+                ClickerConfig.CLICK_LIMIT_MIN,
+                ClickerConfig.CLICK_LIMIT_MAX);
+
+        return (isValidInput1 && isValidInput2);
     }
 
-    private void commitAndValidateSpinnerInputHelper(JSpinner spinner, int currValue, int minValue, int maxValue){
+    private boolean commitAndValidateSpinnerInputHelper(JSpinner spinner, int currValue, int minValue, int maxValue){
+
+        JFormattedTextField spinnerTextField = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
+
         try{
             //Test for valid input: Retrieve user typed value:
             JFormattedTextField userInputField = ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField();
@@ -112,29 +132,45 @@ public class ClickerUI extends JFrame {
             try{
                 userInput = Integer.parseInt(userInputField.getText());
             } catch (NumberFormatException _) {
-                userInput = currValue;
+                spinner.setValue(currValue);
+                spinnerTextField.setText(String.valueOf(currValue));
+                spawnSpinnerInputError(spinner,minValue,maxValue);
+                return false;
             }
 
-
-
             //Clamp input to config bounds and commit updates
-            JFormattedTextField spinnerTextField =
-                    ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
-
             if (userInput < minValue) {
                 spinner.setValue(minValue);
                 spinnerTextField.setText(String.valueOf(minValue));
+                spawnSpinnerInputError(spinner,minValue,maxValue);
+                return false;
+
             }
             else if (userInput > maxValue) {
                 spinner.setValue(maxValue);
                 spinnerTextField.setText(String.valueOf(maxValue));
+                spawnSpinnerInputError(spinner,minValue,maxValue);
+                return false;
             }
             else{
+                spinner.putClientProperty("JComponent.outline", "default");
+                spinnerTextField.setToolTipText(null);
                 spinner.commitEdit();
+                return true;
             }
 
-        }catch(java.text.ParseException _) {}
+        }catch(java.text.ParseException _) {
+            return false;
+        }
     }
+
+    private void spawnSpinnerInputError(JSpinner spinner, int minValue, int maxValue){
+        spinner.putClientProperty("JComponent.outline", "error");
+        spinner.setToolTipText("Input must be between " + minValue + " and " + maxValue);
+    }
+
+
+
     private void initUI() {
         setTitle("Croissant Clicker v" + ClickerConfig.APP_VERSION);
         setSize(400, 290);
@@ -149,16 +185,21 @@ public class ClickerUI extends JFrame {
 
         headerPanel.setLayout(new MigLayout(
                 "fill, insets 10 15 10 15",
-                "[left][left][left][grow,right][right]"
+                "[left][left][left][left][grow,right][right]"
         ));
 
-        JButton configMenuButton = new JButton("☰");
-        configMenuButton.putClientProperty("JButton.buttonType", "square");
-        configMenuButton.setFont(configMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
-        configMenuButton.setToolTipText("Save/Load");
+        JButton loadButton = new JButton("☰");
+        loadButton.putClientProperty("JButton.buttonType", "square");
+        loadButton.setFont(loadButton.getFont().deriveFont(Font.PLAIN, 16f));
+        loadButton.setToolTipText("Load");
+
+        JButton saveButton = new JButton("⇓");
+        saveButton.putClientProperty("JButton.buttonType", "square");
+        saveButton.setFont(saveButton.getFont().deriveFont(Font.PLAIN, 16f));
+        saveButton.setToolTipText("Save");
 
         toggleIndicator = new JLabel("⬤");
-        toggleIndicator.setFont(configMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
+        toggleIndicator.setFont(toggleIndicator.getFont().deriveFont(Font.PLAIN, 16f));
         toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
         JLabel hotKeyLabel = new JLabel("[F8]");
@@ -173,9 +214,11 @@ public class ClickerUI extends JFrame {
         resetConfigButton.putClientProperty("JButton.buttonType", "square");
         resetConfigButton.setFont(resetConfigButton.getFont().deriveFont(Font.PLAIN, 16f));
         resetConfigButton.setToolTipText("Reset");
+        resetConfigButton.addActionListener(_ -> config.setDefaultConfig());
 
         headerPanel.add(new JSeparator(), "dock north, growx");
-        headerPanel.add(configMenuButton);
+        headerPanel.add(loadButton);
+        headerPanel.add(saveButton);
         headerPanel.add(customizationMenuButton);
         headerPanel.add(resetConfigButton);
         headerPanel.add(hotKeyLabel);
@@ -201,12 +244,18 @@ public class ClickerUI extends JFrame {
         SpinnerNumberModel clickLimitSpinnerModel = new SpinnerNumberModel(config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX, 1);
         clickLimitSpinner = new JSpinner(clickLimitSpinnerModel);
         clickLimitSpinner.addChangeListener(_ -> config.setClickLimit((int)clickLimitSpinner.getValue()));
+        JFormattedTextField clickLimitSpinnerTextfield =
+                ((JSpinner.DefaultEditor) clickLimitSpinner.getEditor()).getTextField();
+        clickLimitSpinnerTextfield.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
         JLabel cpsLabel = new JLabel("CPS:");
 
         SpinnerNumberModel cpsSpinnerModel = new SpinnerNumberModel(config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX, 1);
         cpsSpinner = new JSpinner(cpsSpinnerModel);
         cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
+        JFormattedTextField cpsSpinnerTextfield =
+                ((JSpinner.DefaultEditor) cpsSpinner.getEditor()).getTextField();
+        cpsSpinnerTextfield.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
@@ -271,7 +320,32 @@ public class ClickerUI extends JFrame {
 
         toggleIndicatorButton = new JButton("OFF");
         toggleIndicatorButton.putClientProperty("JButton.buttonType", "roundRect");
-        toggleIndicatorButton.addActionListener(_ -> config.setEnabled(!config.isEnabled()));
+        toggleIndicatorButton.addActionListener(_ -> {
+
+            toggleIndicatorButton.setEnabled(false);
+            if (!config.isEnabled()){
+
+                countdown = 3;
+                toggleIndicatorButton.setText(String.valueOf(countdown));
+
+                toggleCountDownTimer = new Timer(1000, _ -> {
+                    countdown--;
+
+                    if (countdown > 0){
+                        toggleIndicatorButton.setText(String.valueOf(countdown));
+                    } else{
+                        toggleCountDownTimer.stop();
+                        config.setEnabled(true);
+                        toggleIndicatorButton.setEnabled(true);
+                    }
+                });
+                toggleCountDownTimer.start();
+            }
+            else{
+                config.setEnabled(false);
+                toggleIndicatorButton.setEnabled(true);
+            }
+        });
 
         mainPanelSouth.add(new JSeparator(), "growx, span 2");
         mainPanelSouth.add(clickCounterLabel);
