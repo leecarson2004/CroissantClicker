@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.Objects;
 
 public class ClickerUI extends JFrame {
 
@@ -77,7 +78,7 @@ public class ClickerUI extends JFrame {
             //ensure input valid
             if (!commitAndValidateSpinnerInput()){
                 config.setEnabled(false);
-                System.out.println("invalid input");
+                System.err.println("invalid input");
                 return;
             }
 
@@ -188,38 +189,30 @@ public class ClickerUI extends JFrame {
                 "[left][left][left][left][grow,right][right]"
         ));
 
-        JButton loadButton = new JButton("☰");
-        loadButton.putClientProperty("JButton.buttonType", "square");
-        loadButton.setFont(loadButton.getFont().deriveFont(Font.PLAIN, 16f));
-        loadButton.setToolTipText("Load");
+        JButton loadButton = new JButton("⇑");
+        setHeaderStyle(loadButton, "Load");
 
         JButton saveButton = new JButton("⇓");
-        saveButton.putClientProperty("JButton.buttonType", "square");
-        saveButton.setFont(saveButton.getFont().deriveFont(Font.PLAIN, 16f));
-        saveButton.setToolTipText("Save");
+        setHeaderStyle(saveButton, "Save");
 
         toggleIndicator = new JLabel("⬤");
-        toggleIndicator.setFont(toggleIndicator.getFont().deriveFont(Font.PLAIN, 16f));
+        setHeaderStyle(toggleIndicator);
         toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
         JLabel hotKeyLabel = new JLabel("[F8]");
-        hotKeyLabel.setFont(hotKeyLabel.getFont().deriveFont(Font.PLAIN, 16f));
+        setHeaderStyle(hotKeyLabel);
 
-        JButton customizationMenuButton = new JButton("✎");
-        customizationMenuButton.putClientProperty("JButton.buttonType", "square");
-        customizationMenuButton.setFont(customizationMenuButton.getFont().deriveFont(Font.PLAIN, 16f));
-        customizationMenuButton.setToolTipText("Edit Style");
+        JButton settingsMenuButton = new JButton("⚙");
+        setHeaderStyle(settingsMenuButton, "Settings");
 
         JButton resetConfigButton = new JButton("↻");
-        resetConfigButton.putClientProperty("JButton.buttonType", "square");
-        resetConfigButton.setFont(resetConfigButton.getFont().deriveFont(Font.PLAIN, 16f));
-        resetConfigButton.setToolTipText("Reset");
+        setHeaderStyle(resetConfigButton, "Reset");
         resetConfigButton.addActionListener(_ -> config.setDefaultConfig());
 
         headerPanel.add(new JSeparator(), "dock north, growx");
+        headerPanel.add(settingsMenuButton);
         headerPanel.add(loadButton);
         headerPanel.add(saveButton);
-        headerPanel.add(customizationMenuButton);
         headerPanel.add(resetConfigButton);
         headerPanel.add(hotKeyLabel);
         headerPanel.add(toggleIndicator);
@@ -244,18 +237,14 @@ public class ClickerUI extends JFrame {
         SpinnerNumberModel clickLimitSpinnerModel = new SpinnerNumberModel(config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX, 1);
         clickLimitSpinner = new JSpinner(clickLimitSpinnerModel);
         clickLimitSpinner.addChangeListener(_ -> config.setClickLimit((int)clickLimitSpinner.getValue()));
-        JFormattedTextField clickLimitSpinnerTextfield =
-                ((JSpinner.DefaultEditor) clickLimitSpinner.getEditor()).getTextField();
-        clickLimitSpinnerTextfield.setFocusLostBehavior(JFormattedTextField.COMMIT);
+        setSpinnerFocusLostBehavior(clickLimitSpinner);
 
         JLabel cpsLabel = new JLabel("CPS:");
 
         SpinnerNumberModel cpsSpinnerModel = new SpinnerNumberModel(config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX, 1);
         cpsSpinner = new JSpinner(cpsSpinnerModel);
         cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
-        JFormattedTextField cpsSpinnerTextfield =
-                ((JSpinner.DefaultEditor) cpsSpinner.getEditor()).getTextField();
-        cpsSpinnerTextfield.setFocusLostBehavior(JFormattedTextField.COMMIT);
+        setSpinnerFocusLostBehavior(cpsSpinner);
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
@@ -288,14 +277,15 @@ public class ClickerUI extends JFrame {
             }
         });
 
-        mainPanelLeft.add(clickLimitLabel);
-        mainPanelLeft.add(clickLimitSpinner);
+
         mainPanelLeft.add(cpsLabel);
         mainPanelLeft.add(cpsSpinner);
-        mainPanelLeft.add(clickModeLabel);
-        mainPanelLeft.add(clickModeSelector);
         mainPanelLeft.add(mouseButtonLabel);
         mainPanelLeft.add(mouseButtonSelector);
+        mainPanelLeft.add(clickModeLabel);
+        mainPanelLeft.add(clickModeSelector);
+        mainPanelLeft.add(clickLimitLabel);
+        mainPanelLeft.add(clickLimitSpinner);
 
 
         mainPanel.add(mainPanelLeft, BorderLayout.WEST);
@@ -303,8 +293,13 @@ public class ClickerUI extends JFrame {
         JPanel mainPanelRight = new JPanel();
 
         mainPanelRight.setLayout(new MigLayout(
-                "fillx, insets 10 20 20 10"
+                "fill, insets 20 20 20 20"
         ));
+
+        ImageIcon mainImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/wynnEmerald.png")));
+        JLabel mainImageLabel = new JLabel(mainImage);
+
+        mainPanelRight.add(mainImageLabel);
 
         mainPanel.add(mainPanelRight, BorderLayout.EAST);
 
@@ -320,32 +315,7 @@ public class ClickerUI extends JFrame {
 
         toggleIndicatorButton = new JButton("OFF");
         toggleIndicatorButton.putClientProperty("JButton.buttonType", "roundRect");
-        toggleIndicatorButton.addActionListener(_ -> {
-
-            toggleIndicatorButton.setEnabled(false);
-            if (!config.isEnabled()){
-
-                countdown = 3;
-                toggleIndicatorButton.setText(String.valueOf(countdown));
-
-                toggleCountDownTimer = new Timer(1000, _ -> {
-                    countdown--;
-
-                    if (countdown > 0){
-                        toggleIndicatorButton.setText(String.valueOf(countdown));
-                    } else{
-                        toggleCountDownTimer.stop();
-                        config.setEnabled(true);
-                        toggleIndicatorButton.setEnabled(true);
-                    }
-                });
-                toggleCountDownTimer.start();
-            }
-            else{
-                config.setEnabled(false);
-                toggleIndicatorButton.setEnabled(true);
-            }
-        });
+        toggleIndicatorButton.addActionListener(_ -> countDownAndStartClicker());
 
         mainPanelSouth.add(new JSeparator(), "growx, span 2");
         mainPanelSouth.add(clickCounterLabel);
@@ -356,5 +326,47 @@ public class ClickerUI extends JFrame {
         //------------------------------------------------------------------------------
         add(mainPanel);
 
+    }
+
+    private void countDownAndStartClicker(){
+        toggleIndicatorButton.setEnabled(false);
+        if (!config.isEnabled()){
+
+            countdown = 3;
+            toggleIndicatorButton.setText(String.valueOf(countdown));
+
+            toggleCountDownTimer = new Timer(1000, _ -> {
+                countdown--;
+
+                if (countdown > 0){
+                    toggleIndicatorButton.setText(String.valueOf(countdown));
+                }
+                else{
+                    toggleCountDownTimer.stop();
+                    config.setEnabled(true);
+                    toggleIndicatorButton.setEnabled(true);
+                }
+            });
+            toggleCountDownTimer.start();
+        }
+        else{
+            config.setEnabled(false);
+            toggleIndicatorButton.setEnabled(true);
+        }
+    }
+
+    private void setSpinnerFocusLostBehavior(JSpinner spinner){
+        JFormattedTextField textField =
+                ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
+        textField.setFocusLostBehavior(JFormattedTextField.COMMIT);
+    }
+
+    private void setHeaderStyle(JButton button, String tooltip){
+        button.putClientProperty("JButton.buttonType", "square");
+        button.setFont(button.getFont().deriveFont(Font.PLAIN, 16f));
+        button.setToolTipText(tooltip);
+    }
+    private void setHeaderStyle(JLabel label){
+        label.setFont(label.getFont().deriveFont(Font.PLAIN, 16f));
     }
 }

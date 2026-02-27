@@ -3,7 +3,7 @@ package com.croissant.CroissantClicker;
 import java.awt.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 
-//TDOO: theme switching, other button functionality, image
+//TODO: theme switching, other button functionality
 
 
 public class Main {
