@@ -19,6 +19,15 @@ public class ClickerUI extends JFrame {
     private Timer toggleCountDownTimer;
     private int countdown;
 
+    //overlay drawer panel
+    private JPanel drawerContainer;
+    private JPanel drawerCardContainer;
+    private boolean drawerContainerVisible = false;
+    //overlay drawer subpanels:
+    private JPanel settingsPanel;
+    private JPanel saveConfigPanel;
+    private JPanel loadConfigPanel;
+
     JLabel clickCounterLabel;
     JLabel toggleIndicator;
     JSpinner cpsSpinner;
@@ -179,7 +188,10 @@ public class ClickerUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
 
-        setLayout(new BorderLayout()); //splits screen into 5 areas -- north,south,center,east,west
+        //-----------------------------------------------------------------------------
+        JPanel defaultPageContainer = new JPanel();
+        defaultPageContainer.setLayout(new BorderLayout()); //splits screen into 5 areas -- north,south,center,east,west
+        setContentPane(defaultPageContainer);
 
         //-----------------------------------------------------------------------------
         JPanel headerPanel = new JPanel();
@@ -191,9 +203,19 @@ public class ClickerUI extends JFrame {
 
         JButton loadButton = new JButton("⇑");
         setHeaderStyle(loadButton, "Load");
+        loadButton.addActionListener(_ -> showSelectedDrawerPanel("Load"));
 
         JButton saveButton = new JButton("⇓");
         setHeaderStyle(saveButton, "Save");
+        saveButton.addActionListener(_ -> showSelectedDrawerPanel("Save"));
+
+        JButton settingsButton = new JButton("⚙");
+        setHeaderStyle(settingsButton, "Settings");
+        settingsButton.addActionListener(_ -> showSelectedDrawerPanel("Settings"));
+
+        JButton resetConfigButton = new JButton("↻");
+        setHeaderStyle(resetConfigButton, "Reset");
+        resetConfigButton.addActionListener(_ -> config.setDefaultConfig());
 
         toggleIndicator = new JLabel("⬤");
         setHeaderStyle(toggleIndicator);
@@ -202,15 +224,9 @@ public class ClickerUI extends JFrame {
         JLabel hotKeyLabel = new JLabel("[F8]");
         setHeaderStyle(hotKeyLabel);
 
-        JButton settingsMenuButton = new JButton("⚙");
-        setHeaderStyle(settingsMenuButton, "Settings");
-
-        JButton resetConfigButton = new JButton("↻");
-        setHeaderStyle(resetConfigButton, "Reset");
-        resetConfigButton.addActionListener(_ -> config.setDefaultConfig());
 
         headerPanel.add(new JSeparator(), "dock north, growx");
-        headerPanel.add(settingsMenuButton);
+        headerPanel.add(settingsButton);
         headerPanel.add(loadButton);
         headerPanel.add(saveButton);
         headerPanel.add(resetConfigButton);
@@ -218,7 +234,7 @@ public class ClickerUI extends JFrame {
         headerPanel.add(toggleIndicator);
         headerPanel.add(new JSeparator(), "dock south, growx");
 
-        add(headerPanel, BorderLayout.NORTH);
+        defaultPageContainer.add(headerPanel, BorderLayout.NORTH);
         //-----------------------------------------------------------------------------
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -250,11 +266,11 @@ public class ClickerUI extends JFrame {
 
         String[] modeStrings = {"Unlimited Clicks", "Limited Clicks"};
         clickModeSelector = new JComboBox<>(modeStrings);
-        if (!config.isClickLimitMode()){
-            clickModeSelector.setSelectedIndex(0);
+        if (config.isClickLimitMode()){
+            clickModeSelector.setSelectedIndex(1);
         }
         else{
-            clickModeSelector.setSelectedIndex(1);
+            clickModeSelector.setSelectedIndex(0);
         }
         clickModeSelector.addActionListener(_ -> config.setClickLimitMode(clickModeSelector.getSelectedIndex() != 0));
 
@@ -324,8 +340,125 @@ public class ClickerUI extends JFrame {
 
         mainPanel.add(mainPanelSouth, BorderLayout.SOUTH);
         //------------------------------------------------------------------------------
-        add(mainPanel);
+        defaultPageContainer.add(mainPanel);
 
+        //------------------------------------------------------------------------------
+
+        drawerContainer = new JPanel(new BorderLayout()) {
+            //draw transparent black background over existing menu:
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setColor(new Color(0, 0, 0, 100));
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+                g2d.dispose();
+
+                super.paintComponent(g); //ensure children are then painted on top
+            }
+        };
+        drawerContainer.setLayout(new BorderLayout());
+        drawerContainer.setOpaque(false);
+        drawerContainer.setVisible(false);
+
+        getLayeredPane().add(drawerContainer, JLayeredPane.PALETTE_LAYER);
+        drawerContainer.setBounds(0,0,getWidth(),getHeight());
+
+        drawerCardContainer = new JPanel(new CardLayout());
+        drawerCardContainer.setPreferredSize(new Dimension(getWidth()/2,getHeight()));
+
+        drawerContainer.add(drawerCardContainer, BorderLayout.WEST);
+        //------------------------------------------------------------------------------
+        settingsPanel = new JPanel(new BorderLayout());
+        buildDrawerHeader(settingsPanel);
+
+        JPanel settingsContentPanel = new JPanel();
+
+
+
+        settingsPanel.add(settingsContentPanel, BorderLayout.SOUTH);
+
+        //------------------------------------------------------------------------------
+        saveConfigPanel = new JPanel(new BorderLayout());
+        buildDrawerHeader(saveConfigPanel);
+
+        JPanel saveConfigPanel = new JPanel();
+
+
+
+        settingsPanel.add(saveConfigPanel, BorderLayout.SOUTH);
+
+        //------------------------------------------------------------------------------
+        loadConfigPanel = new JPanel(new BorderLayout());
+        buildDrawerHeader(loadConfigPanel);
+
+        JPanel loadConfigPanel = new JPanel();
+
+
+
+        settingsPanel.add(loadConfigPanel, BorderLayout.SOUTH);
+
+        //------------------------------------------------------------------------------
+        drawerCardContainer.add(settingsPanel, "Settings");
+        drawerCardContainer.add(settingsPanel, "Save");
+        drawerCardContainer.add(settingsPanel, "Load");
+    }
+
+    private void showSelectedDrawerPanel(String panelName) {
+        if (!drawerContainerVisible){
+            playDrawerAnimation();
+            toggleDrawerVisible();
+        }
+        CardLayout cardLayout = (CardLayout) drawerCardContainer.getLayout();
+        cardLayout.show(drawerCardContainer,panelName);
+    }
+
+    private void closeDrawer(){
+        playDrawerAnimation();
+        toggleDrawerVisible();
+    }
+
+    private void playDrawerAnimation(){
+        System.out.println("playing drawer animation");
+    }
+
+    private void buildDrawerHeader(JPanel mainPanel){
+        JPanel headerPanel = new JPanel();
+
+        headerPanel.setLayout(new MigLayout(
+                "fill, insets 10 15 10 15",
+                "[left][left][left][grow,right]"
+        ));
+
+        JButton loadButton = new JButton("⇑");
+        setHeaderStyle(loadButton, "Load");
+        loadButton.addActionListener(_ -> showSelectedDrawerPanel("Load"));
+
+        JButton saveButton = new JButton("⇓");
+        setHeaderStyle(saveButton, "Save");
+        saveButton.addActionListener(_ -> showSelectedDrawerPanel("Save"));
+
+        JButton settingsButton = new JButton("⚙");
+        setHeaderStyle(settingsButton, "Settings");
+        settingsButton.addActionListener(_ -> showSelectedDrawerPanel("Settings"));
+
+        JButton exitButton = new JButton("◁");
+        exitButton.putClientProperty("JButton.buttonType", "borderless");
+        exitButton.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 16f));
+        exitButton.addActionListener(_ -> closeDrawer());
+
+        headerPanel.add(new JSeparator(), "dock north, growx");
+        headerPanel.add(settingsButton);
+        headerPanel.add(loadButton);
+        headerPanel.add(saveButton);
+        headerPanel.add(exitButton);
+        headerPanel.add(new JSeparator(), "dock south, growx");
+
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+    }
+
+    private void toggleDrawerVisible(){
+        drawerContainerVisible = !drawerContainerVisible;
+        drawerContainer.setVisible(drawerContainerVisible);
     }
 
     private void countDownAndStartClicker(){
