@@ -37,6 +37,8 @@ public class ClickerUI extends JFrame {
         this.logic = logic;
 
         drawer = new ClickerUIDrawer(config);
+        //glass pane consumes user mouse clicks so they don't leak to UI under drawer when open
+        setGlassPane(drawer);
 
         //listen for config changes
         config.addPropertyChangeListener(evt -> {
@@ -264,8 +266,14 @@ public class ClickerUI extends JFrame {
         }
         else{
             clickModeSelector.setSelectedIndex(0);
+            clickLimitSpinner.setEnabled(false);
         }
-        clickModeSelector.addActionListener(_ -> config.setClickLimitMode(clickModeSelector.getSelectedIndex() != 0));
+
+        clickModeSelector.addActionListener(_ -> {
+            boolean isClickMode = (clickModeSelector.getSelectedIndex() != 0);
+            config.setClickLimitMode(isClickMode);
+            clickLimitSpinner.setEnabled(isClickMode);
+        });
 
         JLabel mouseButtonLabel = new JLabel("Mouse Button:");
 

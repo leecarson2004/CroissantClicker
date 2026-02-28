@@ -9,12 +9,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClickerConfig {
 
-    private int hotkey = NativeKeyEvent.VC_F8; //hotkey
     //user selected options:
     private int mouseButton; //mouse button
     private volatile int cps; //clicks/sec
     private boolean clickLimitMode; //infinite or finite run mode
     private int clickLimit; //num mouse clicks run when turned on
+    private int hotkey = NativeKeyEvent.VC_F8; //hotkey
+    private String theme = "Dark";
     //----------------------------------------
     //clicker state:
     private volatile boolean enabled = false; //whether clicker is enabled or not enabled
@@ -132,5 +133,13 @@ public class ClickerConfig {
     }
     public void incrementClickCount() {
         clickCount.getAndIncrement();
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 }

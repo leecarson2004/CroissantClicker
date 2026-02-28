@@ -4,7 +4,6 @@ import java.awt.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 
 //TODO: theme switching, other button functionality
-//gray out clicklimit when in mode
 
 
 public class Main {

@@ -4,6 +4,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
 
 public class ClickerUIDrawer extends JPanel {
 
@@ -45,6 +47,10 @@ public class ClickerUIDrawer extends JPanel {
         setVisible(false);
         setBounds(0,0,ClickerConfig.WINDOW_WIDTH,ClickerConfig.WINDOW_HEIGHT);
 
+        //block mouse events as glass pane overlay stopping input from reaching lower layer covered by open drawer.
+        addMouseListener(new MouseAdapter() {});
+        addMouseMotionListener(new MouseMotionAdapter() {});
+
         JPanel drawerContainer = new JPanel(new BorderLayout());
         drawerContainer.setPreferredSize(new Dimension(ClickerConfig.WINDOW_WIDTH/2,ClickerConfig.WINDOW_HEIGHT));
         add(drawerContainer,BorderLayout.WEST);
@@ -55,41 +61,66 @@ public class ClickerUIDrawer extends JPanel {
         drawerCardContainer = new JPanel(new CardLayout());
 
         //------------------------------------------------------------------------------
-        settingsPanel = new JPanel(new BorderLayout());
+        settingsPanel = new JPanel();
+        settingsPanel.setLayout(new MigLayout(
+                "fillx, insets 10 10 20 10, wrap 2",
+                "[left][fill]",
+                "[][][]10[]"
+        ));
+
+        buildDrawerPanelTitle(settingsPanel, "Settings:");
+
+        JLabel hotKeyLabel = new JLabel("Hotkey:");
+
+        JLabel ActiveHotKeyLabel = new JLabel("[F8]");
+
+        JLabel themeLabel = new JLabel("Theme:");
+
+        String[] themeStrings = {"Dark", "Light"};
+        JComboBox<String> themeComboBox = new JComboBox<>(themeStrings);
+        themeComboBox.setSelectedItem(config.getTheme());
 
 
-        JPanel settingsPanelMain = new JPanel();
+        settingsPanel.add(hotKeyLabel);
+        settingsPanel.add(ActiveHotKeyLabel);
+        settingsPanel.add(themeLabel);
+        settingsPanel.add(themeComboBox);
+        settingsPanel.add(new JPanel(), "span 2, pushy");
+        settingsPanel.add(new JSeparator(), "span 2, growx");
 
-
-
-        settingsPanel.add(settingsPanelMain, BorderLayout.SOUTH);
 
         //------------------------------------------------------------------------------
-        saveConfigPanel = new JPanel(new BorderLayout());
+        saveConfigPanel = new JPanel();
+        saveConfigPanel.setLayout(new MigLayout(
+                "fillx, insets 10 10 10 10, wrap 2",
+                "[left][fill]"
+        ));
 
-
-        JPanel saveConfigPanelMain = new JPanel();
-
-
-
-        saveConfigPanel.add(saveConfigPanelMain, BorderLayout.SOUTH);
+        buildDrawerPanelTitle(saveConfigPanel, "Save Configuration:");
 
         //------------------------------------------------------------------------------
-        loadConfigPanel = new JPanel(new BorderLayout());
+        loadConfigPanel = new JPanel();
+        loadConfigPanel.setLayout(new MigLayout(
+                "fillx, insets 10 10 10 10, wrap 2",
+                "[left][fill]"
+        ));
 
-
-        JPanel loadConfigPanelMain = new JPanel();
-
-
-
-        loadConfigPanel.add(loadConfigPanelMain, BorderLayout.SOUTH);
+        buildDrawerPanelTitle(loadConfigPanel, "Load Configuration:");
 
         //------------------------------------------------------------------------------
         drawerCardContainer.add(settingsPanel, "Settings");
         drawerCardContainer.add(saveConfigPanel, "Save");
         drawerCardContainer.add(loadConfigPanel, "Load");
 
-        drawerContainer.add(drawerCardContainer, BorderLayout.SOUTH);
+        drawerContainer.add(drawerCardContainer, BorderLayout.CENTER);
+    }
+
+    public void buildDrawerPanelTitle(JPanel drawerPanel, String title){
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.PLAIN, 14f));
+
+        drawerPanel.add(titleLabel, "span 2");
+        drawerPanel.add(new JSeparator(), "span 2, growx");
     }
 
     public void showSelectedDrawerPanel(String panelName) {
@@ -98,13 +129,47 @@ public class ClickerUIDrawer extends JPanel {
         }
         CardLayout cardLayout = (CardLayout) drawerCardContainer.getLayout();
         cardLayout.show(drawerCardContainer,panelName);
+        setPanelButtonSelected(panelName);
+    }
+
+    private void setPanelButtonSelected(String panelName){
+
+        switch (panelName){
+            case "Save":
+                setStyleSelected(saveButton);
+                setStyleUnselected(loadButton);
+                setStyleUnselected(settingsButton);
+                break;
+
+            case "Load":
+                setStyleUnselected(saveButton);
+                setStyleSelected(loadButton);
+                setStyleUnselected(settingsButton);
+                break;
+
+            default: //settings
+                setStyleUnselected(saveButton);
+                setStyleUnselected(loadButton);
+                setStyleSelected(settingsButton);
+                break;
+        }
+
+    }
+
+    private void setStyleSelected(JButton button){
+        button.putClientProperty("FlatLaf.style",
+                "background: darken($Button.background,8%)"
+        );
+    }
+
+    private void setStyleUnselected(JButton button){
+        button.putClientProperty("FlatLaf.style", null);
     }
 
     private void closeDrawer(){
         toggleDrawerVisible();
     }
 
-    //TODO: add a method which will take string input and then change selected status for given button (style should also be improved), call from ONLY showSelectedDrawerPanel aswell
     private JPanel buildDrawerHeader(){
         JPanel headerPanel = new JPanel();
 
@@ -115,30 +180,15 @@ public class ClickerUIDrawer extends JPanel {
 
         loadButton = new JButton("⇑");
         setHeaderStyle(loadButton, "Load");
-        loadButton.addActionListener(_ -> {
-            showSelectedDrawerPanel("Load");
-            setStyleUnselected(saveButton);
-            setStyleSelected(loadButton);
-            setStyleUnselected(settingsButton);
-        });
+        loadButton.addActionListener(_ -> showSelectedDrawerPanel("Load"));
 
         saveButton = new JButton("⇓");
         setHeaderStyle(saveButton, "Save");
-        saveButton.addActionListener(_ -> {
-            showSelectedDrawerPanel("Save");
-            setStyleSelected(saveButton);
-            setStyleUnselected(loadButton);
-            setStyleUnselected(settingsButton);
-        });
+        saveButton.addActionListener(_ -> showSelectedDrawerPanel("Save"));
 
         settingsButton = new JButton("⚙");
         setHeaderStyle(settingsButton, "Settings");
-        settingsButton.addActionListener(_ -> {
-            showSelectedDrawerPanel("Settings");
-            setStyleUnselected(saveButton);
-            setStyleUnselected(loadButton);
-            setStyleSelected(settingsButton);
-        });
+        settingsButton.addActionListener(_ -> showSelectedDrawerPanel("Settings"));
 
         JButton exitButton = new JButton("◁");
         exitButton.putClientProperty("JButton.buttonType", "borderless");
@@ -154,22 +204,13 @@ public class ClickerUIDrawer extends JPanel {
 
         return headerPanel;
     }
+    private void setHeaderStyle(JButton button, String tooltip){
+        button.putClientProperty("JButton.buttonType", "square");
+        button.setToolTipText(tooltip);
+    }
 
     private void toggleDrawerVisible(){
         drawerContainerVisible = !drawerContainerVisible;
         setVisible(drawerContainerVisible);
-    }
-
-    private void setStyleSelected(JButton button){
-        button.putClientProperty("JButton.buttonType", "borderless");
-    }
-    private void setStyleUnselected(JButton button){
-        button.putClientProperty("JButton.buttonType", "square");
-    }
-
-    private void setHeaderStyle(JButton button, String tooltip){
-        button.putClientProperty("JButton.buttonType", "square");
-        button.setFont(button.getFont().deriveFont(Font.PLAIN, 16f));
-        button.setToolTipText(tooltip);
     }
 }
