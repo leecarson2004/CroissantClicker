@@ -31,6 +31,9 @@ public class ClickerConfig {
     public static final int CPS_DEFAULT = 5;
     public static final boolean CLICK_LIMIT_MODE_DEFAULT = false;
     public static final int CLICK_LIMIT_DEFAULT = 50;
+    //main JFrame dims:
+    public static final int WINDOW_WIDTH = 400;
+    public static final int WINDOW_HEIGHT = 290;
 
 
 
