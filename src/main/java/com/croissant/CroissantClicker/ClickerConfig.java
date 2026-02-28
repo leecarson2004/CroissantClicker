@@ -5,6 +5,7 @@ import java.awt.event.InputEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
 
 
 public class ClickerConfig {
@@ -15,13 +16,13 @@ public class ClickerConfig {
     private boolean clickLimitMode; //infinite or finite run mode
     private int clickLimit; //num mouse clicks run when turned on
     private int hotkey = NativeKeyEvent.VC_F8; //hotkey
-    private String theme = "Dark";
+    private String theme;
     //----------------------------------------
     //clicker state:
     private volatile boolean enabled = false; //whether clicker is enabled or not enabled
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
     //----------------------------------------
-    public static final String APP_VERSION = "1.4";
+    public static final String APP_VERSION = "1.6";
     //User input bounds constants:
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
@@ -32,6 +33,7 @@ public class ClickerConfig {
     public static final int CPS_DEFAULT = 5;
     public static final boolean CLICK_LIMIT_MODE_DEFAULT = false;
     public static final int CLICK_LIMIT_DEFAULT = 50;
+    public static final String THEME_DEFAULT = "Dark";
     //main JFrame dims:
     public static final int WINDOW_WIDTH = 400;
     public static final int WINDOW_HEIGHT = 290;
@@ -57,12 +59,26 @@ public class ClickerConfig {
         setCps(CPS_DEFAULT);
         setClickLimitMode(CLICK_LIMIT_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
+        setTheme(THEME_DEFAULT);
     }
 
     //listener system initialization
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     public void addPropertyChangeListener(PropertyChangeListener configChangeListener){
         support.addPropertyChangeListener(configChangeListener);
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        //null-safe comparison
+        if (Objects.equals(this.theme, theme)) return;
+
+        String old = this.theme;
+        this.theme = theme;
+        support.firePropertyChange("theme",old,theme);
     }
 
     public int getCps() {
@@ -133,13 +149,5 @@ public class ClickerConfig {
     }
     public void incrementClickCount() {
         clickCount.getAndIncrement();
-    }
-
-    public String getTheme() {
-        return theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
     }
 }

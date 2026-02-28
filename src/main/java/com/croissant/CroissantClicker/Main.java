@@ -1,16 +1,14 @@
 package com.croissant.CroissantClicker;
 
 import java.awt.*;
-import com.formdev.flatlaf.FlatDarkLaf;
 
-//TODO: theme switching, other button functionality
+//TODO: add enums for drop down boxes
+//TODO: add custom theme
 
 
 public class Main {
 
     public static void main(String[] args) throws AWTException {
-
-        FlatDarkLaf.setup();
 
         ClickerConfig config = new ClickerConfig();
         ClickerLogic logic = new ClickerLogic(config);
@@ -24,13 +22,17 @@ public class Main {
             if ("clickLimit".equals(evt.getPropertyName())
                     || "cps".equals(evt.getPropertyName())
                     || "mouseButton".equals(evt.getPropertyName())
-                    || "clickLimitMode".equals(evt.getPropertyName())){
+                    || "clickLimitMode".equals(evt.getPropertyName())
+                    || "theme".equals(evt.getPropertyName())
+            ){
                 SaveDataManager.save(config, "current");
             }
         });
 
         javax.swing.SwingUtilities.invokeLater(() -> {
             ClickerUI ui = new ClickerUI(config, logic);
+            ThemeManager.setTheme(config.getTheme(), ui);
+
             ui.setVisible(true);
         });
     }

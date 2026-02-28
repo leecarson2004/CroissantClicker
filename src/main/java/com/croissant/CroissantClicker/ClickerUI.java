@@ -72,6 +72,14 @@ public class ClickerUI extends JFrame {
             if (!config.isClickLimitMode()) clickModeSelector.setSelectedIndex(0);
             else clickModeSelector.setSelectedIndex(1);
         }
+        else if ("theme".equals(evt.getPropertyName())){
+            String theme = config.getTheme();
+            drawer.setThemeSelector(theme);
+            ThemeManager.setTheme(theme, this);
+        }
+        else{
+            System.err.println("Event name non-existent!");
+        }
     }
 
     private void updateStatus(){

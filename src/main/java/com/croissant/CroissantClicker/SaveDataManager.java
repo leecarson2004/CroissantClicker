@@ -40,11 +40,13 @@ public class SaveDataManager {
 
             //save new config data into properties
             Properties configProps = new Properties();
-            configProps.setProperty("Version",ClickerConfig.APP_VERSION);
+            configProps.setProperty("configName", configName);
+            configProps.setProperty("version",ClickerConfig.APP_VERSION);
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
             configProps.setProperty("clickLimitMode",String.valueOf(config.isClickLimitMode()));
             configProps.setProperty("mouseButton",String.valueOf(config.getMouseButton()));
+            configProps.setProperty("theme", config.getTheme());
 
             try (OutputStream output = Files.newOutputStream(filePath)) {
                 configProps.store(output, "User Save Data Configuration: " + configName);
@@ -78,6 +80,7 @@ public class SaveDataManager {
                 config.setClickLimitMode(Boolean.parseBoolean(configProps.getProperty("clickLimitMode",String.valueOf(ClickerConfig.CLICK_LIMIT_MODE_DEFAULT))));
                 config.setMouseButton(parseIntSafe(configProps.getProperty("mouseButton"),
                         ClickerConfig.MOUSE_BUTTON_DEFAULT));
+                config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));
 
             }
         } catch(IOException e) {

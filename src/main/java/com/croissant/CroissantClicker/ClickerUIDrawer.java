@@ -18,10 +18,11 @@ public class ClickerUIDrawer extends JPanel {
     private JPanel settingsPanel;
     private JPanel saveConfigPanel;
     private JPanel loadConfigPanel;
-    //drawer header buttons:
+    //drawer components:
     private JButton settingsButton;
     private JButton saveButton;
     private JButton loadButton;
+    private JComboBox<String> themeSelector;
 
     public ClickerUIDrawer(ClickerConfig config){
         this.config = config;
@@ -77,14 +78,15 @@ public class ClickerUIDrawer extends JPanel {
         JLabel themeLabel = new JLabel("Theme:");
 
         String[] themeStrings = {"Dark", "Light"};
-        JComboBox<String> themeComboBox = new JComboBox<>(themeStrings);
-        themeComboBox.setSelectedItem(config.getTheme());
+        themeSelector = new JComboBox<>(themeStrings);
+        themeSelector.setSelectedItem(config.getTheme());
+        themeSelector.addActionListener(_ -> config.setTheme((String)themeSelector.getSelectedItem()));
 
 
         settingsPanel.add(hotKeyLabel);
         settingsPanel.add(ActiveHotKeyLabel);
         settingsPanel.add(themeLabel);
-        settingsPanel.add(themeComboBox);
+        settingsPanel.add(themeSelector);
         settingsPanel.add(new JPanel(), "span 2, pushy");
         settingsPanel.add(new JSeparator(), "span 2, growx");
 
@@ -151,7 +153,6 @@ public class ClickerUIDrawer extends JPanel {
                 setStyleUnselected(saveButton);
                 setStyleUnselected(loadButton);
                 setStyleSelected(settingsButton);
-                break;
         }
 
     }
@@ -212,5 +213,9 @@ public class ClickerUIDrawer extends JPanel {
     private void toggleDrawerVisible(){
         drawerContainerVisible = !drawerContainerVisible;
         setVisible(drawerContainerVisible);
+    }
+
+    public void setThemeSelector(String theme){
+        themeSelector.setSelectedItem(theme);
     }
 }
