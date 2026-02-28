@@ -4,6 +4,7 @@ import java.awt.*;
 
 //TODO: add enums for drop down boxes
 //TODO: add custom theme
+//TODO: slide in drawer animation
 
 
 public class Main {

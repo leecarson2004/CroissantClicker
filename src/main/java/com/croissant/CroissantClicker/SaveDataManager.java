@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Properties;
 
 
@@ -90,8 +91,36 @@ public class SaveDataManager {
 
     public static ArrayList<String> loadAllConfigTemplateNames(){
 
+        ArrayList<String> configTemplateNames = new ArrayList<>();
+        Properties configProps = new Properties();
 
-        return new ArrayList<>();
+        try {
+            Path saveDir = getSaveDirectory();
+            File[] configFiles = saveDir.toFile().listFiles((dir, name) -> name.endsWith(".properties"));
+
+            if (configFiles == null || configFiles.length == 0){ //no stored save data
+                return new ArrayList<>();
+            }
+
+            //load all config names into array
+            for (File configFile : configFiles){
+                Path filePath = saveDir.resolve(configFile.getName());
+
+                try (InputStream input = Files.newInputStream(filePath)){
+                    configProps.load(input);
+
+                    configTemplateNames.add(configProps.getProperty("configName","NAME_MISSING"));
+                } catch (IOException e){
+                    System.err.println("Failed to load configFile " + configFile.getName() + ": " + e.getMessage());
+                }
+            }
+            Collections.sort(configTemplateNames);
+            return configTemplateNames;
+
+        } catch (IOException e) {
+            System.err.println("Error loading all config template names: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     public static void delete(String configName){

@@ -78,7 +78,7 @@ public class ClickerUI extends JFrame {
             ThemeManager.setTheme(theme, this);
         }
         else{
-            System.err.println("Event name non-existent!");
+            System.err.println("Event name non-existent");
         }
     }
 
@@ -101,6 +101,7 @@ public class ClickerUI extends JFrame {
                 logic.start();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                System.err.println("Failed to start autoclicker logic: " + e.getMessage());
                 config.setEnabled(false);
             }
         }
@@ -352,8 +353,6 @@ public class ClickerUI extends JFrame {
         defaultPageContainer.add(mainPanel);
 
         //------------------------------------------------------------------------------
-
-        getLayeredPane().add(drawer, JLayeredPane.PALETTE_LAYER);
     }
 
     private void countDownAndStartClicker(){

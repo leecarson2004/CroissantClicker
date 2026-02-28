@@ -5,6 +5,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 public class ClickerUIDrawer extends JPanel {
@@ -19,9 +20,10 @@ public class ClickerUIDrawer extends JPanel {
     private JPanel saveConfigPanel;
     private JPanel loadConfigPanel;
     //drawer components:
-    private JButton settingsButton;
-    private JButton saveButton;
+    private JLabel titleLabel;
     private JButton loadButton;
+    private JButton saveButton;
+    private JButton settingsButton;
     private JComboBox<String> themeSelector;
 
     public ClickerUIDrawer(ClickerConfig config){
@@ -48,28 +50,40 @@ public class ClickerUIDrawer extends JPanel {
         setVisible(false);
         setBounds(0,0,ClickerConfig.WINDOW_WIDTH,ClickerConfig.WINDOW_HEIGHT);
 
-        //block mouse events as glass pane overlay stopping input from reaching lower layer covered by open drawer.
-        addMouseListener(new MouseAdapter() {});
-        addMouseMotionListener(new MouseMotionAdapter() {});
-
+        //entire drawer page container
         JPanel drawerContainer = new JPanel(new BorderLayout());
         drawerContainer.setPreferredSize(new Dimension(ClickerConfig.WINDOW_WIDTH/2,ClickerConfig.WINDOW_HEIGHT));
         add(drawerContainer,BorderLayout.WEST);
 
+        //block mouse events as glass pane overlay stopping input from reaching lower layer covered by open drawer.
+        addMouseListener(new MouseAdapter() {
+
+            //close drawer if user clicks outside of drawer
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //convert p from glass pane coordinates to drawerContainer coordinates.
+                Point p = SwingUtilities.convertPoint(ClickerUIDrawer.this, e.getPoint(), drawerContainer);
+
+                if (!drawerContainer.contains(p)){
+                    closeDrawer();
+                }
+            }
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {});
+
         JPanel drawerHeaderPanel = buildDrawerHeader();
         drawerContainer.add(drawerHeaderPanel,BorderLayout.NORTH);
 
+        //contains swappable drawer card menus
         drawerCardContainer = new JPanel(new CardLayout());
 
         //------------------------------------------------------------------------------
         settingsPanel = new JPanel();
         settingsPanel.setLayout(new MigLayout(
-                "fillx, insets 10 10 20 10, wrap 2",
+                "fillx, insets 10 10 10 10, wrap 2",
                 "[left][fill]",
                 "[][][]10[]"
         ));
-
-        buildDrawerPanelTitle(settingsPanel, "Settings:");
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
@@ -88,8 +102,6 @@ public class ClickerUIDrawer extends JPanel {
         settingsPanel.add(themeLabel);
         settingsPanel.add(themeSelector);
         settingsPanel.add(new JPanel(), "span 2, pushy");
-        settingsPanel.add(new JSeparator(), "span 2, growx");
-
 
         //------------------------------------------------------------------------------
         saveConfigPanel = new JPanel();
@@ -98,7 +110,7 @@ public class ClickerUIDrawer extends JPanel {
                 "[left][fill]"
         ));
 
-        buildDrawerPanelTitle(saveConfigPanel, "Save Configuration:");
+
 
         //------------------------------------------------------------------------------
         loadConfigPanel = new JPanel();
@@ -107,22 +119,15 @@ public class ClickerUIDrawer extends JPanel {
                 "[left][fill]"
         ));
 
-        buildDrawerPanelTitle(loadConfigPanel, "Load Configuration:");
-
         //------------------------------------------------------------------------------
         drawerCardContainer.add(settingsPanel, "Settings");
         drawerCardContainer.add(saveConfigPanel, "Save");
         drawerCardContainer.add(loadConfigPanel, "Load");
 
         drawerContainer.add(drawerCardContainer, BorderLayout.CENTER);
-    }
 
-    public void buildDrawerPanelTitle(JPanel drawerPanel, String title){
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.PLAIN, 14f));
-
-        drawerPanel.add(titleLabel, "span 2");
-        drawerPanel.add(new JSeparator(), "span 2, growx");
+        JPanel footerPanel = buildDrawerFooter();
+        drawerContainer.add(footerPanel, BorderLayout.SOUTH);
     }
 
     public void showSelectedDrawerPanel(String panelName) {
@@ -131,7 +136,13 @@ public class ClickerUIDrawer extends JPanel {
         }
         CardLayout cardLayout = (CardLayout) drawerCardContainer.getLayout();
         cardLayout.show(drawerCardContainer,panelName);
+
+        setDrawerTitle(panelName);
         setPanelButtonSelected(panelName);
+    }
+
+    private void setDrawerTitle(String panelName){
+        titleLabel.setText(panelName + ":");
     }
 
     private void setPanelButtonSelected(String panelName){
@@ -162,7 +173,6 @@ public class ClickerUIDrawer extends JPanel {
                 "background: darken($Button.background,8%)"
         );
     }
-
     private void setStyleUnselected(JButton button){
         button.putClientProperty("FlatLaf.style", null);
     }
@@ -175,9 +185,12 @@ public class ClickerUIDrawer extends JPanel {
         JPanel headerPanel = new JPanel();
 
         headerPanel.setLayout(new MigLayout(
-                "fill, insets 10 15 10 15",
-                "[left][left][left][grow,right]"
+                "fill, insets 10 10 10 10",
+                "[left][grow, right][right][right]"
         ));
+
+        titleLabel = new JLabel("Drawer");
+        setHeaderStyle(titleLabel);
 
         loadButton = new JButton("⇑");
         setHeaderStyle(loadButton, "Load");
@@ -191,23 +204,44 @@ public class ClickerUIDrawer extends JPanel {
         setHeaderStyle(settingsButton, "Settings");
         settingsButton.addActionListener(_ -> showSelectedDrawerPanel("Settings"));
 
-        JButton exitButton = new JButton("◁");
-        exitButton.putClientProperty("JButton.buttonType", "borderless");
-        exitButton.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 16f));
-        exitButton.addActionListener(_ -> closeDrawer());
+
 
         headerPanel.add(new JSeparator(), "dock north, growx");
+        headerPanel.add(titleLabel);
         headerPanel.add(settingsButton);
         headerPanel.add(loadButton);
         headerPanel.add(saveButton);
-        headerPanel.add(exitButton);
         headerPanel.add(new JSeparator(), "dock south, growx");
 
         return headerPanel;
     }
+
+    private JPanel buildDrawerFooter(){
+        JPanel footerPanel = new JPanel();
+
+        footerPanel.setLayout(new MigLayout(
+                "fill, insets 10 10 10 10",
+                "[grow, right]"
+        ));
+
+        JButton exitButton = new JButton("◁");
+        exitButton.putClientProperty("JButton.buttonType", "borderless");
+        exitButton.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 14f));
+        exitButton.addActionListener(_ -> closeDrawer());
+
+        footerPanel.add(new JSeparator(), "growx,wrap");
+        footerPanel.add(exitButton);
+
+        return footerPanel;
+    }
+
     private void setHeaderStyle(JButton button, String tooltip){
         button.putClientProperty("JButton.buttonType", "square");
+        button.setFont(button.getFont().deriveFont(Font.PLAIN, 14f));
         button.setToolTipText(tooltip);
+    }
+    private void setHeaderStyle(JLabel label){
+        label.setFont(label.getFont().deriveFont(Font.PLAIN, 14f));
     }
 
     private void toggleDrawerVisible(){
