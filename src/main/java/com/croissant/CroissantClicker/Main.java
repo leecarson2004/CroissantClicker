@@ -5,7 +5,14 @@ import java.awt.*;
 //TODO: add enums for drop down boxes
 //TODO: add custom theme
 //TODO: slide in drawer animation
+//TODO: allow for user selection of hotkey
+//TODO: user selection of image?
 
+//TODO: when user tries to delete save config, popup dialouge should show omniman - are you sure?
+
+//TODO: ensure user input is sanitized against special characters (only letters allowed)
+
+//TODO: gray out load button if no input ready
 
 public class Main {
 

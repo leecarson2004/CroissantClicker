@@ -96,7 +96,7 @@ public class SaveDataManager {
 
         try {
             Path saveDir = getSaveDirectory();
-            File[] configFiles = saveDir.toFile().listFiles((dir, name) -> name.endsWith(".properties"));
+            File[] configFiles = saveDir.toFile().listFiles((_, name) -> name.endsWith(".properties"));
 
             if (configFiles == null || configFiles.length == 0){ //no stored save data
                 return new ArrayList<>();

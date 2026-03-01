@@ -1,12 +1,12 @@
 package com.croissant.CroissantClicker;
 
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 
 public class ClickerUIDrawer extends JPanel {
 
@@ -15,16 +15,17 @@ public class ClickerUIDrawer extends JPanel {
     //overlay drawer panel
     private JPanel drawerCardContainer;
     private boolean drawerContainerVisible = false;
-    //overlay drawer subpanels:
-    private JPanel settingsPanel;
-    private JPanel saveConfigPanel;
-    private JPanel loadConfigPanel;
     //drawer components:
     private JLabel titleLabel;
     private JButton loadButton;
     private JButton saveButton;
     private JButton settingsButton;
     private JComboBox<String> themeSelector;
+    private JTextField saveConfigNameField;
+    //load config selection:
+    private String selectedConfig;
+    JButton loadPageLoadButton;
+    JButton loadPageDeleteButton;
 
     public ClickerUIDrawer(ClickerConfig config){
         this.config = config;
@@ -78,11 +79,11 @@ public class ClickerUIDrawer extends JPanel {
         drawerCardContainer = new JPanel(new CardLayout());
 
         //------------------------------------------------------------------------------
-        settingsPanel = new JPanel();
+        //overlay drawer subpanels:
+        JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new MigLayout(
                 "fillx, insets 10 10 10 10, wrap 2",
-                "[left][fill]",
-                "[][][]10[]"
+                "[left][fill]"
         ));
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
@@ -96,28 +97,85 @@ public class ClickerUIDrawer extends JPanel {
         themeSelector.setSelectedItem(config.getTheme());
         themeSelector.addActionListener(_ -> config.setTheme((String)themeSelector.getSelectedItem()));
 
+        JButton doneButton = new JButton("Done");
+        doneButton.addActionListener(_ -> closeDrawer());
 
         settingsPanel.add(hotKeyLabel);
         settingsPanel.add(ActiveHotKeyLabel);
         settingsPanel.add(themeLabel);
         settingsPanel.add(themeSelector);
         settingsPanel.add(new JPanel(), "span 2, pushy");
+        settingsPanel.add(new JSeparator(), "growx, span 2");
+        settingsPanel.add(doneButton, "span 2, align right");
 
         //------------------------------------------------------------------------------
-        saveConfigPanel = new JPanel();
+        JPanel saveConfigPanel = new JPanel();
         saveConfigPanel.setLayout(new MigLayout(
-                "fillx, insets 10 10 10 10, wrap 2",
-                "[left][fill]"
+                "insets 10 10 20 10, wrap 2, align center",
+                "",
+                "10[]10[][]10[]"
         ));
 
+        JLabel saveInstructionLabel = new JLabel("Enter Configuration Name:");
 
+        saveConfigNameField = new JTextField();
+        saveConfigNameField.setDocument(new TextFieldLimit(20));
+
+        JButton savePageSaveButton = new JButton("Save");
+        savePageSaveButton.addActionListener(_ -> {
+            String inputText = saveConfigNameField.getText();
+            
+            if (inputText.isEmpty()) {
+                saveConfigNameField.putClientProperty("JComponent.outline", "error");
+                saveConfigNameField.setToolTipText("Please enter a name!");
+            } else{
+                SaveDataManager.save(config, saveConfigNameField.getText());
+                closeDrawer();
+            }
+        });
+
+        JButton savePageCancelButton = new JButton("Cancel");
+        savePageCancelButton.addActionListener(_ -> closeDrawer());
+
+        saveConfigPanel.add(saveInstructionLabel, "span 2");
+        saveConfigPanel.add(saveConfigNameField, "span 2, grow");
+        saveConfigPanel.add(new JPanel(), "span 2, pushy");
+        saveConfigPanel.add(new JSeparator(), "growx, span 2");
+        saveConfigPanel.add(savePageSaveButton);
+        saveConfigPanel.add(savePageCancelButton);
 
         //------------------------------------------------------------------------------
-        loadConfigPanel = new JPanel();
+        JPanel loadConfigPanel = new JPanel();
         loadConfigPanel.setLayout(new MigLayout(
-                "fillx, insets 10 10 10 10, wrap 2",
-                "[left][fill]"
+                "insets 10 10 20 10, wrap 3, fillx",
+                "",
+                "[][]10[]"
         ));
+
+        JScrollPane loadPageScrollPane = new JScrollPane();
+
+        refreshSavedConfigs(loadPageScrollPane);
+
+        loadPageLoadButton = new JButton("Load");
+        loadPageLoadButton.setEnabled(false);
+        loadPageLoadButton.addActionListener(_ -> SaveDataManager.load(config, selectedConfig));
+
+        JButton loadPageCancelButton = new JButton("◁");
+        loadPageCancelButton.putClientProperty("JButton.buttonType", "borderless");
+        loadPageCancelButton.setFont(loadPageCancelButton.getFont().deriveFont(Font.PLAIN, 14f));
+        loadPageCancelButton.addActionListener(_ -> closeDrawer());
+
+        loadPageDeleteButton = new JButton("⩐");
+        loadPageDeleteButton.putClientProperty("JButton.buttonType", "borderless");
+        loadPageDeleteButton.setFont(loadPageDeleteButton.getFont().deriveFont(Font.PLAIN, 14f));
+        loadPageDeleteButton.setEnabled(false);
+        loadPageCancelButton.addActionListener(_ -> SaveDataManager.delete(selectedConfig));
+
+        loadConfigPanel.add(loadPageScrollPane, "span, grow");
+        loadConfigPanel.add(new JPanel(), "span, pushy");
+        loadConfigPanel.add(loadPageLoadButton, "split 3, span, center");
+        loadConfigPanel.add(loadPageDeleteButton);
+        loadConfigPanel.add(loadPageCancelButton);
 
         //------------------------------------------------------------------------------
         drawerCardContainer.add(settingsPanel, "Settings");
@@ -125,12 +183,41 @@ public class ClickerUIDrawer extends JPanel {
         drawerCardContainer.add(loadConfigPanel, "Load");
 
         drawerContainer.add(drawerCardContainer, BorderLayout.CENTER);
+    }
 
-        JPanel footerPanel = buildDrawerFooter();
-        drawerContainer.add(footerPanel, BorderLayout.SOUTH);
+    private void refreshSavedConfigs(JScrollPane loadPageScrollPane) {
+        JPanel scrollablePanel = new JPanel();
+        scrollablePanel.setLayout(new MigLayout(
+                "insets 5 5 5 5, fillx",
+                "fill"
+        ));
+        ArrayList<String> savedConfigs = SaveDataManager.loadAllConfigTemplateNames();
+
+        for (String configName : savedConfigs){
+            JButton configNameButton = new JButton(configName);
+            configNameButton.addActionListener(_ -> {
+                selectedConfig = configName;
+                setStyleSelected(configNameButton);
+
+                loadPageLoadButton.setEnabled(true);
+                loadPageDeleteButton.setEnabled(true);
+            });
+
+            scrollablePanel.add(configNameButton, "span");
+        }
+
+        loadPageScrollPane.setViewportView(scrollablePanel);
+    }
+
+    private void resetSaveConfigPanel() {
+        saveConfigNameField.putClientProperty("JComponent.outline", "default");
+        saveConfigNameField.setToolTipText(null);
+        saveConfigNameField.setText("");
     }
 
     public void showSelectedDrawerPanel(String panelName) {
+        resetSaveConfigPanel();
+
         if (!drawerContainerVisible){
             toggleDrawerVisible();
         }
@@ -178,6 +265,7 @@ public class ClickerUIDrawer extends JPanel {
     }
 
     private void closeDrawer(){
+        resetSaveConfigPanel();
         toggleDrawerVisible();
     }
 
@@ -214,25 +302,6 @@ public class ClickerUIDrawer extends JPanel {
         headerPanel.add(new JSeparator(), "dock south, growx");
 
         return headerPanel;
-    }
-
-    private JPanel buildDrawerFooter(){
-        JPanel footerPanel = new JPanel();
-
-        footerPanel.setLayout(new MigLayout(
-                "fill, insets 10 10 10 10",
-                "[grow, right]"
-        ));
-
-        JButton exitButton = new JButton("◁");
-        exitButton.putClientProperty("JButton.buttonType", "borderless");
-        exitButton.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 14f));
-        exitButton.addActionListener(_ -> closeDrawer());
-
-        footerPanel.add(new JSeparator(), "growx,wrap");
-        footerPanel.add(exitButton);
-
-        return footerPanel;
     }
 
     private void setHeaderStyle(JButton button, String tooltip){
