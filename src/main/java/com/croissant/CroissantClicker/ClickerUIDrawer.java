@@ -7,6 +7,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClickerUIDrawer extends JPanel {
 
@@ -23,9 +25,13 @@ public class ClickerUIDrawer extends JPanel {
     private JComboBox<String> themeSelector;
     private JTextField saveConfigNameField;
     //load config selection:
-    private String selectedConfig;
     JButton loadPageLoadButton;
     JButton loadPageDeleteButton;
+    private String selectedConfig;
+    JScrollPane loadPageScrollPane;
+    JPanel scrollablePanel;
+    private final Map<String, JButton> loadedConfigButtons = new HashMap<>();
+
 
     public ClickerUIDrawer(ClickerConfig config){
         this.config = config;
@@ -36,19 +42,19 @@ public class ClickerUIDrawer extends JPanel {
     //draw transparent black background over existing menu:
     @Override
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g); //paint children
+
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setColor(new Color(0, 0, 0, 100));
         g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.dispose();
-
-        super.paintComponent(g); //ensure children are then painted on top
     }
 
     private void initUIDrawer(){
 
         setLayout(new BorderLayout());
-        setOpaque(false);
         setVisible(false);
+        setOpaque(false);
         setBounds(0,0,ClickerConfig.WINDOW_WIDTH,ClickerConfig.WINDOW_HEIGHT);
 
         //entire drawer page container
@@ -149,33 +155,37 @@ public class ClickerUIDrawer extends JPanel {
         loadConfigPanel.setLayout(new MigLayout(
                 "insets 10 10 20 10, wrap 3, fillx",
                 "",
-                "[][]10[]"
+                "[grow]10[]"
         ));
 
-        JScrollPane loadPageScrollPane = new JScrollPane();
-
-        refreshSavedConfigs(loadPageScrollPane);
+        loadPageScrollPane = new JScrollPane();
+        loadPageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
         loadPageLoadButton = new JButton("Load");
-        loadPageLoadButton.setEnabled(false);
-        loadPageLoadButton.addActionListener(_ -> SaveDataManager.load(config, selectedConfig));
+        loadPageLoadButton.addActionListener(_ -> {
+            SaveDataManager.load(config, selectedConfig);
+            closeDrawer();
+        });
 
-        JButton loadPageCancelButton = new JButton("◁");
-        loadPageCancelButton.putClientProperty("JButton.buttonType", "borderless");
-        loadPageCancelButton.setFont(loadPageCancelButton.getFont().deriveFont(Font.PLAIN, 14f));
-        loadPageCancelButton.addActionListener(_ -> closeDrawer());
+        JButton loadPageExitButton = new JButton("◁");
+        loadPageExitButton.putClientProperty("JButton.buttonType", "borderless");
+        loadPageExitButton.setFont(loadPageExitButton.getFont().deriveFont(Font.PLAIN, 14f));
+        loadPageExitButton.addActionListener(_ -> closeDrawer());
 
-        loadPageDeleteButton = new JButton("⩐");
-        loadPageDeleteButton.putClientProperty("JButton.buttonType", "borderless");
-        loadPageDeleteButton.setFont(loadPageDeleteButton.getFont().deriveFont(Font.PLAIN, 14f));
-        loadPageDeleteButton.setEnabled(false);
-        loadPageCancelButton.addActionListener(_ -> SaveDataManager.delete(selectedConfig));
+        loadPageDeleteButton = new JButton("Delete");
+        loadPageDeleteButton.addActionListener(_ -> {
+            SaveDataManager.delete(selectedConfig);
+
+            resetLoadPage();
+            refreshSavedConfigs();
+        });
+
+        buildSavedConfigsPanel();
 
         loadConfigPanel.add(loadPageScrollPane, "span, grow");
-        loadConfigPanel.add(new JPanel(), "span, pushy");
         loadConfigPanel.add(loadPageLoadButton, "split 3, span, center");
         loadConfigPanel.add(loadPageDeleteButton);
-        loadConfigPanel.add(loadPageCancelButton);
+        loadConfigPanel.add(loadPageExitButton);
 
         //------------------------------------------------------------------------------
         drawerCardContainer.add(settingsPanel, "Settings");
@@ -185,28 +195,71 @@ public class ClickerUIDrawer extends JPanel {
         drawerContainer.add(drawerCardContainer, BorderLayout.CENTER);
     }
 
-    private void refreshSavedConfigs(JScrollPane loadPageScrollPane) {
-        JPanel scrollablePanel = new JPanel();
-        scrollablePanel.setLayout(new MigLayout(
+    private void buildSavedConfigsPanel() {
+        scrollablePanel = new JPanel(new MigLayout(
                 "insets 5 5 5 5, fillx",
                 "fill"
         ));
-        ArrayList<String> savedConfigs = SaveDataManager.loadAllConfigTemplateNames();
-
-        for (String configName : savedConfigs){
-            JButton configNameButton = new JButton(configName);
-            configNameButton.addActionListener(_ -> {
-                selectedConfig = configName;
-                setStyleSelected(configNameButton);
-
-                loadPageLoadButton.setEnabled(true);
-                loadPageDeleteButton.setEnabled(true);
-            });
-
-            scrollablePanel.add(configNameButton, "span");
-        }
 
         loadPageScrollPane.setViewportView(scrollablePanel);
+        refreshSavedConfigs();
+    }
+
+    private void refreshSavedConfigs() {
+
+        scrollablePanel.removeAll();
+        loadedConfigButtons.clear();
+
+        //current config is for the currently loaded config -- don't display in load menu
+        ArrayList<String> savedConfigs = SaveDataManager.loadAllConfigTemplateNames();
+        savedConfigs.remove("current");
+
+        if (savedConfigs.isEmpty()){
+            JLabel emptyConfigsLabel = new JLabel("No saved configurations yet!");
+            emptyConfigsLabel.putClientProperty("FlatLaf.style",
+                    "foreground: $Label.disabledForeground"
+            );
+
+            scrollablePanel.add(emptyConfigsLabel);
+        }
+        else{
+            for (String configName : savedConfigs){
+                JButton configNameButton = new JButton(configName);
+
+                configNameButton.addActionListener(_ -> {
+                    selectedConfig = configName;
+                    updateSavedConfigButtonSelection();
+                });
+
+                loadedConfigButtons.put(configName, configNameButton);
+                scrollablePanel.add(configNameButton, "span");
+            }
+        }
+
+        scrollablePanel.revalidate(); //re-run layout manager after original components removed
+        scrollablePanel.repaint(); //re-draw
+    }
+
+    private void updateSavedConfigButtonSelection() {
+
+        for (Map.Entry<String, JButton> entry : loadedConfigButtons.entrySet()){
+            String configName = entry.getKey();
+            JButton configButton = entry.getValue();
+
+            if (configName.equals(selectedConfig)) {
+                setStyleSelected(configButton);
+                loadPageLoadButton.setEnabled(true);
+                loadPageDeleteButton.setEnabled(true);
+            } else{
+                setStyleUnselected(configButton);
+            }
+        }
+    }
+
+    private void resetLoadPage(){
+        loadPageLoadButton.setEnabled(false);
+        loadPageDeleteButton.setEnabled(false);
+        selectedConfig = "";
     }
 
     private void resetSaveConfigPanel() {
@@ -223,6 +276,12 @@ public class ClickerUIDrawer extends JPanel {
         }
         CardLayout cardLayout = (CardLayout) drawerCardContainer.getLayout();
         cardLayout.show(drawerCardContainer,panelName);
+
+        //refresh loaded configs
+        if (panelName.equals("Load")){
+            resetLoadPage();
+            refreshSavedConfigs();
+        }
 
         setDrawerTitle(panelName);
         setPanelButtonSelected(panelName);

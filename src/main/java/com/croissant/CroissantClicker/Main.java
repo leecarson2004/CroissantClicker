@@ -12,7 +12,9 @@ import java.awt.*;
 
 //TODO: ensure user input is sanitized against special characters (only letters allowed)
 
-//TODO: gray out load button if no input ready
+//TODO: make scrolling faster, handle too large of input, clean up code, deletion popup (are you sure?)
+//optimization: add "last selected" var which is only style reset rather than all buttons
+
 
 public class Main {
 
@@ -37,6 +39,7 @@ public class Main {
             }
         });
 
+        //ui initialization
         javax.swing.SwingUtilities.invokeLater(() -> {
             ClickerUI ui = new ClickerUI(config, logic);
             ThemeManager.setTheme(config.getTheme(), ui);
