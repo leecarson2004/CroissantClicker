@@ -27,10 +27,11 @@ public class ClickerUIDrawer extends JPanel {
     //load config selection:
     JButton loadPageLoadButton;
     JButton loadPageDeleteButton;
-    private String selectedConfig;
     JScrollPane loadPageScrollPane;
     JPanel scrollablePanel;
     private final Map<String, JButton> loadedConfigButtons = new HashMap<>();
+    private String selectedConfig;
+    private String prevSelectedConfig;
 
 
     public ClickerUIDrawer(ClickerConfig config){
@@ -260,6 +261,7 @@ public class ClickerUIDrawer extends JPanel {
         loadPageLoadButton.setEnabled(false);
         loadPageDeleteButton.setEnabled(false);
         selectedConfig = "";
+        prevSelectedConfig = "";
     }
 
     private void resetSaveConfigPanel() {
