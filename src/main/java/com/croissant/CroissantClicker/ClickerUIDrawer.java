@@ -30,8 +30,8 @@ public class ClickerUIDrawer extends JPanel {
     JScrollPane loadPageScrollPane;
     JPanel scrollablePanel;
     private final Map<String, JButton> loadedConfigButtons = new HashMap<>();
-    private String selectedConfig;
-    private String prevSelectedConfig;
+    private String selectedConfig = "";
+    private String prevSelectedConfig = "";
 
 
     public ClickerUIDrawer(ClickerConfig config){
@@ -243,18 +243,21 @@ public class ClickerUIDrawer extends JPanel {
 
     private void updateSavedConfigButtonSelection() {
 
-        for (Map.Entry<String, JButton> entry : loadedConfigButtons.entrySet()){
-            String configName = entry.getKey();
-            JButton configButton = entry.getValue();
+        loadPageLoadButton.setEnabled(true);
+        loadPageDeleteButton.setEnabled(true);
 
-            if (configName.equals(selectedConfig)) {
-                setStyleSelected(configButton);
-                loadPageLoadButton.setEnabled(true);
-                loadPageDeleteButton.setEnabled(true);
-            } else{
-                setStyleUnselected(configButton);
+        JButton selectedButton = loadedConfigButtons.get(selectedConfig);
+        if (selectedButton != null){
+            setStyleSelected(selectedButton);
+        }
+
+        if (!(prevSelectedConfig.isEmpty())){
+            JButton prevSelectedButton = loadedConfigButtons.get(prevSelectedConfig);
+            if (prevSelectedButton != null){
+                setStyleUnselected(prevSelectedButton);
             }
         }
+        prevSelectedConfig = selectedConfig;
     }
 
     private void resetLoadPage(){

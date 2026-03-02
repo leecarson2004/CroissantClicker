@@ -10,10 +10,9 @@ import java.awt.*;
 
 //TODO: when user tries to delete save config, popup dialouge should show omniman - are you sure?
 
-//TODO: ensure user input is sanitized against special characters (only letters allowed)
+//handle too large of input, clean up code, deletion popup (are you sure?)
 
-//TODO: make scrolling faster, handle too large of input, clean up code, deletion popup (are you sure?)
-//optimization: add "last selected" var which is only style reset rather than all buttons
+//if config file contains '#' then don't display it (for global settings and current config
 
 
 public class Main {
