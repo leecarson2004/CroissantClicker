@@ -24,7 +24,9 @@ public class ClickerUIDrawer extends JPanel {
     private JButton settingsButton;
     private JComboBox<String> themeSelector;
     private JTextField saveConfigNameField;
-    //load config selection:
+    //save config components:
+    private JButton savePageSaveButton;
+    //load config components:
     JButton loadPageLoadButton;
     JButton loadPageDeleteButton;
     JScrollPane loadPageScrollPane;
@@ -128,28 +130,26 @@ public class ClickerUIDrawer extends JPanel {
         saveConfigNameField = new JTextField();
         saveConfigNameField.setDocument(new TextFieldLimit(20));
 
-        JButton savePageSaveButton = new JButton("Save");
+        savePageSaveButton = new JButton("Save");
         savePageSaveButton.addActionListener(_ -> {
             String inputText = saveConfigNameField.getText();
             
             if (inputText.isEmpty()) {
-                saveConfigNameField.putClientProperty("JComponent.outline", "error");
-                saveConfigNameField.setToolTipText("Please enter a name!");
+                showTempSaveFeedback("error", "Please enter a name!");
             } else{
-                SaveDataManager.save(config, saveConfigNameField.getText());
-                closeDrawer();
+                showTempSaveFeedback("success", "Configuration Saved!");
             }
         });
 
-        JButton savePageCancelButton = new JButton("Cancel");
-        savePageCancelButton.addActionListener(_ -> closeDrawer());
+        JButton savePageDoneButton = new JButton("Done");
+        savePageDoneButton.addActionListener(_ -> closeDrawer());
 
         saveConfigPanel.add(saveInstructionLabel, "span 2");
         saveConfigPanel.add(saveConfigNameField, "span 2, grow");
         saveConfigPanel.add(new JPanel(), "span 2, pushy");
         saveConfigPanel.add(new JSeparator(), "growx, span 2");
         saveConfigPanel.add(savePageSaveButton);
-        saveConfigPanel.add(savePageCancelButton);
+        saveConfigPanel.add(savePageDoneButton);
 
         //------------------------------------------------------------------------------
         JPanel loadConfigPanel = new JPanel();
@@ -267,8 +267,23 @@ public class ClickerUIDrawer extends JPanel {
         prevSelectedConfig = "";
     }
 
+    private void showTempSaveFeedback(String outline, String tooltip){
+        savePageSaveButton.setEnabled(false);
+        saveConfigNameField.putClientProperty("JComponent.outline", outline);
+        saveConfigNameField.setToolTipText(tooltip);
+
+        Timer tempTimer = new Timer(2000, _ -> {
+            saveConfigNameField.putClientProperty("JComponent.outline", null);
+            saveConfigNameField.setToolTipText(null);
+            savePageSaveButton.setEnabled(true);
+        });
+
+        tempTimer.setRepeats(false);
+        tempTimer.start();
+    }
+
     private void resetSaveConfigPanel() {
-        saveConfigNameField.putClientProperty("JComponent.outline", "default");
+        saveConfigNameField.putClientProperty("JComponent.outline", null);
         saveConfigNameField.setToolTipText(null);
         saveConfigNameField.setText("");
     }

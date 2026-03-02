@@ -91,7 +91,6 @@ public class ClickerUI extends JFrame {
             //ensure input valid
             if (!commitAndValidateSpinnerInput()){
                 config.setEnabled(false);
-                System.err.println("invalid input");
                 return;
             }
 
@@ -168,7 +167,7 @@ public class ClickerUI extends JFrame {
                 return false;
             }
             else{
-                spinner.putClientProperty("JComponent.outline", "default");
+                spinner.putClientProperty("JComponent.outline", null);
                 spinnerTextField.setToolTipText(null);
                 spinner.commitEdit();
                 return true;
