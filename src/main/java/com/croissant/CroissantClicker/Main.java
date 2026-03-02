@@ -8,7 +8,8 @@ import java.awt.*;
 //TODO: slide in drawer animation?
 //TODO: allow for user selection of hotkey?
 //TODO: user selection of image?
-//TODO: allow for lower cps
+//TODO: allow for lower cps (delay between click mode)
+// -> change cps spinner to delay spinner,
 
 public class Main {
 
