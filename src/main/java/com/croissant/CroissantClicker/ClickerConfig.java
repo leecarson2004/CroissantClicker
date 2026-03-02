@@ -44,16 +44,6 @@ public class ClickerConfig {
         setDefaultConfig();
     }
 
-    public void createConfigTemplate(String configName){
-        SaveDataManager.save(this,configName);
-    }
-    public void loadConfigTemplate(String configName){
-        SaveDataManager.load(this,configName);
-    }
-    public void deleteConfigTemplate(String configName){
-        SaveDataManager.delete(configName);
-    }
-
     public void setDefaultConfig(){
         setMouseButton(MOUSE_BUTTON_DEFAULT);
         setCps(CPS_DEFAULT);

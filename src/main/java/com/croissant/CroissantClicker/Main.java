@@ -8,6 +8,7 @@ import java.awt.*;
 //TODO: slide in drawer animation?
 //TODO: allow for user selection of hotkey?
 //TODO: user selection of image?
+//TODO: allow for lower cps
 
 public class Main {
 
