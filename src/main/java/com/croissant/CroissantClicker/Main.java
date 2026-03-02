@@ -2,18 +2,12 @@ package com.croissant.CroissantClicker;
 
 import java.awt.*;
 
-//TODO: add enums for drop down boxes
-//TODO: add custom theme
-//TODO: slide in drawer animation
-//TODO: allow for user selection of hotkey
+//Possible future features/refactors:
+//TODO: add enums for drop down boxes?
+//TODO: add custom theme?
+//TODO: slide in drawer animation?
+//TODO: allow for user selection of hotkey?
 //TODO: user selection of image?
-
-//TODO: when user tries to delete save config, popup dialouge should show omniman - are you sure?
-
-//handle too large of input, clean up code, deletion popup (are you sure?)
-
-//if config file contains '#' then don't display it (for global settings and current config
-
 
 public class Main {
 
@@ -23,8 +17,8 @@ public class Main {
         ClickerLogic logic = new ClickerLogic(config);
         GlobalHotkey hotkey = new GlobalHotkey(config);
 
-        //load user save data into config (prior to propertychangelistener initialization)
-        SaveDataManager.load(config, "current");
+        //load user save data into config -- "_" denotes non-user created saved configuration file.
+        SaveDataManager.load(config, "_current");
 
         //autosave user data on config change
         config.addPropertyChangeListener(evt -> {
@@ -34,7 +28,7 @@ public class Main {
                     || "clickLimitMode".equals(evt.getPropertyName())
                     || "theme".equals(evt.getPropertyName())
             ){
-                SaveDataManager.save(config, "current");
+                SaveDataManager.save(config, "_current");
             }
         });
 

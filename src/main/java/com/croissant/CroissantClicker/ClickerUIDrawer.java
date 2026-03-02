@@ -9,6 +9,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ClickerUIDrawer extends JPanel {
 
@@ -137,6 +138,7 @@ public class ClickerUIDrawer extends JPanel {
             if (inputText.isEmpty()) {
                 showTempSaveFeedback("error", "Please enter a name!");
             } else{
+                SaveDataManager.save(config, inputText);
                 showTempSaveFeedback("success", "Configuration Saved!");
             }
         });
@@ -162,6 +164,9 @@ public class ClickerUIDrawer extends JPanel {
         loadPageScrollPane = new JScrollPane();
         loadPageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
+        loadPageScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        //loadPageScrollPane.setViewportBorder(null);
+
         loadPageLoadButton = new JButton("Load");
         loadPageLoadButton.addActionListener(_ -> {
             SaveDataManager.load(config, selectedConfig);
@@ -175,10 +180,25 @@ public class ClickerUIDrawer extends JPanel {
 
         loadPageDeleteButton = new JButton("Delete");
         loadPageDeleteButton.addActionListener(_ -> {
-            SaveDataManager.delete(selectedConfig);
 
-            resetLoadPage();
-            refreshSavedConfigs();
+            ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/areYouSure.png")));
+
+            int result = JOptionPane.showConfirmDialog(
+                    null,
+                    "ARE YOU SURE \n" +
+                            "you want to delete \n" + selectedConfig + "?",
+                    "",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    icon
+            );
+
+            if (result == JOptionPane.YES_OPTION){
+                SaveDataManager.delete(selectedConfig);
+
+                resetLoadPage();
+                refreshSavedConfigs();
+            }
         });
 
         buildSavedConfigsPanel();
@@ -213,7 +233,7 @@ public class ClickerUIDrawer extends JPanel {
 
         //current config is for the currently loaded config -- don't display in load menu
         ArrayList<String> savedConfigs = SaveDataManager.loadAllConfigTemplateNames();
-        savedConfigs.remove("current");
+        savedConfigs.remove("_current");
 
         if (savedConfigs.isEmpty()){
             JLabel emptyConfigsLabel = new JLabel("No saved configurations yet!");
@@ -224,8 +244,19 @@ public class ClickerUIDrawer extends JPanel {
             scrollablePanel.add(emptyConfigsLabel);
         }
         else{
+            int scrollPaneWidth = loadPageScrollPane.getViewport().getWidth();
+
             for (String configName : savedConfigs){
-                JButton configNameButton = new JButton(configName);
+                JButton configNameButton;
+
+                if (configName.length() == 1){
+                    configNameButton = new JButton(configName + " ");
+                } else{
+                    configNameButton = new JButton(configName);
+                }
+
+                configNameButton.setHorizontalAlignment(SwingConstants.LEFT);
+                configNameButton.setMaximumSize(new Dimension(scrollPaneWidth-10, Integer.MAX_VALUE));
 
                 configNameButton.addActionListener(_ -> {
                     selectedConfig = configName;
@@ -238,7 +269,7 @@ public class ClickerUIDrawer extends JPanel {
         }
 
         scrollablePanel.revalidate(); //re-run layout manager after original components removed
-        scrollablePanel.repaint(); //re-draw
+        scrollablePanel.repaint();
     }
 
     private void updateSavedConfigButtonSelection() {
