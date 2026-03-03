@@ -130,16 +130,27 @@ public class ClickerUI extends JFrame {
     //ensure any manually typed user input in spinners is updated in config
     private boolean commitAndValidateSpinnerInput() {
 
-        boolean isValidInput1 = commitAndValidateSpinnerInputHelper(cpsSpinner,
+        if(!(commitAndValidateSpinnerInputHelper(cpsSpinner,
                 config.getCps(),
                 ClickerConfig.CPS_MIN,
-                ClickerConfig.CPS_MAX);
-        boolean isValidInput2 = commitAndValidateSpinnerInputHelper(clickLimitSpinner,
+                ClickerConfig.CPS_MAX))) {
+            return false;
+        }
+        else if (!(commitAndValidateSpinnerInputHelper(clickLimitSpinner,
                 config.getClickLimit(),
                 ClickerConfig.CLICK_LIMIT_MIN,
-                ClickerConfig.CLICK_LIMIT_MAX);
-
-        return (isValidInput1 && isValidInput2);
+                ClickerConfig.CLICK_LIMIT_MAX))){
+            return false;
+        }
+        else if (!(commitAndValidateSpinnerInputHelper(delaySpinner,
+                config.getDelay(),
+                ClickerConfig.DELAY_MIN,
+                ClickerConfig.DELAY_MAX))){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
     private boolean commitAndValidateSpinnerInputHelper(JSpinner spinner, int currValue, int minValue, int maxValue){
