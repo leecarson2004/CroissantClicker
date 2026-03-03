@@ -11,8 +11,11 @@ import java.util.Objects;
 public class ClickerConfig {
 
     //user selected options:
+
     private int mouseButton; //mouse button
+    private boolean delayMode; //mode for click speed -- cps or delay
     private volatile int cps; //clicks/sec
+    private volatile int delay; //delay between clicks
     private boolean clickLimitMode; //infinite or finite run mode
     private int clickLimit; //num mouse clicks run when turned on
     private int hotkey = NativeKeyEvent.VC_F8; //hotkey
@@ -24,13 +27,17 @@ public class ClickerConfig {
     //----------------------------------------
     public static final String APP_VERSION = "1.5";
     //User input bounds constants:
+    public static final int DELAY_MIN = 20;
+    public static final int DELAY_MAX = 10000;
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
     public static final int CLICK_LIMIT_MIN = 1;
     public static final int CLICK_LIMIT_MAX = 999_999;
     //default input values constants:
     public static final int MOUSE_BUTTON_DEFAULT = InputEvent.BUTTON1_DOWN_MASK;
+    public static final boolean DELAY_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
+    public static final int DELAY_DEFAULT = 200;
     public static final boolean CLICK_LIMIT_MODE_DEFAULT = false;
     public static final int CLICK_LIMIT_DEFAULT = 50;
     public static final String THEME_DEFAULT = "Dark";
@@ -46,7 +53,9 @@ public class ClickerConfig {
 
     public void setDefaultConfig(){
         setMouseButton(MOUSE_BUTTON_DEFAULT);
+        setDelayMode(DELAY_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
+        setDelay(DELAY_DEFAULT);
         setClickLimitMode(CLICK_LIMIT_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
         setTheme(THEME_DEFAULT);
@@ -80,6 +89,28 @@ public class ClickerConfig {
         int old = this.cps;
         this.cps = cps;
         support.firePropertyChange("cps",old,cps); //notify listeners
+    }
+
+    public boolean isDelayMode() {
+        return delayMode;
+    }
+    public void setDelayMode(boolean delayMode) {
+        if (this.delayMode == delayMode) return;
+
+        boolean old = this.delayMode;
+        this.delayMode = delayMode;
+        support.firePropertyChange("delayMode",old,delayMode); //notify listeners
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+    public void setDelay(int delay) {
+        if (this.delay == delay) return;
+
+        int old = this.delay;
+        this.delay = delay;
+        support.firePropertyChange("delay",old,delay); //notify listeners
     }
 
     public boolean isEnabled() {

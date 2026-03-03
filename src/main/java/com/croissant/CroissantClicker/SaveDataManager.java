@@ -43,6 +43,9 @@ public class SaveDataManager {
             Properties configProps = new Properties();
             configProps.setProperty("configName", configName);
             configProps.setProperty("version",ClickerConfig.APP_VERSION);
+
+            configProps.setProperty("delayMode", String.valueOf(config.isDelayMode()));
+            configProps.setProperty("delay", String.valueOf(config.getDelay()));
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
             configProps.setProperty("clickLimitMode",String.valueOf(config.isClickLimitMode()));
@@ -74,11 +77,16 @@ public class SaveDataManager {
                 configProps.load(input);
 
                 //load config values by keys and store in clickerconfig
+                config.setDelayMode(Boolean.parseBoolean(configProps.getProperty("delayMode",
+                        String.valueOf(ClickerConfig.DELAY_MODE_DEFAULT))));
+                config.setDelay(parseIntSafe(configProps.getProperty("delay"),
+                        ClickerConfig.DELAY_DEFAULT));
                 config.setCps(parseIntSafe(configProps.getProperty("cps"),
                         ClickerConfig.CPS_DEFAULT));
                 config.setClickLimit(parseIntSafe(configProps.getProperty("clickLimit"),
                         ClickerConfig.CLICK_LIMIT_DEFAULT));
-                config.setClickLimitMode(Boolean.parseBoolean(configProps.getProperty("clickLimitMode",String.valueOf(ClickerConfig.CLICK_LIMIT_MODE_DEFAULT))));
+                config.setClickLimitMode(Boolean.parseBoolean(configProps.getProperty("clickLimitMode",
+                        String.valueOf(ClickerConfig.CLICK_LIMIT_MODE_DEFAULT))));
                 config.setMouseButton(parseIntSafe(configProps.getProperty("mouseButton"),
                         ClickerConfig.MOUSE_BUTTON_DEFAULT));
                 config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));
@@ -136,7 +144,11 @@ public class SaveDataManager {
     }
 
     private static String createFileName(String configName) {
-        return "config." + configName + ".properties";
+        return "config." + getFileFormattedName(configName) + ".properties";
+    }
+    
+    private static String getFileFormattedName(String configName){
+        return configName.replaceAll(" ", "_");
     }
 
     private static int parseIntSafe(String value, int defaultValue) {

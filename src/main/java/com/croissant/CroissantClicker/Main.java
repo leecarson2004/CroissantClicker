@@ -3,13 +3,23 @@ package com.croissant.CroissantClicker;
 import java.awt.*;
 
 //Possible future features/refactors:
+//TODO: make drawer page cleaner - methods making each drawer page?
 //TODO: add enums for drop down boxes?
 //TODO: add custom theme?
-//TODO: slide in drawer animation?
-//TODO: allow for user selection of hotkey?
 //TODO: user selection of image?
+
+//For update 1.6:
+//TODO: allow for user selection of hotkey?
+//TODO: slide in drawer animation?
 //TODO: allow for lower cps (delay between click mode)
 // -> change cps spinner to delay spinner,
+// -> use card panels to make the swap work
+// -> work out swap logic in actual clickerlogic -- ensure efficiency
+//add to input validation method
+
+//TODO: ensure are you sure popup spawns where window is!
+
+
 
 public class Main {
 
@@ -29,6 +39,8 @@ public class Main {
                     || "mouseButton".equals(evt.getPropertyName())
                     || "clickLimitMode".equals(evt.getPropertyName())
                     || "theme".equals(evt.getPropertyName())
+                    || "delay".equals(evt.getPropertyName())
+                    || "delayMode".equals(evt.getPropertyName())
             ){
                 SaveDataManager.save(config, "_current");
             }

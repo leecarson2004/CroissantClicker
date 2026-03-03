@@ -23,6 +23,7 @@ public class ClickerUI extends JFrame {
     JLabel clickCounterLabel;
     JLabel toggleIndicator;
     JSpinner cpsSpinner;
+    JSpinner delaySpinner;
     JSpinner clickLimitSpinner;
     JComboBox<String> mouseButtonSelector;
     JComboBox<String> clickModeSelector;
@@ -60,6 +61,12 @@ public class ClickerUI extends JFrame {
 
         if ("cps".equals(evt.getPropertyName())){
             cpsSpinner.setValue(config.getCps());
+        }
+        else if ("delay".equals(evt.getPropertyName())){
+            delaySpinner.setValue(config.getDelay());
+        }
+        else if ("delayMode".equals(evt.getPropertyName())){
+            drawer.setDelayMode(config.isDelayMode());
         }
         else if ("clickLimit".equals(evt.getPropertyName())){
             clickLimitSpinner.setValue(config.getClickLimit());
@@ -264,6 +271,13 @@ public class ClickerUI extends JFrame {
         cpsSpinner = new JSpinner(cpsSpinnerModel);
         cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
         setSpinnerFocusLostBehavior(cpsSpinner);
+
+        JLabel delayLabel = new JLabel("Delay (Ms):");
+
+        SpinnerNumberModel delaySpinnerModel = new SpinnerNumberModel(config.getDelay(), ClickerConfig.DELAY_MIN, ClickerConfig.DELAY_MAX, 10);
+        delaySpinner = new JSpinner(delaySpinnerModel);
+        delaySpinner.addChangeListener(_ -> config.setDelay((int)delaySpinner.getValue()));
+        setSpinnerFocusLostBehavior(delaySpinner);
 
         JLabel clickModeLabel = new JLabel("Mode:");
 

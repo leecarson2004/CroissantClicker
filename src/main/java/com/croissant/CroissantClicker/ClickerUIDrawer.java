@@ -23,11 +23,13 @@ public class ClickerUIDrawer extends JPanel {
     private JButton loadButton;
     private JButton saveButton;
     private JButton settingsButton;
+    //settings components:
     private JComboBox<String> themeSelector;
-    private JTextField saveConfigNameField;
-    //save config components:
+    private JComboBox<String> delayModeSelector;
+    //save components:
     private JButton savePageSaveButton;
-    //load config components:
+    private JTextField saveConfigNameField;
+    //load components:
     JButton loadPageLoadButton;
     JButton loadPageDeleteButton;
     JScrollPane loadPageScrollPane;
@@ -93,7 +95,8 @@ public class ClickerUIDrawer extends JPanel {
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new MigLayout(
                 "fillx, insets 10 10 10 10, wrap 2",
-                "[left][fill]"
+                "[left][fill]",
+                "[]10[]10[]"
         ));
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
@@ -107,6 +110,16 @@ public class ClickerUIDrawer extends JPanel {
         themeSelector.setSelectedItem(config.getTheme());
         themeSelector.addActionListener(_ -> config.setTheme((String)themeSelector.getSelectedItem()));
 
+        JLabel delayModeLabel = new JLabel("Delay Mode:");
+
+        String[] delayModeStrings = {"CPS", "Delay"};
+        delayModeSelector = new JComboBox<>(delayModeStrings);
+        if (config.isDelayMode()){
+            delayModeSelector.setSelectedItem("Delay");
+        } else{
+            delayModeSelector.setSelectedItem("CPS");
+        }
+
         JButton doneButton = new JButton("Done");
         doneButton.addActionListener(_ -> closeDrawer());
 
@@ -114,6 +127,9 @@ public class ClickerUIDrawer extends JPanel {
         settingsPanel.add(ActiveHotKeyLabel);
         settingsPanel.add(themeLabel);
         settingsPanel.add(themeSelector);
+        settingsPanel.add(delayModeLabel);
+        settingsPanel.add(delayModeSelector);
+
         settingsPanel.add(new JPanel(), "span 2, pushy");
         settingsPanel.add(new JSeparator(), "growx, span 2");
         settingsPanel.add(doneButton, "span 2, align right");
@@ -165,7 +181,6 @@ public class ClickerUIDrawer extends JPanel {
         loadPageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
         loadPageScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        //loadPageScrollPane.setViewportBorder(null);
 
         loadPageLoadButton = new JButton("Load");
         loadPageLoadButton.addActionListener(_ -> {
@@ -430,5 +445,13 @@ public class ClickerUIDrawer extends JPanel {
 
     public void setThemeSelector(String theme){
         themeSelector.setSelectedItem(theme);
+    }
+
+    public void setDelayMode(boolean delayMode) {
+        if (delayMode){
+            delayModeSelector.setSelectedItem("Delay");
+        } else{
+            delayModeSelector.setSelectedItem("CPS");
+        }
     }
 }

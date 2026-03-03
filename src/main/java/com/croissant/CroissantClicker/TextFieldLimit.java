@@ -27,8 +27,9 @@ public class TextFieldLimit extends PlainDocument {
                 char currChar = editableString.charAt(i);
                 if (!((currChar >= 65 && currChar <= 90)
                         || (currChar >= 97 && currChar <= 122)
-                        || (currChar >= 48 && currChar <= 57))){
-
+                        || (currChar >= 48 && currChar <= 57)
+                        || (currChar == 32)))
+                {
                     editableString.deleteCharAt(i);
                 }
             }
