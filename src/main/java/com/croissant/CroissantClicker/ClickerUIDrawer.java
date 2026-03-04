@@ -119,6 +119,10 @@ public class ClickerUIDrawer extends JPanel {
         } else{
             delayModeSelector.setSelectedItem("CPS");
         }
+        delayModeSelector.addActionListener(_ -> {
+            boolean isDelayMode = (delayModeSelector.getSelectedIndex() != 0);
+            config.setDelayMode(isDelayMode);
+        });
 
         JButton doneButton = new JButton("Done");
         doneButton.addActionListener(_ -> closeDrawer());

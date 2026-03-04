@@ -14,15 +14,15 @@ public class ClickerConfig {
 
     private int mouseButton; //mouse button
     private boolean delayMode; //mode for click speed -- cps or delay
-    private volatile int cps; //clicks/sec
-    private volatile int delay; //delay between clicks
+    private int cps; //clicks/sec
+    private int delay; //delay between clicks
     private boolean clickLimitMode; //infinite or finite run mode
     private int clickLimit; //num mouse clicks run when turned on
     private int hotkey = NativeKeyEvent.VC_F8; //hotkey
     private String theme;
     //----------------------------------------
     //clicker state:
-    private volatile boolean enabled = false; //whether clicker is enabled or not enabled
+    private boolean enabled = false; //whether clicker is enabled or not enabled
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
     //----------------------------------------
     public static final String APP_VERSION = "1.5";

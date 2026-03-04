@@ -24,6 +24,7 @@ public class ClickerUI extends JFrame {
     JLabel toggleIndicator;
     JSpinner cpsSpinner;
     JSpinner delaySpinner;
+    JPanel delayTypePanel;
     JSpinner clickLimitSpinner;
     JComboBox<String> mouseButtonSelector;
     JComboBox<String> clickModeSelector;
@@ -67,6 +68,13 @@ public class ClickerUI extends JFrame {
         }
         else if ("delayMode".equals(evt.getPropertyName())){
             drawer.setDelayMode(config.isDelayMode());
+            CardLayout cardLayout = (CardLayout) delayTypePanel.getLayout();
+            if (config.isDelayMode()){
+                cardLayout.show(delayTypePanel, "delay");
+            } else{
+                cardLayout.show(delayTypePanel, "cps");
+
+            }
         }
         else if ("clickLimit".equals(evt.getPropertyName())){
             clickLimitSpinner.setValue(config.getClickLimit());
@@ -76,8 +84,16 @@ public class ClickerUI extends JFrame {
             else mouseButtonSelector.setSelectedIndex(1);
         }
         else if ("clickLimitMode".equals(evt.getPropertyName())){
-            if (!config.isClickLimitMode()) clickModeSelector.setSelectedIndex(0);
-            else clickModeSelector.setSelectedIndex(1);
+            if (!config.isClickLimitMode()) {
+                clickLimitSpinner.setEnabled(true);
+                clickModeSelector.setSelectedIndex(0);
+            }
+            else {
+                clickLimitSpinner.setEnabled(false);
+                clickModeSelector.setSelectedIndex(1);
+            }
+
+
         }
         else if ("theme".equals(evt.getPropertyName())){
             String theme = config.getTheme();
@@ -159,22 +175,22 @@ public class ClickerUI extends JFrame {
 
         try{
             //Test for valid input: Retrieve user typed value:
-            JFormattedTextField userInputField = ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField();
-            int userInput;
             try{
-                userInput = Integer.parseInt(userInputField.getText());
-            } catch (NumberFormatException _) {
+                spinner.commitEdit();
+
+            } catch (NumberFormatException e) {
                 spinner.setValue(currValue);
-                spinnerTextField.setText(String.valueOf(currValue));
                 spawnSpinnerInputError(spinner,minValue,maxValue);
                 return false;
             }
+            int userInput = (int) spinner.getValue();
 
             //Clamp input to config bounds and commit updates
             if (userInput < minValue) {
                 spinner.setValue(minValue);
                 spinnerTextField.setText(String.valueOf(minValue));
                 spawnSpinnerInputError(spinner,minValue,maxValue);
+
                 return false;
 
             }
@@ -182,6 +198,7 @@ public class ClickerUI extends JFrame {
                 spinner.setValue(maxValue);
                 spinnerTextField.setText(String.valueOf(maxValue));
                 spawnSpinnerInputError(spinner,minValue,maxValue);
+
                 return false;
             }
             else{
@@ -276,6 +293,10 @@ public class ClickerUI extends JFrame {
         clickLimitSpinner.addChangeListener(_ -> config.setClickLimit((int)clickLimitSpinner.getValue()));
         setSpinnerFocusLostBehavior(clickLimitSpinner);
 
+        JPanel cpsPanel = new JPanel(new MigLayout(
+                "fillx, insets 0, wrap 2",
+                "[left][fill]"
+        ));
         JLabel cpsLabel = new JLabel("CPS:");
 
         SpinnerNumberModel cpsSpinnerModel = new SpinnerNumberModel(config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX, 1);
@@ -283,12 +304,33 @@ public class ClickerUI extends JFrame {
         cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
         setSpinnerFocusLostBehavior(cpsSpinner);
 
+        cpsPanel.add(cpsLabel);
+        cpsPanel.add(cpsSpinner);
+
+        JPanel delayPanel = new JPanel(new MigLayout(
+                "fillx, insets 0, wrap 2",
+                "[left][fill]"
+        ));
         JLabel delayLabel = new JLabel("Delay (Ms):");
 
         SpinnerNumberModel delaySpinnerModel = new SpinnerNumberModel(config.getDelay(), ClickerConfig.DELAY_MIN, ClickerConfig.DELAY_MAX, 10);
         delaySpinner = new JSpinner(delaySpinnerModel);
         delaySpinner.addChangeListener(_ -> config.setDelay((int)delaySpinner.getValue()));
         setSpinnerFocusLostBehavior(delaySpinner);
+
+        delayPanel.add(delayLabel);
+        delayPanel.add(delaySpinner);
+
+        delayTypePanel = new JPanel(new CardLayout());
+        delayTypePanel.add(cpsPanel, "cps");
+        delayTypePanel.add(delayPanel, "delay");
+
+        CardLayout cardLayout = (CardLayout) delayTypePanel.getLayout();
+        if (config.isDelayMode()){
+            cardLayout.show(delayTypePanel, "delay");
+        } else{
+            cardLayout.show(delayTypePanel, "cps");
+        }
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
@@ -305,7 +347,6 @@ public class ClickerUI extends JFrame {
         clickModeSelector.addActionListener(_ -> {
             boolean isClickMode = (clickModeSelector.getSelectedIndex() != 0);
             config.setClickLimitMode(isClickMode);
-            clickLimitSpinner.setEnabled(isClickMode);
         });
 
         JLabel mouseButtonLabel = new JLabel("Mouse Button:");
@@ -328,17 +369,19 @@ public class ClickerUI extends JFrame {
         });
 
 
-        mainPanelLeft.add(cpsLabel);
-        mainPanelLeft.add(cpsSpinner);
+        mainPanelLeft.add(delayTypePanel, "span 2, growx");
+
         mainPanelLeft.add(mouseButtonLabel);
         mainPanelLeft.add(mouseButtonSelector);
+
         mainPanelLeft.add(clickModeLabel);
         mainPanelLeft.add(clickModeSelector);
+
         mainPanelLeft.add(clickLimitLabel);
         mainPanelLeft.add(clickLimitSpinner);
 
-
         mainPanel.add(mainPanelLeft, BorderLayout.WEST);
+
         //------------------------------------------------------------------------------
         JPanel mainPanelRight = new JPanel();
 

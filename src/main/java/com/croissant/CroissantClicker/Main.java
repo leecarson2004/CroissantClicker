@@ -15,7 +15,8 @@ import java.awt.*;
 // -> change cps spinner to delay spinner,
 // -> use card panels to make the swap work
 // -> work out swap logic in actual clickerlogic -- ensure efficiency
-//add to input validation method
+
+//TODO: see delay, cps still need to be volatile, atomic ints
 
 //TODO: ensure are you sure popup spawns where window is!
 

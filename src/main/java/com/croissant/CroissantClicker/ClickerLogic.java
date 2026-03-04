@@ -25,7 +25,7 @@ public class ClickerLogic {
         config.setClickCount(0);
 
         thread = new Thread(()->{
-            //check mode:
+            //check modes:
             int numRemainingClicks = -1;
             if (config.isClickLimitMode()){
                 numRemainingClicks = config.getClickLimit();
@@ -33,18 +33,19 @@ public class ClickerLogic {
 
             boolean delayMode = config.isDelayMode();
 
+            //load config settings
+            int mouseButton = config.getMouseButton();
+            int cps = config.getCps();
+            int delay = config.getDelay();
+
             //run clicking loop
             while (running) {
-                int mouseButton = config.getMouseButton();
                 robot.mousePress(mouseButton);
                 robot.mouseRelease(mouseButton);
 
-                int cps = config.getCps();
-                int delay = config.getDelay();
-
                 if (delayMode){
                     try {
-                        Thread.sleep(delay); //convert cps to ms of delay
+                        Thread.sleep(delay);
                     } catch(InterruptedException e){
                         break;
                     }
@@ -55,7 +56,6 @@ public class ClickerLogic {
                         break;
                     }
                 }
-
 
                 config.incrementClickCount();
 
