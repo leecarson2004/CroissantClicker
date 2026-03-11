@@ -101,7 +101,6 @@ public class ClickerUIDrawer extends JPanel {
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
-        JLabel ActiveHotKeyLabel = new JLabel("[F8]");
         JTextField hotKeyField = new JTextField(config.getHotkeyString());
 
         JLabel themeLabel = new JLabel("Theme:");

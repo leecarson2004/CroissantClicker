@@ -19,9 +19,8 @@ import java.awt.*;
 // area to enter click pattern?? (LLR, RRL, or even with characters?)
 
 
-//TODO: CANCELLED: ADD hold down click option -- put in same menu as delay -- rename --
 //time between click start and release slider basically?
-//TODO: allow for user selection of hotkey?
+//TODO: allow for user selection of hotkey? -- current
 //TODO: slide in drawer animation?
 //TODO: remove excessive numbers of buttons for using drawer -- closing drawer only on top with arrow or by clicking off
 //done:

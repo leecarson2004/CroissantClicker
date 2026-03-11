@@ -1,7 +1,6 @@
 package com.croissant.CroissantClicker;
 
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
