@@ -102,6 +102,7 @@ public class ClickerUIDrawer extends JPanel {
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
         JLabel ActiveHotKeyLabel = new JLabel("[F8]");
+        JTextField hotKeyField = new JTextField(config.getHotkeyString());
 
         JLabel themeLabel = new JLabel("Theme:");
 
@@ -128,7 +129,7 @@ public class ClickerUIDrawer extends JPanel {
         doneButton.addActionListener(_ -> closeDrawer());
 
         settingsPanel.add(hotKeyLabel);
-        settingsPanel.add(ActiveHotKeyLabel);
+        settingsPanel.add(hotKeyField);
         settingsPanel.add(themeLabel);
         settingsPanel.add(themeSelector);
         settingsPanel.add(delayModeLabel);
@@ -203,9 +204,10 @@ public class ClickerUIDrawer extends JPanel {
             ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/areYouSure.png")));
 
             int result = JOptionPane.showConfirmDialog(
-                    null,
+                    this,
                     "ARE YOU SURE \n" +
-                            "you want to delete \n" + selectedConfig + "?",
+                            "you want to delete \n"
+                            + selectedConfig + "?",
                     "",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,

@@ -125,6 +125,9 @@ public class ClickerConfig {
     public int getHotkey() {
         return hotkey;
     }
+    public String getHotkeyString(){
+        return NativeKeyEvent.getKeyText(hotkey);
+    }
     public void setHotkey(int hotkey) {
         this.hotkey = hotkey;
     }

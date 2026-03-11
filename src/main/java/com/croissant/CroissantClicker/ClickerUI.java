@@ -259,7 +259,7 @@ public class ClickerUI extends JFrame {
         setHeaderStyle(toggleIndicator);
         toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
-        JLabel hotKeyLabel = new JLabel("[F8]");
+        JLabel hotKeyLabel = new JLabel("[" + config.getHotkeyString() +"]");
         setHeaderStyle(hotKeyLabel);
 
 
