@@ -26,14 +26,16 @@ public class ClickerUIDrawer extends JPanel {
     //settings components:
     private JComboBox<String> themeSelector;
     private JComboBox<String> delayModeSelector;
+    private KeyBindTextField hotKeySelectionField;
     //save components:
     private JButton savePageSaveButton;
     private JTextField saveConfigNameField;
     //load components:
-    JButton loadPageLoadButton;
-    JButton loadPageDeleteButton;
-    JScrollPane loadPageScrollPane;
-    JPanel scrollablePanel;
+    private JButton loadPageLoadButton;
+    private JButton loadPageDeleteButton;
+    private JScrollPane loadPageScrollPane;
+    private JPanel scrollablePanel;
+
     private final Map<String, JButton> loadedConfigButtons = new HashMap<>();
     private String selectedConfig = "";
     private String prevSelectedConfig = "";
@@ -101,7 +103,7 @@ public class ClickerUIDrawer extends JPanel {
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
-        JTextField hotKeyField = new JTextField(config.getHotkeyString());
+        hotKeySelectionField = new KeyBindTextField(config.getHotkey());
 
         JLabel themeLabel = new JLabel("Theme:");
 
@@ -128,7 +130,7 @@ public class ClickerUIDrawer extends JPanel {
         doneButton.addActionListener(_ -> closeDrawer());
 
         settingsPanel.add(hotKeyLabel);
-        settingsPanel.add(hotKeyField);
+        settingsPanel.add(hotKeySelectionField);
         settingsPanel.add(themeLabel);
         settingsPanel.add(themeSelector);
         settingsPanel.add(delayModeLabel);
@@ -460,7 +462,7 @@ public class ClickerUIDrawer extends JPanel {
         }
     }
 
-    public void setDisplayedHotkey(int hotkey){
-        //set ui component to display this (whatever component ends up being)
+    public void setDisplayedHotkey(String hotkeyString){
+        hotKeySelectionField.setText(hotkeyString);
     }
 }

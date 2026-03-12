@@ -1,7 +1,6 @@
 package com.croissant.CroissantClicker;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 
@@ -11,12 +10,6 @@ public class GlobalHotkey implements NativeKeyListener {
 
     public GlobalHotkey(ClickerConfig config){
         this.config = config;
-
-        try{
-            GlobalScreen.registerNativeHook();
-        } catch(NativeHookException e){
-            e.printStackTrace();
-        }
 
         GlobalScreen.addNativeKeyListener(this);
     }

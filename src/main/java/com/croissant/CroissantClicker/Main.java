@@ -1,6 +1,11 @@
 package com.croissant.CroissantClicker;
 
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
+
 import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //Possible future features/refactors:
 //TODO: make drawer page cleaner - methods making each drawer page?
@@ -17,6 +22,7 @@ import java.awt.*;
 
 //***release mouse with finally to prevent issues with mouse staying held down if thread crashes
 // area to enter click pattern?? (LLR, RRL, or even with characters?)
+// *** bug: add flag to updatedata
 
 
 //time between click start and release slider basically?
@@ -29,13 +35,11 @@ import java.awt.*;
 //ensure are you sure popup spawns where window is!
 //fixed bug where inputs >1000 wouldn't work as click limit
 
-
-
-
-
 public class Main {
 
     public static void main(String[] args) throws AWTException {
+
+        setUpJNativeHook();
 
         ClickerConfig config = new ClickerConfig();
         ClickerLogic logic = new ClickerLogic(config);
@@ -66,5 +70,27 @@ public class Main {
 
             ui.setVisible(true);
         });
+    }
+
+    public static void setUpJNativeHook(){
+        //register actual global nativehook
+        try{
+            GlobalScreen.registerNativeHook();
+        } catch(NativeHookException e){
+            System.err.println("Failed to register global native hook: " + e.getMessage());
+            System.exit(1);
+        }
+
+        //Reduce JNativeHook logging noise
+        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(Level.OFF);
+        logger.setUseParentHandlers(false);
+
+        //Remove hook at shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                GlobalScreen.unregisterNativeHook();
+            } catch (NativeHookException ignored) {}
+        }));
     }
 }

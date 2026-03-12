@@ -1,5 +1,6 @@
 package com.croissant.CroissantClicker;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
@@ -19,16 +20,16 @@ public class ClickerUI extends JFrame {
     private Timer toggleCountDownTimer;
     private int countdown;
 
-    JLabel hotKeyLabel;
-    JLabel clickCounterLabel;
-    JLabel toggleIndicator;
-    JSpinner cpsSpinner;
-    JSpinner delaySpinner;
-    JPanel delayTypePanel;
-    JSpinner clickLimitSpinner;
-    JComboBox<String> mouseButtonSelector;
-    JComboBox<String> clickModeSelector;
-    JButton toggleIndicatorButton;
+    private JLabel hotKeyLabel;
+    private JLabel clickCounterLabel;
+    private JLabel toggleIndicator;
+    private JSpinner cpsSpinner;
+    private JSpinner delaySpinner;
+    private JPanel delayTypePanel;
+    private JSpinner clickLimitSpinner;
+    private JComboBox<String> mouseButtonSelector;
+    private JComboBox<String> clickModeSelector;
+    private JButton toggleIndicatorButton;
 
     String colorGreen = "#388e3c";
     String colorRed = "#d32f2f";
@@ -94,13 +95,13 @@ public class ClickerUI extends JFrame {
         else if ("clickLimitMode".equals(evt.getPropertyName())){
             boolean isClickLimitMode = (boolean) evt.getNewValue();
 
-            if (!isClickLimitMode) {
+            if (isClickLimitMode) {
                 clickLimitSpinner.setEnabled(true);
-                clickModeSelector.setSelectedIndex(0);
+                clickModeSelector.setSelectedIndex(1);
             }
             else {
                 clickLimitSpinner.setEnabled(false);
-                clickModeSelector.setSelectedIndex(1);
+                clickModeSelector.setSelectedIndex(0);
             }
         }
         else if ("theme".equals(evt.getPropertyName())){
@@ -110,13 +111,13 @@ public class ClickerUI extends JFrame {
             ThemeManager.setTheme(theme, this);
         }
         else if ("hotkey".equals(evt.getPropertyName())){
-            int hotkey = (int) evt.getNewValue();
+            String hotkey = NativeKeyEvent.getKeyText((int) evt.getNewValue());
 
             drawer.setDisplayedHotkey(hotkey);
-            hotKeyLabel.setText(config.getHotkeyString());
+            hotKeyLabel.setText(hotkey);
         }
         else{
-            System.err.println("Event name non-existent");
+            System.err.println("Event name non-existent!");
         }
     }
 
