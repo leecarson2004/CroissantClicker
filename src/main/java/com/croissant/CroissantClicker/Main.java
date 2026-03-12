@@ -53,6 +53,7 @@ public class Main {
                     || "theme".equals(evt.getPropertyName())
                     || "delay".equals(evt.getPropertyName())
                     || "delayMode".equals(evt.getPropertyName())
+                    || "hotkey".equals(evt.getPropertyName())
             ){
                 SaveDataManager.save(config, "_current");
             }

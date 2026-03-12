@@ -40,6 +40,7 @@ public class ClickerConfig {
     public static final int DELAY_DEFAULT = 200;
     public static final boolean CLICK_LIMIT_MODE_DEFAULT = false;
     public static final int CLICK_LIMIT_DEFAULT = 50;
+    public static final int HOTKEY_DEFAULT =  NativeKeyEvent.VC_F8;
     public static final String THEME_DEFAULT = "Dark";
     //main JFrame dims:
     public static final int WINDOW_WIDTH = 400;
@@ -59,6 +60,7 @@ public class ClickerConfig {
         setClickLimitMode(CLICK_LIMIT_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
         setTheme(THEME_DEFAULT);
+        setHotkey(HOTKEY_DEFAULT);
     }
 
     //listener system initialization
@@ -129,7 +131,11 @@ public class ClickerConfig {
         return NativeKeyEvent.getKeyText(hotkey);
     }
     public void setHotkey(int hotkey) {
+        if (this.hotkey == hotkey) return;
+
+        int old = this.hotkey;
         this.hotkey = hotkey;
+        support.firePropertyChange("hotkey",old,hotkey);
     }
 
     public int getMouseButton() {

@@ -19,6 +19,7 @@ public class ClickerUI extends JFrame {
     private Timer toggleCountDownTimer;
     private int countdown;
 
+    JLabel hotKeyLabel;
     JLabel clickCounterLabel;
     JLabel toggleIndicator;
     JSpinner cpsSpinner;
@@ -49,7 +50,7 @@ public class ClickerUI extends JFrame {
                     updateStatus();
                 }
                 else{
-                    refreshInputFields(evt);
+                    refreshData(evt);
                 }
             });
         });
@@ -57,18 +58,20 @@ public class ClickerUI extends JFrame {
         initUI();
     }
 
-    private void refreshInputFields(PropertyChangeEvent evt) {
+    private void refreshData(PropertyChangeEvent evt) {
 
         if ("cps".equals(evt.getPropertyName())){
-            cpsSpinner.setValue(config.getCps());
+            cpsSpinner.setValue(evt.getNewValue());
         }
         else if ("delay".equals(evt.getPropertyName())){
-            delaySpinner.setValue(config.getDelay());
+            delaySpinner.setValue(evt.getNewValue());
         }
         else if ("delayMode".equals(evt.getPropertyName())){
-            drawer.setDelayMode(config.isDelayMode());
+            boolean isDelayMode = (boolean) evt.getNewValue();
+
+            drawer.setDisplayedDelayMode(isDelayMode);
             CardLayout cardLayout = (CardLayout) delayTypePanel.getLayout();
-            if (config.isDelayMode()){
+            if (isDelayMode){
                 cardLayout.show(delayTypePanel, "delay");
             } else{
                 cardLayout.show(delayTypePanel, "cps");
@@ -76,14 +79,22 @@ public class ClickerUI extends JFrame {
             }
         }
         else if ("clickLimit".equals(evt.getPropertyName())){
-            clickLimitSpinner.setValue(config.getClickLimit());
+            clickLimitSpinner.setValue(evt.getNewValue());
         }
         else if ("mouseButton".equals(evt.getPropertyName())){
-            if (config.getMouseButton() == InputEvent.BUTTON1_DOWN_MASK) mouseButtonSelector.setSelectedIndex(0);
-            else mouseButtonSelector.setSelectedIndex(1);
+            int mouseButton = (int) evt.getNewValue();
+
+            if (mouseButton == InputEvent.BUTTON1_DOWN_MASK) {
+                mouseButtonSelector.setSelectedIndex(0);
+            }
+            else {
+                mouseButtonSelector.setSelectedIndex(1);
+            }
         }
         else if ("clickLimitMode".equals(evt.getPropertyName())){
-            if (!config.isClickLimitMode()) {
+            boolean isClickLimitMode = (boolean) evt.getNewValue();
+
+            if (!isClickLimitMode) {
                 clickLimitSpinner.setEnabled(true);
                 clickModeSelector.setSelectedIndex(0);
             }
@@ -91,13 +102,18 @@ public class ClickerUI extends JFrame {
                 clickLimitSpinner.setEnabled(false);
                 clickModeSelector.setSelectedIndex(1);
             }
-
-
         }
         else if ("theme".equals(evt.getPropertyName())){
-            String theme = config.getTheme();
-            drawer.setThemeSelector(theme);
+            String theme = (String) evt.getNewValue();
+
+            drawer.setDisplayedTheme(theme);
             ThemeManager.setTheme(theme, this);
+        }
+        else if ("hotkey".equals(evt.getPropertyName())){
+            int hotkey = (int) evt.getNewValue();
+
+            drawer.setDisplayedHotkey(hotkey);
+            hotKeyLabel.setText(config.getHotkeyString());
         }
         else{
             System.err.println("Event name non-existent");
@@ -258,7 +274,7 @@ public class ClickerUI extends JFrame {
         setHeaderStyle(toggleIndicator);
         toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
-        JLabel hotKeyLabel = new JLabel("[" + config.getHotkeyString() +"]");
+        hotKeyLabel = new JLabel("[" + config.getHotkeyString() +"]");
         setHeaderStyle(hotKeyLabel);
 
 

@@ -448,15 +448,19 @@ public class ClickerUIDrawer extends JPanel {
         setVisible(drawerContainerVisible);
     }
 
-    public void setThemeSelector(String theme){
+    public void setDisplayedTheme(String theme){
         themeSelector.setSelectedItem(theme);
     }
 
-    public void setDelayMode(boolean delayMode) {
+    public void setDisplayedDelayMode(boolean delayMode) {
         if (delayMode){
             delayModeSelector.setSelectedItem("Delay");
         } else{
             delayModeSelector.setSelectedItem("CPS");
         }
+    }
+
+    public void setDisplayedHotkey(int hotkey){
+        //set ui component to display this (whatever component ends up being)
     }
 }
