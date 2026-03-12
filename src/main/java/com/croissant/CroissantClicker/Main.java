@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 //***release mouse with finally to prevent issues with mouse staying held down if thread crashes
 // area to enter click pattern?? (LLR, RRL, or even with characters?)
-// *** bug: add flag to updatedata
 
 
 //time between click start and release slider basically?
@@ -34,6 +33,7 @@ import java.util.logging.Logger;
 //delay mode for millisecond delay specification (longer delays allows)
 //ensure are you sure popup spawns where window is!
 //fixed bug where inputs >1000 wouldn't work as click limit
+//bug fixes and performance improvements
 
 public class Main {
 

@@ -34,6 +34,7 @@ public class ClickerUI extends JFrame {
     String colorGreen = "#388e3c";
     String colorRed = "#d32f2f";
 
+    private boolean updateByConfig = false;
 
     public ClickerUI(ClickerConfig config, ClickerLogic logic) {
         this.config = config;
@@ -60,6 +61,7 @@ public class ClickerUI extends JFrame {
     }
 
     private void refreshData(PropertyChangeEvent evt) {
+        updateByConfig = true;
 
         if ("cps".equals(evt.getPropertyName())){
             cpsSpinner.setValue(evt.getNewValue());
@@ -119,6 +121,8 @@ public class ClickerUI extends JFrame {
         else{
             System.err.println("Event name non-existent!");
         }
+
+        updateByConfig = false;
     }
 
     private void updateStatus(){
@@ -306,8 +310,13 @@ public class ClickerUI extends JFrame {
 
         SpinnerNumberModel clickLimitSpinnerModel = new SpinnerNumberModel(config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX, 1);
         clickLimitSpinner = new JSpinner(clickLimitSpinnerModel);
-        clickLimitSpinner.addChangeListener(_ -> config.setClickLimit((int)clickLimitSpinner.getValue()));
         setSpinnerFocusLostBehavior(clickLimitSpinner);
+        clickLimitSpinner.addChangeListener(_ -> {
+            if (!updateByConfig) {
+                config.setClickLimit((int)clickLimitSpinner.getValue());
+            }
+        });
+
 
         JPanel cpsPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
@@ -317,8 +326,13 @@ public class ClickerUI extends JFrame {
 
         SpinnerNumberModel cpsSpinnerModel = new SpinnerNumberModel(config.getCps(), ClickerConfig.CPS_MIN, ClickerConfig.CPS_MAX, 1);
         cpsSpinner = new JSpinner(cpsSpinnerModel);
-        cpsSpinner.addChangeListener(_ -> config.setCps((int)cpsSpinner.getValue()));
         setSpinnerFocusLostBehavior(cpsSpinner);
+        cpsSpinner.addChangeListener(_ -> {
+            if (!updateByConfig) {
+                config.setCps((int)cpsSpinner.getValue());
+            }
+        });
+
 
         cpsPanel.add(cpsLabel);
         cpsPanel.add(cpsSpinner);
@@ -331,8 +345,13 @@ public class ClickerUI extends JFrame {
 
         SpinnerNumberModel delaySpinnerModel = new SpinnerNumberModel(config.getDelay(), ClickerConfig.DELAY_MIN, ClickerConfig.DELAY_MAX, 10);
         delaySpinner = new JSpinner(delaySpinnerModel);
-        delaySpinner.addChangeListener(_ -> config.setDelay((int)delaySpinner.getValue()));
         setSpinnerFocusLostBehavior(delaySpinner);
+        delaySpinner.addChangeListener(_ -> {
+            if (!updateByConfig) {
+                config.setDelay((int)delaySpinner.getValue());
+            }
+        });
+
 
         delayPanel.add(delayLabel);
         delayPanel.add(delaySpinner);
@@ -361,8 +380,10 @@ public class ClickerUI extends JFrame {
         }
 
         clickModeSelector.addActionListener(_ -> {
-            boolean isClickMode = (clickModeSelector.getSelectedIndex() != 0);
-            config.setClickLimitMode(isClickMode);
+            if (!updateByConfig) {
+                boolean isClickMode = (clickModeSelector.getSelectedIndex() != 0);
+                config.setClickLimitMode(isClickMode);
+            }
         });
 
         JLabel mouseButtonLabel = new JLabel("Mouse Button:");
@@ -376,11 +397,13 @@ public class ClickerUI extends JFrame {
             mouseButtonSelector.setSelectedIndex(1);
         }
         mouseButtonSelector.addActionListener(_ -> {
-            if(mouseButtonSelector.getSelectedIndex() == 0){
-                config.setMouseButton(InputEvent.BUTTON1_DOWN_MASK);
-            }
-            else{
-                config.setMouseButton(InputEvent.BUTTON3_DOWN_MASK);
+            if (!updateByConfig){
+                if(mouseButtonSelector.getSelectedIndex() == 0){
+                    config.setMouseButton(InputEvent.BUTTON1_DOWN_MASK);
+                }
+                else{
+                    config.setMouseButton(InputEvent.BUTTON3_DOWN_MASK);
+                }
             }
         });
 
@@ -432,6 +455,7 @@ public class ClickerUI extends JFrame {
         mainPanelSouth.add(new JSeparator(), "growx, span 2");
 
         mainPanel.add(mainPanelSouth, BorderLayout.SOUTH);
+
         //------------------------------------------------------------------------------
         defaultPageContainer.add(mainPanel);
 
