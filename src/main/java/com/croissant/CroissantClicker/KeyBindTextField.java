@@ -16,11 +16,10 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
 
     public KeyBindTextField(int keyBind){
         super();
-        this.keyBind = keyBind;
 
         setEditable(false);
         setHorizontalAlignment(JTextField.CENTER);
-        setText(getKeyBindString());
+        setKeyBind(keyBind);
 
         addFocusListener(this);
     }
@@ -45,10 +44,10 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
             this.keyBind = keyBind;
         }
 
-        SwingUtilities.invokeLater(() -> setText(keyBind == -1 ? "None" : getKeyBindString()));
+        setText(this.keyBind == -1 ? "None" : getKeyBindString());
 
         if (keyChangedListener != null){
-            keyChangedListener.accept(keyBind);
+            keyChangedListener.accept(this.keyBind);
         }
     }
 
@@ -75,10 +74,10 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
 
         int inputKey = nativeEvent.getKeyCode();
 
-        setKeyBind(inputKey);
-
-        //exit field
-        SwingUtilities.invokeLater(this::transferFocus);
+        SwingUtilities.invokeLater(() -> {
+            setKeyBind(inputKey);
+            transferFocus(); //exit field
+        });
     }
 
     public void addKeyChangedListener(IntConsumer listener){

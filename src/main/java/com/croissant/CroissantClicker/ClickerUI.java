@@ -114,10 +114,10 @@ public class ClickerUI extends JFrame {
             ThemeManager.setTheme(theme, this);
         }
         else if ("hotkey".equals(evt.getPropertyName())){
-            String hotkey = NativeKeyEvent.getKeyText((int) evt.getNewValue());
+            String hotkeyString = config.getHotkeyString();
 
-            drawer.setDisplayedHotkey(hotkey);
-            hotKeyLabel.setText(hotkey);
+            drawer.setDisplayedHotkey(hotkeyString);
+            hotKeyLabel.setText("[" + hotkeyString + "]");
         }
         else{
             System.err.println("Event name non-existent!");
@@ -280,7 +280,7 @@ public class ClickerUI extends JFrame {
         setHeaderStyle(toggleIndicator);
         toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
 
-        hotKeyLabel = new JLabel("[" + config.getHotkeyString() +"]");
+        hotKeyLabel = new JLabel("[" + config.getHotkeyString() + "]");
         setHeaderStyle(hotKeyLabel);
 
 

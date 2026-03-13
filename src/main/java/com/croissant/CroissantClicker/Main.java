@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 //TODO: add enums for drop down boxes?
 //TODO: add custom theme?
 //TODO: user selection of image?
+// use switch statements for the event things
 
 //For update 1.6:
 //TODO: SIMPLE MODE VS ADVANCED -- simple has CPS, advanced has DELAY BETWEEN CLICKS (MS), LENGTH OF CLICK (hold down)
@@ -23,17 +24,15 @@ import java.util.logging.Logger;
 //***release mouse with finally to prevent issues with mouse staying held down if thread crashes
 // area to enter click pattern?? (LLR, RRL, or even with characters?)
 
-//*** move isupdatingfromconfig to jsut config setters???
-// use switch statements for the event things
-
 //time between click start and release slider basically?
-//TODO: allow for user selection of hotkey? -- current
+
 //TODO: slide in drawer animation?
 //TODO: remove excessive numbers of buttons for using drawer -- closing drawer only on top with arrow or by clicking off
 //done:
 //spaces in user input allowed
 //delay mode for millisecond delay specification (longer delays allows)
 //ensure are you sure popup spawns where window is!
+//allow for user selection of hotkey
 //fixed bug where inputs >1000 wouldn't work as click limit
 //bug fixes and performance improvements
 

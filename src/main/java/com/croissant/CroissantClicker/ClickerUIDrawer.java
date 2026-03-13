@@ -106,6 +106,12 @@ public class ClickerUIDrawer extends JPanel {
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
         hotKeySelectionField = new KeyBindTextField(config.getHotkey());
+        hotKeySelectionField.addKeyChangedListener(key -> {
+            if (!config.isUpdatingFromConfig()){
+                config.setHotkey(key);
+            }
+        });
+
 
         JLabel themeLabel = new JLabel("Theme:");
 

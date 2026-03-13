@@ -24,7 +24,9 @@ public class ClickerConfig {
     //clicker state:
     private boolean enabled = false; //whether clicker is enabled or not enabled
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
+    //data update states:
     private boolean updatingFromConfig = false; //flag indicating whether clicker ui is currently being updated with new config data
+    private boolean updatingHotkey = false; //if hotkey is being updated in settings, don't start autoclicker
     //----------------------------------------
     //constants
     public static final String APP_VERSION = "1.5";
@@ -130,7 +132,7 @@ public class ClickerConfig {
         return hotkey;
     }
     public String getHotkeyString(){
-        return NativeKeyEvent.getKeyText(hotkey);
+        return hotkey == -1 ? "None" : NativeKeyEvent.getKeyText(hotkey);
     }
     public void setHotkey(int hotkey) {
         if (this.hotkey == hotkey) return;
