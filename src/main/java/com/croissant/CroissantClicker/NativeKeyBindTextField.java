@@ -9,27 +9,27 @@ import java.awt.event.FocusListener;
 import java.util.function.IntConsumer;
 
 
-public class KeyBindTextField extends JTextField implements NativeKeyListener, FocusListener {
+public class NativeKeyBindTextField extends JTextField implements NativeKeyListener, FocusListener {
 
     private int keyBind;
     private IntConsumer keyChangedListener;
+    private ClickerConfig config;
 
-    public KeyBindTextField(int keyBind){
+    public NativeKeyBindTextField(int keyBind, ClickerConfig config){
         super();
+        this.config = config;
 
         setEditable(false);
         setHorizontalAlignment(JTextField.CENTER);
         setKeyBind(keyBind);
 
         addFocusListener(this);
+
+        System.err.println("created new nativekeybindtextfield...");
     }
 
     private String getKeyBindString(){
-        if (keyBind == -1){
-            return getText();
-        } else{
-            return NativeKeyEvent.getKeyText(keyBind);
-        }
+        return (this.keyBind == -1 ? "None" : NativeKeyEvent.getKeyText(keyBind));
     }
 
     public int getKeyBind(){
@@ -40,11 +40,15 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
 
         if (keyBind == NativeKeyEvent.VC_DELETE || keyBind == NativeKeyEvent.VC_BACKSPACE) {
             this.keyBind = -1;
-        } else{
+        }
+        else if (keyBind == NativeKeyEvent.VC_ENTER){
+            return;
+        }
+        else{
             this.keyBind = keyBind;
         }
 
-        setText(this.keyBind == -1 ? "None" : getKeyBindString());
+        setText(getKeyBindString());
 
         if (keyChangedListener != null){
             keyChangedListener.accept(this.keyBind);
@@ -53,17 +57,18 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
 
     @Override
     public void focusGained(FocusEvent e) {
-        GlobalScreen.removeNativeKeyListener(this); //remove any duplicates if exist
-        GlobalScreen.addNativeKeyListener(this);
+        config.setCapturingNativeKeyBind(true);
 
+        GlobalScreen.addNativeKeyListener(this);
         setText("<" + getKeyBindString() + ">");
     }
 
     @Override
     public void focusLost(FocusEvent e) {
         GlobalScreen.removeNativeKeyListener(this);
-
         setText(getKeyBindString());
+
+        config.setCapturingNativeKeyBind(false);
     }
 
     @Override
@@ -80,7 +85,7 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
         });
     }
 
-    public void addKeyChangedListener(IntConsumer listener){
+    public void setOnKeyChanged(IntConsumer listener){
         keyChangedListener = listener;
     }
 

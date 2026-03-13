@@ -28,7 +28,7 @@ public class ClickerUIDrawer extends JPanel {
     //settings components:
     private JComboBox<String> themeSelector;
     private JComboBox<String> delayModeSelector;
-    private KeyBindTextField hotKeySelectionField;
+    private NativeKeyBindTextField hotKeySelectionField;
     //save components:
     private JButton savePageSaveButton;
     private JTextField saveConfigNameField;
@@ -105,8 +105,8 @@ public class ClickerUIDrawer extends JPanel {
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
-        hotKeySelectionField = new KeyBindTextField(config.getHotkey());
-        hotKeySelectionField.addKeyChangedListener(key -> {
+        hotKeySelectionField = new NativeKeyBindTextField(config.getHotkey(), config);
+        hotKeySelectionField.setOnKeyChanged(key -> {
             if (!config.isUpdatingFromConfig()){
                 config.setHotkey(key);
             }

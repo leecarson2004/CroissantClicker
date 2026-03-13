@@ -26,7 +26,7 @@ public class ClickerConfig {
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
     //data update states:
     private boolean updatingFromConfig = false; //flag indicating whether clicker ui is currently being updated with new config data
-    private boolean updatingHotkey = false; //if hotkey is being updated in settings, don't start autoclicker
+    private volatile boolean capturingNativeKeyBind = false; //if hotkey is being updated in settings, don't start autoclicker
     //----------------------------------------
     //constants
     public static final String APP_VERSION = "1.5";
@@ -190,5 +190,12 @@ public class ClickerConfig {
     }
     public void setUpdatingFromConfig(boolean updatingFromConfig) {
         this.updatingFromConfig = updatingFromConfig;
+    }
+
+    public boolean isCapturingNativeKeyBind() {
+        return capturingNativeKeyBind;
+    }
+    public void setCapturingNativeKeyBind(boolean capturingNativeKeyBind) {
+        this.capturingNativeKeyBind = capturingNativeKeyBind;
     }
 }

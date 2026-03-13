@@ -16,6 +16,10 @@ public class GlobalHotkey implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e){
+        if (config.isCapturingNativeKeyBind()){
+            return;
+        }
+
         //global hotkey:
         if (e.getKeyCode() == config.getHotkey()){
 
