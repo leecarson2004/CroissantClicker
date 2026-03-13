@@ -24,8 +24,6 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
         setKeyBind(keyBind);
 
         addFocusListener(this);
-
-        System.err.println("created new nativekeybindtextfield...");
     }
 
     private String getKeyBindString(){
