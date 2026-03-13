@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 //***release mouse with finally to prevent issues with mouse staying held down if thread crashes
 // area to enter click pattern?? (LLR, RRL, or even with characters?)
 
+//*** move isupdatingfromconfig to jsut config setters???
+// use switch statements for the event things
 
 //time between click start and release slider basically?
 //TODO: allow for user selection of hotkey? -- current

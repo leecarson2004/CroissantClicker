@@ -8,6 +8,8 @@ import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
+
+
 public class ClickerUI extends JFrame {
 
     private final ClickerConfig config;
@@ -34,7 +36,6 @@ public class ClickerUI extends JFrame {
     String colorGreen = "#388e3c";
     String colorRed = "#d32f2f";
 
-    private boolean updateByConfig = false;
 
     public ClickerUI(ClickerConfig config, ClickerLogic logic) {
         this.config = config;
@@ -61,7 +62,7 @@ public class ClickerUI extends JFrame {
     }
 
     private void refreshData(PropertyChangeEvent evt) {
-        updateByConfig = true;
+        config.setUpdatingFromConfig(true);
 
         if ("cps".equals(evt.getPropertyName())){
             cpsSpinner.setValue(evt.getNewValue());
@@ -122,7 +123,7 @@ public class ClickerUI extends JFrame {
             System.err.println("Event name non-existent!");
         }
 
-        updateByConfig = false;
+        config.setUpdatingFromConfig(false);
     }
 
     private void updateStatus(){
@@ -312,7 +313,7 @@ public class ClickerUI extends JFrame {
         clickLimitSpinner = new JSpinner(clickLimitSpinnerModel);
         setSpinnerFocusLostBehavior(clickLimitSpinner);
         clickLimitSpinner.addChangeListener(_ -> {
-            if (!updateByConfig) {
+            if (!config.isUpdatingFromConfig()) {
                 config.setClickLimit((int)clickLimitSpinner.getValue());
             }
         });
@@ -328,7 +329,7 @@ public class ClickerUI extends JFrame {
         cpsSpinner = new JSpinner(cpsSpinnerModel);
         setSpinnerFocusLostBehavior(cpsSpinner);
         cpsSpinner.addChangeListener(_ -> {
-            if (!updateByConfig) {
+            if (!config.isUpdatingFromConfig()) {
                 config.setCps((int)cpsSpinner.getValue());
             }
         });
@@ -347,7 +348,7 @@ public class ClickerUI extends JFrame {
         delaySpinner = new JSpinner(delaySpinnerModel);
         setSpinnerFocusLostBehavior(delaySpinner);
         delaySpinner.addChangeListener(_ -> {
-            if (!updateByConfig) {
+            if (!config.isUpdatingFromConfig()) {
                 config.setDelay((int)delaySpinner.getValue());
             }
         });
@@ -380,7 +381,7 @@ public class ClickerUI extends JFrame {
         }
 
         clickModeSelector.addActionListener(_ -> {
-            if (!updateByConfig) {
+            if (!config.isUpdatingFromConfig()) {
                 boolean isClickMode = (clickModeSelector.getSelectedIndex() != 0);
                 config.setClickLimitMode(isClickMode);
             }
@@ -397,7 +398,7 @@ public class ClickerUI extends JFrame {
             mouseButtonSelector.setSelectedIndex(1);
         }
         mouseButtonSelector.addActionListener(_ -> {
-            if (!updateByConfig){
+            if (!config.isUpdatingFromConfig()){
                 if(mouseButtonSelector.getSelectedIndex() == 0){
                     config.setMouseButton(InputEvent.BUTTON1_DOWN_MASK);
                 }

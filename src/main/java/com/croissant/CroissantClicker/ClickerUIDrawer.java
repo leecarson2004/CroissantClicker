@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+
+
 public class ClickerUIDrawer extends JPanel {
 
     private final ClickerConfig config;
@@ -110,7 +112,11 @@ public class ClickerUIDrawer extends JPanel {
         String[] themeStrings = {"Dark", "Light"};
         themeSelector = new JComboBox<>(themeStrings);
         themeSelector.setSelectedItem(config.getTheme());
-        themeSelector.addActionListener(_ -> config.setTheme((String)themeSelector.getSelectedItem()));
+        themeSelector.addActionListener(_ -> {
+            if (!config.isUpdatingFromConfig()){
+                config.setTheme((String)themeSelector.getSelectedItem());
+            }
+        });
 
         JLabel delayModeLabel = new JLabel("Delay Mode:");
 
@@ -122,8 +128,10 @@ public class ClickerUIDrawer extends JPanel {
             delayModeSelector.setSelectedItem("CPS");
         }
         delayModeSelector.addActionListener(_ -> {
-            boolean isDelayMode = (delayModeSelector.getSelectedIndex() != 0);
-            config.setDelayMode(isDelayMode);
+            if (!config.isUpdatingFromConfig()){
+                boolean isDelayMode = (delayModeSelector.getSelectedIndex() != 0);
+                config.setDelayMode(isDelayMode);
+            }
         });
 
         JButton doneButton = new JButton("Done");

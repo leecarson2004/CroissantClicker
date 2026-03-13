@@ -3,14 +3,16 @@ package com.croissant.CroissantClicker;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
-
 import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.function.IntConsumer;
+
 
 public class KeyBindTextField extends JTextField implements NativeKeyListener, FocusListener {
 
     private int keyBind;
+    private IntConsumer keyChangedListener;
 
     public KeyBindTextField(int keyBind){
         super();
@@ -36,8 +38,18 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
     }
 
     public void setKeyBind(int keyBind){
-        this.keyBind = keyBind;
-        setText(getKeyBindString());
+
+        if (keyBind == NativeKeyEvent.VC_DELETE || keyBind == NativeKeyEvent.VC_BACKSPACE) {
+            this.keyBind = -1;
+        } else{
+            this.keyBind = keyBind;
+        }
+
+        SwingUtilities.invokeLater(() -> setText(keyBind == -1 ? "None" : getKeyBindString()));
+
+        if (keyChangedListener != null){
+            keyChangedListener.accept(keyBind);
+        }
     }
 
     @Override
@@ -63,16 +75,14 @@ public class KeyBindTextField extends JTextField implements NativeKeyListener, F
 
         int inputKey = nativeEvent.getKeyCode();
 
-        if (inputKey == NativeKeyEvent.VC_DELETE || inputKey == NativeKeyEvent.VC_BACKSPACE) {
-            keyBind = -1;
-        } else{
-            keyBind = inputKey;
-        }
+        setKeyBind(inputKey);
 
-        SwingUtilities.invokeLater(() -> {
-            setText(keyBind == -1 ? "None" : getKeyBindString());
-            transferFocus(); //exit field
-        });
+        //exit field
+        SwingUtilities.invokeLater(this::transferFocus);
+    }
+
+    public void addKeyChangedListener(IntConsumer listener){
+        keyChangedListener = listener;
     }
 
     @Override

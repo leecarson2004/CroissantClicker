@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Objects;
 
 
+
 public class ClickerConfig {
 
     //user selected options:
-
     private int mouseButton; //mouse button
     private boolean delayMode; //mode for click speed -- cps or delay
     private int cps; //clicks/sec
@@ -24,7 +24,9 @@ public class ClickerConfig {
     //clicker state:
     private boolean enabled = false; //whether clicker is enabled or not enabled
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
+    private boolean updatingFromConfig = false; //flag indicating whether clicker ui is currently being updated with new config data
     //----------------------------------------
+    //constants
     public static final String APP_VERSION = "1.5";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
@@ -179,5 +181,12 @@ public class ClickerConfig {
     }
     public void incrementClickCount() {
         clickCount.getAndIncrement();
+    }
+
+    public boolean isUpdatingFromConfig() {
+        return updatingFromConfig;
+    }
+    public void setUpdatingFromConfig(boolean updatingFromConfig) {
+        this.updatingFromConfig = updatingFromConfig;
     }
 }

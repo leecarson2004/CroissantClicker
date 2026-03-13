@@ -2,6 +2,8 @@ package com.croissant.CroissantClicker;
 
 import java.awt.*;
 
+
+
 public class ClickerLogic {
 
     private final ClickerConfig config;
