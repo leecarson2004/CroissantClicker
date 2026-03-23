@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 //TODO: add custom theme?
 //TODO: user selection of image?
 // use switch statements for the event things
+// make load page use Jlist instead of button map
+
 
 //For update 1.6:
 //TODO: SIMPLE MODE VS ADVANCED -- simple has CPS, advanced has DELAY BETWEEN CLICKS (MS), LENGTH OF CLICK (hold down)
@@ -21,13 +23,15 @@ import java.util.logging.Logger;
 // (separate into 2 methods).
 // UX: in mode -- repeat, HOLD, (maybe checkbox for until stopped (for both repeat and hold) gray out things, add hold time option
 
+
+// area to enter click pattern?? (LLR, RRL, or even with characters?) -- in advanced - user can set repeated key
+// -- COULD BE its own mode!! - block mode
+
 //***release mouse with finally to prevent issues with mouse staying held down if thread crashes
-// area to enter click pattern?? (LLR, RRL, or even with characters?)
 
 //time between click start and release slider basically?
 
 //TODO: slide in drawer animation?
-//TODO: remove excessive numbers of buttons for using drawer -- closing drawer only on top with arrow or by clicking off
 //done:
 //spaces in user input allowed
 //delay mode for millisecond delay specification (longer delays allows)
@@ -35,6 +39,8 @@ import java.util.logging.Logger;
 //allow for user selection of hotkey
 //fixed bug where inputs >1000 wouldn't work as click limit
 //bug fixes and performance improvements
+//load page UI update
+//improved icon system in clicker ui; added improved icons -- USE SVG icons -- add methods and rename imageiconloader to imageloader
 
 public class Main {
 

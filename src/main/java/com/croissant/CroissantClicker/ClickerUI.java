@@ -1,12 +1,10 @@
 package com.croissant.CroissantClicker;
 
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
-import java.util.Objects;
 
 
 
@@ -429,7 +427,7 @@ public class ClickerUI extends JFrame {
                 "fill, insets 20 20 20 20"
         ));
 
-        ImageIcon mainImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/wynnEmerald.png")));
+        ImageIcon mainImage = UIResources.WYNN_EMERALD_ICON;
         JLabel mainImageLabel = new JLabel(mainImage);
 
         mainPanelRight.add(mainImageLabel);

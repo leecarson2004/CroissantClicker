@@ -9,8 +9,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 
 
 public class ClickerUIDrawer extends JPanel {
@@ -192,9 +190,9 @@ public class ClickerUIDrawer extends JPanel {
         //------------------------------------------------------------------------------
         JPanel loadConfigPanel = new JPanel();
         loadConfigPanel.setLayout(new MigLayout(
-                "insets 10 10 20 10, wrap 3, fillx",
+                "insets 10 10 20 10, wrap 2, fillx",
                 "",
-                "[grow]10[]"
+                "[grow]10[]10[]"
         ));
 
         loadPageScrollPane = new JScrollPane();
@@ -208,15 +206,10 @@ public class ClickerUIDrawer extends JPanel {
             closeDrawer();
         });
 
-        JButton loadPageExitButton = new JButton("◁");
-        loadPageExitButton.putClientProperty("JButton.buttonType", "borderless");
-        loadPageExitButton.setFont(loadPageExitButton.getFont().deriveFont(Font.PLAIN, 14f));
-        loadPageExitButton.addActionListener(_ -> closeDrawer());
-
         loadPageDeleteButton = new JButton("Delete");
         loadPageDeleteButton.addActionListener(_ -> {
 
-            ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/areYouSure.png")));
+            ImageIcon icon = UIResources.ARE_YOU_SURE_ICON;
 
             int result = JOptionPane.showConfirmDialog(
                     this,
@@ -240,9 +233,9 @@ public class ClickerUIDrawer extends JPanel {
         buildSavedConfigsPanel();
 
         loadConfigPanel.add(loadPageScrollPane, "span, grow");
-        loadConfigPanel.add(loadPageLoadButton, "split 3, span, center");
+        loadConfigPanel.add(new JSeparator(), "growx, span 2, h 5!");
+        loadConfigPanel.add(loadPageLoadButton, "split 2, span 2, center");
         loadConfigPanel.add(loadPageDeleteButton);
-        loadConfigPanel.add(loadPageExitButton);
 
         //------------------------------------------------------------------------------
         drawerCardContainer.add(settingsPanel, "Settings");
