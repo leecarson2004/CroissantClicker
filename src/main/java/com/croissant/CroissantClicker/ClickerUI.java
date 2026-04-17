@@ -77,7 +77,6 @@ public class ClickerUI extends JFrame {
                 cardLayout.show(delayTypePanel, "delay");
             } else{
                 cardLayout.show(delayTypePanel, "cps");
-
             }
         }
         else if ("clickLimit".equals(evt.getPropertyName())){
@@ -97,6 +96,9 @@ public class ClickerUI extends JFrame {
             String clickMode = evt.getNewValue().toString();
 
             clickLimitSpinner.setEnabled(!clickMode.equals("Hold") && !clickMode.equals("Unlimited Clicks"));
+            cpsSpinner.setEnabled(!clickMode.equals("Hold"));
+            delaySpinner.setEnabled(!clickMode.equals("Hold"));
+
 
             clickModeSelector.setSelectedItem(clickMode);
         }
@@ -310,6 +312,7 @@ public class ClickerUI extends JFrame {
                 config.setClickLimit((int)clickLimitSpinner.getValue());
             }
         });
+        clickLimitSpinner.setEnabled(!config.getClickMode().equals("Hold") && !config.getClickMode().equals("Unlimited Clicks"));
 
 
         JPanel cpsPanel = new JPanel(new MigLayout(
@@ -326,6 +329,7 @@ public class ClickerUI extends JFrame {
                 config.setCps((int)cpsSpinner.getValue());
             }
         });
+        cpsSpinner.setEnabled(!config.getClickMode().equals("Hold"));
 
 
         cpsPanel.add(cpsLabel);
@@ -345,6 +349,7 @@ public class ClickerUI extends JFrame {
                 config.setDelay((int)delaySpinner.getValue());
             }
         });
+        delaySpinner.setEnabled(!config.getClickMode().equals("Hold"));
 
 
         delayPanel.add(delayLabel);
@@ -360,6 +365,7 @@ public class ClickerUI extends JFrame {
         } else{
             cardLayout.show(delayTypePanel, "cps");
         }
+
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
