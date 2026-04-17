@@ -49,7 +49,7 @@ public class SaveDataManager {
             configProps.setProperty("delay", String.valueOf(config.getDelay()));
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
-            configProps.setProperty("clickLimitMode",String.valueOf(config.isClickLimitMode()));
+            configProps.setProperty("clickMode",String.valueOf(config.getClickMode()));
             configProps.setProperty("mouseButton",String.valueOf(config.getMouseButton()));
             configProps.setProperty("theme", config.getTheme());
 
@@ -88,8 +88,8 @@ public class SaveDataManager {
                         ClickerConfig.CPS_DEFAULT));
                 config.setClickLimit(parseIntSafe(configProps.getProperty("clickLimit"),
                         ClickerConfig.CLICK_LIMIT_DEFAULT));
-                config.setClickLimitMode(Boolean.parseBoolean(configProps.getProperty("clickLimitMode",
-                        String.valueOf(ClickerConfig.CLICK_LIMIT_MODE_DEFAULT))));
+                config.setClickMode(configProps.getProperty("clickMode",
+                        ClickerConfig.CLICK_MODE_DEFAULT));
                 config.setMouseButton(parseIntSafe(configProps.getProperty("mouseButton"),
                         ClickerConfig.MOUSE_BUTTON_DEFAULT));
                 config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));

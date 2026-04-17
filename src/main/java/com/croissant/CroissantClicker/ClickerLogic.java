@@ -29,7 +29,7 @@ public class ClickerLogic {
         thread = new Thread(()->{
             //check modes:
             int numRemainingClicks = -1;
-            if (config.isClickLimitMode()){
+            if (config.getClickMode().equals("Limited Clicks")){
                 numRemainingClicks = config.getClickLimit();
             }
 

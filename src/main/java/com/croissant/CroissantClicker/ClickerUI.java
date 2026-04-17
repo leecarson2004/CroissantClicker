@@ -93,17 +93,12 @@ public class ClickerUI extends JFrame {
                 mouseButtonSelector.setSelectedIndex(1);
             }
         }
-        else if ("clickLimitMode".equals(evt.getPropertyName())){
-            boolean isClickLimitMode = (boolean) evt.getNewValue();
+        else if ("clickMode".equals(evt.getPropertyName())){
+            String clickMode = evt.getNewValue().toString();
 
-            if (isClickLimitMode) {
-                clickLimitSpinner.setEnabled(true);
-                clickModeSelector.setSelectedIndex(1);
-            }
-            else {
-                clickLimitSpinner.setEnabled(false);
-                clickModeSelector.setSelectedIndex(0);
-            }
+            clickLimitSpinner.setEnabled(!clickMode.equals("Hold") && !clickMode.equals("Unlimited Clicks"));
+
+            clickModeSelector.setSelectedItem(clickMode);
         }
         else if ("theme".equals(evt.getPropertyName())){
             String theme = (String) evt.getNewValue();
@@ -340,7 +335,7 @@ public class ClickerUI extends JFrame {
                 "fillx, insets 0, wrap 2",
                 "[left][fill]"
         ));
-        JLabel delayLabel = new JLabel("Delay (Ms):");
+        JLabel delayLabel = new JLabel("Delay (ms):");
 
         SpinnerNumberModel delaySpinnerModel = new SpinnerNumberModel(config.getDelay(), ClickerConfig.DELAY_MIN, ClickerConfig.DELAY_MAX, 10);
         delaySpinner = new JSpinner(delaySpinnerModel);
@@ -368,20 +363,13 @@ public class ClickerUI extends JFrame {
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
-        String[] modeStrings = {"Unlimited Clicks", "Limited Clicks"};
+        String[] modeStrings = {"Unlimited Clicks", "Limited Clicks", "Hold"};
         clickModeSelector = new JComboBox<>(modeStrings);
-        if (config.isClickLimitMode()){
-            clickModeSelector.setSelectedIndex(1);
-        }
-        else{
-            clickModeSelector.setSelectedIndex(0);
-            clickLimitSpinner.setEnabled(false);
-        }
+        clickModeSelector.setSelectedItem(config.getClickMode());
 
         clickModeSelector.addActionListener(_ -> {
             if (!config.isUpdatingFromConfig()) {
-                boolean isClickMode = (clickModeSelector.getSelectedIndex() != 0);
-                config.setClickLimitMode(isClickMode);
+                config.setClickMode((String) clickModeSelector.getSelectedItem());
             }
         });
 

@@ -18,10 +18,10 @@ import java.util.logging.Logger;
 
 //For update 1.6:
 //TODO: SIMPLE MODE VS ADVANCED -- simple has CPS, advanced has DELAY BETWEEN CLICKS (MS), LENGTH OF CLICK (hold down)
-// AND this covers image so no image in advanced (estimated cps display)
+// AND this covers image so no image in advanced (include estimated cps display)
 // add default delay between click, adjustable by user, use different clickerlogic depending on mode
 // (separate into 2 methods).
-// UX: in mode -- repeat, HOLD, (maybe checkbox for until stopped (for both repeat and hold) gray out things, add hold time option
+// UX: in SIMPLE mode -- repeat, HOLD, (maybe checkbox for until stopped (for both repeat and hold) gray out things, add hold time option
 
 
 // area to enter click pattern?? (LLR, RRL, or even with characters?) -- in advanced - user can set repeated key
@@ -31,7 +31,8 @@ import java.util.logging.Logger;
 
 //time between click start and release slider basically?
 
-//TODO: slide in drawer animation?
+//**add bounds checking maybe to data loader for crash reduction
+
 //done:
 //spaces in user input allowed
 //delay mode for millisecond delay specification (longer delays allows)
@@ -40,7 +41,6 @@ import java.util.logging.Logger;
 //fixed bug where inputs >1000 wouldn't work as click limit
 //bug fixes and performance improvements
 //load page UI update
-//improved icon system in clicker ui; added improved icons -- USE SVG icons -- add methods and rename imageiconloader to imageloader
 
 public class Main {
 
@@ -60,7 +60,7 @@ public class Main {
             if ("clickLimit".equals(evt.getPropertyName())
                     || "cps".equals(evt.getPropertyName())
                     || "mouseButton".equals(evt.getPropertyName())
-                    || "clickLimitMode".equals(evt.getPropertyName())
+                    || "clickMode".equals(evt.getPropertyName())
                     || "theme".equals(evt.getPropertyName())
                     || "delay".equals(evt.getPropertyName())
                     || "delayMode".equals(evt.getPropertyName())

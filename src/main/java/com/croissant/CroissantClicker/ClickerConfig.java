@@ -16,9 +16,9 @@ public class ClickerConfig {
     private boolean delayMode; //mode for click speed -- cps or delay
     private int cps; //clicks/sec
     private int delay; //delay between clicks
-    private boolean clickLimitMode; //infinite or finite run mode
+    private String clickMode; //click mode
     private int clickLimit; //num mouse clicks run when turned on
-    private int hotkey = NativeKeyEvent.VC_F8; //hotkey
+    private int hotkey; //hotkey
     private String theme;
     //----------------------------------------
     //clicker state:
@@ -42,7 +42,7 @@ public class ClickerConfig {
     public static final boolean DELAY_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
     public static final int DELAY_DEFAULT = 200;
-    public static final boolean CLICK_LIMIT_MODE_DEFAULT = false;
+    public static final String CLICK_MODE_DEFAULT = "Unlimited Clicks";
     public static final int CLICK_LIMIT_DEFAULT = 50;
     public static final int HOTKEY_DEFAULT =  NativeKeyEvent.VC_F8;
     public static final String THEME_DEFAULT = "Dark";
@@ -61,7 +61,7 @@ public class ClickerConfig {
         setDelayMode(DELAY_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
         setDelay(DELAY_DEFAULT);
-        setClickLimitMode(CLICK_LIMIT_MODE_DEFAULT);
+        setClickMode(CLICK_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
         setTheme(THEME_DEFAULT);
         setHotkey(HOTKEY_DEFAULT);
@@ -164,15 +164,15 @@ public class ClickerConfig {
         support.firePropertyChange("clickLimit",old,clickLimit); //notify listeners
     }
 
-    public boolean isClickLimitMode() {
-        return clickLimitMode;
+    public String getClickMode() {
+        return clickMode;
     }
-    public void setClickLimitMode(boolean clickLimitMode) {
-        if (this.clickLimitMode == clickLimitMode) return;
+    public void setClickMode(String clickMode) {
+        if (this.clickMode != null && this.clickMode.equals(clickMode)) return;
 
-        boolean old = this.clickLimitMode;
-        this.clickLimitMode = clickLimitMode;
-        support.firePropertyChange("clickLimitMode",old,clickLimitMode); //notify listeners
+        String old = this.clickMode;
+        this.clickMode = clickMode;
+        support.firePropertyChange("clickMode",old, clickMode); //notify listeners
     }
 
     public int getClickCount() {

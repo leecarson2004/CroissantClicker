@@ -168,7 +168,7 @@ public class ClickerUIDrawer extends JPanel {
         savePageSaveButton = new JButton("Save");
         savePageSaveButton.addActionListener(_ -> {
             String inputText = saveConfigNameField.getText();
-            
+
             if (inputText.isEmpty()) {
                 showTempSaveFeedback("error", "Please enter a name!");
             } else{
