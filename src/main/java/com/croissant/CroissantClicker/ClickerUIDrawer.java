@@ -121,6 +121,8 @@ public class ClickerUIDrawer extends JPanel {
                 config.setTheme((String)themeSelector.getSelectedItem());
             }
         });
+        themeSelector.setLightWeightPopupEnabled(false); //fixes cross device issues with glass pane
+
 
         JLabel delayModeLabel = new JLabel("Delay Mode:");
 
@@ -137,6 +139,8 @@ public class ClickerUIDrawer extends JPanel {
                 config.setDelayMode(isDelayMode);
             }
         });
+        delayModeSelector.setLightWeightPopupEnabled(false); //fixes cross device issues with glass pane
+
 
         JButton doneButton = new JButton("Done");
         doneButton.addActionListener(_ -> closeDrawer());
