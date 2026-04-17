@@ -7,40 +7,7 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//Possible future features/refactors:
-//TODO: make drawer page cleaner - methods making each drawer page?
-//TODO: add enums for drop down boxes?
-//TODO: add custom theme?
-//TODO: user selection of image?
-// use switch statements for the event things
-// make load page use Jlist instead of button map
 
-
-//For update 1.6:
-//TODO: SIMPLE MODE VS ADVANCED -- simple has CPS, advanced has DELAY BETWEEN CLICKS (MS), LENGTH OF CLICK (hold down)
-// AND this covers image so no image in advanced (include estimated cps display)
-// add default delay between click, adjustable by user, use different clickerlogic depending on mode
-// (separate into 2 methods).
-// UX: in SIMPLE mode -- repeat, HOLD, (maybe checkbox for until stopped (for both repeat and hold) gray out things, add hold time option
-
-
-// area to enter click pattern?? (LLR, RRL, or even with characters?) -- in advanced - user can set repeated key
-// -- COULD BE its own mode!! - block mode
-
-//***release mouse with finally to prevent issues with mouse staying held down if thread crashes
-
-//time between click start and release slider basically?
-
-//**add bounds checking maybe to data loader for crash reduction
-
-//done:
-//spaces in user input allowed
-//delay mode for millisecond delay specification (longer delays allows)
-//ensure are you sure popup spawns where window is!
-//allow for user selection of hotkey
-//fixed bug where inputs >1000 wouldn't work as click limit
-//bug fixes and performance improvements
-//load page UI update
 
 public class Main {
 
