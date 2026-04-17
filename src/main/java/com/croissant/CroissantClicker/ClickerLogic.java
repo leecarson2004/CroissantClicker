@@ -28,35 +28,43 @@ public class ClickerLogic {
 
         thread = new Thread(()->{
             //check modes:
-            int numRemainingClicks = -1;
-            if (config.getClickMode().equals("Limited Clicks")){
-                numRemainingClicks = config.getClickLimit();
+            String mode = config.getClickMode();
+
+            if (mode.equals("Hold")){
+                startHoldMode();
             }
+            //CLICK MODE:
+            else{
+                startClickMode(mode);
+            }
+        });
 
-            boolean delayMode = config.isDelayMode();
+        thread.start();
+    }
 
-            //load config settings
-            int mouseButton = config.getMouseButton();
-            int cps = config.getCps();
-            int delay = config.getDelay();
+    public void startClickMode(String clickMode){
+        //check click mode:
+        int numRemainingClicks = -1;
+        if (clickMode.equals("Limited Clicks")){
+            numRemainingClicks = config.getClickLimit();
+        }
 
-            //run clicking loop
+        //load config settings
+        int mouseButton = config.getMouseButton();
+        int cps = config.getCps();
+        int delay = config.getDelay();
+        boolean delayMode = config.isDelayMode();
+
+        //Check delay mode & run appropriate clicking loop
+        if (delayMode){
             while (running) {
                 robot.mousePress(mouseButton);
                 robot.mouseRelease(mouseButton);
 
-                if (delayMode){
-                    try {
-                        Thread.sleep(delay);
-                    } catch(InterruptedException e){
-                        break;
-                    }
-                } else{
-                    try {
-                        Thread.sleep(1000/cps); //convert cps to ms of delay
-                    } catch(InterruptedException e){
-                        break;
-                    }
+                try {
+                    Thread.sleep(delay);
+                } catch(InterruptedException e){
+                    break;
                 }
 
                 config.incrementClickCount();
@@ -71,9 +79,48 @@ public class ClickerLogic {
                     }
                 }
             }
-        });
+        }
+        //CPS MODE:
+        else {
+            while (running) {
+                robot.mousePress(mouseButton);
+                robot.mouseRelease(mouseButton);
 
-        thread.start();
+                try {
+                    Thread.sleep(1000/cps); //convert cps to ms of delay
+                } catch(InterruptedException e){
+                    break;
+                }
+
+                config.incrementClickCount();
+
+                //stop clicker if click limit reached
+                if (numRemainingClicks != -1){
+                    numRemainingClicks--;
+
+                    if (numRemainingClicks <= 0){
+                        config.setEnabled(false);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    public void startHoldMode(){
+        int mouseButton = config.getMouseButton();
+
+        robot.mousePress(mouseButton);
+        config.incrementClickCount();
+
+        try{
+            while (running) {
+                Thread.sleep(50);
+            }
+        } catch (InterruptedException _){
+        } finally{
+            robot.mouseRelease(mouseButton);
+        }
+
     }
 
     public void stop(){
