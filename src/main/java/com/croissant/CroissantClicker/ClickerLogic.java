@@ -58,41 +58,35 @@ public class ClickerLogic {
         //Check delay mode & run appropriate clicking loop
         if (delayMode){
             while (running) {
+                config.incrementClickCount();
+
                 robot.mousePress(mouseButton);
                 robot.mouseRelease(mouseButton);
+
+                //stop clicker if click limit reached
+                if (numRemainingClicks != -1){
+                    numRemainingClicks--;
+
+                    if (numRemainingClicks <= 0){
+                        config.setEnabled(false);
+                        break;
+                    }
+                }
 
                 try {
                     Thread.sleep(delay);
                 } catch(InterruptedException e){
                     break;
                 }
-
-                config.incrementClickCount();
-
-                //stop clicker if click limit reached
-                if (numRemainingClicks != -1){
-                    numRemainingClicks--;
-
-                    if (numRemainingClicks <= 0){
-                        config.setEnabled(false);
-                        break;
-                    }
-                }
             }
         }
         //CPS MODE:
         else {
             while (running) {
+                config.incrementClickCount();
+
                 robot.mousePress(mouseButton);
                 robot.mouseRelease(mouseButton);
-
-                try {
-                    Thread.sleep(1000/cps); //convert cps to ms of delay
-                } catch(InterruptedException e){
-                    break;
-                }
-
-                config.incrementClickCount();
 
                 //stop clicker if click limit reached
                 if (numRemainingClicks != -1){
@@ -102,6 +96,12 @@ public class ClickerLogic {
                         config.setEnabled(false);
                         break;
                     }
+                }
+
+                try {
+                    Thread.sleep(1000/cps); //convert cps to ms of delay
+                } catch(InterruptedException e){
+                    break;
                 }
             }
         }
