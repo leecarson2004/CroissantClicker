@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
-
+import java.text.ParseException;
 
 
 public class ClickerUI extends JFrame {
@@ -161,72 +161,61 @@ public class ClickerUI extends JFrame {
 
     //ensure any manually typed user input in spinners is updated in config
     private boolean commitAndValidateSpinnerInput() {
+        boolean isInputValid = true;
 
         if(!(commitAndValidateSpinnerInputHelper(cpsSpinner,
                 config.getCps(),
                 ClickerConfig.CPS_MIN,
                 ClickerConfig.CPS_MAX))) {
-            return false;
+            isInputValid = false;
         }
         else if (!(commitAndValidateSpinnerInputHelper(clickLimitSpinner,
                 config.getClickLimit(),
                 ClickerConfig.CLICK_LIMIT_MIN,
                 ClickerConfig.CLICK_LIMIT_MAX))){
-            return false;
+            isInputValid = false;
         }
         else if (!(commitAndValidateSpinnerInputHelper(delaySpinner,
                 config.getDelay(),
                 ClickerConfig.DELAY_MIN,
                 ClickerConfig.DELAY_MAX))){
-            return false;
+            isInputValid = false;
         }
-        else{
-            return true;
-        }
+
+        return isInputValid;
     }
 
     private boolean commitAndValidateSpinnerInputHelper(JSpinner spinner, int currValue, int minValue, int maxValue){
 
         JFormattedTextField spinnerTextField = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
 
-        try{
-            //Test for valid input: Retrieve user typed value:
-            try{
-                spinner.commitEdit();
+        try {
+            spinner.commitEdit();
 
-            } catch (NumberFormatException e) {
-                spinner.setValue(currValue);
+        } catch (ParseException e) {
+            System.err.println("Parse Exception while validating spinner input: " + e.getMessage());
+
+            int value = Integer.parseInt(spinnerTextField.getText());
+            System.err.println(value);
+
+            if (value < minValue) {
+                spinnerTextField.setValue(minValue);
+                spawnSpinnerInputError(spinner, minValue, maxValue);
+                return false;
+            } else if (value > maxValue) {
+                spinnerTextField.setValue(maxValue);
+                spawnSpinnerInputError(spinner, minValue, maxValue);
+                return false;
+            } else{
+                spinnerTextField.setValue(currValue);
                 spawnSpinnerInputError(spinner,minValue,maxValue);
                 return false;
             }
-            int userInput = (int) spinner.getValue();
-
-            //Clamp input to config bounds and commit updates
-            if (userInput < minValue) {
-                spinner.setValue(minValue);
-                spinnerTextField.setText(String.valueOf(minValue));
-                spawnSpinnerInputError(spinner,minValue,maxValue);
-
-                return false;
-
-            }
-            else if (userInput > maxValue) {
-                spinner.setValue(maxValue);
-                spinnerTextField.setText(String.valueOf(maxValue));
-                spawnSpinnerInputError(spinner,minValue,maxValue);
-
-                return false;
-            }
-            else{
-                spinner.putClientProperty("JComponent.outline", null);
-                spinnerTextField.setToolTipText(null);
-                spinner.commitEdit();
-                return true;
-            }
-
-        }catch(java.text.ParseException _) {
-            return false;
         }
+
+        spinner.putClientProperty("JComponent.outline", null);
+        spinnerTextField.setToolTipText(null);
+        return true;
     }
 
     private void spawnSpinnerInputError(JSpinner spinner, int minValue, int maxValue){

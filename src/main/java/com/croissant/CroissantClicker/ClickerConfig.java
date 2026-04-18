@@ -29,7 +29,7 @@ public class ClickerConfig {
     private volatile boolean capturingNativeKeyBind = false; //if hotkey is being updated in settings, don't start autoclicker
     //----------------------------------------
     //constants
-    public static final String APP_VERSION = "1.6";
+    public static final String APP_VERSION = "1.6.1";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
     public static final int DELAY_MAX = 10000;
