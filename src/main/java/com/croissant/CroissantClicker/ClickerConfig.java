@@ -26,7 +26,7 @@ public class ClickerConfig {
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
     //data update states:
     private boolean updatingFromConfig = false; //flag indicating whether clicker ui is currently being updated with new config data
-    private volatile boolean capturingNativeKeyBind = false; //if hotkey is being updated in settings, don't start autoclicker
+    private volatile boolean inputCaptureMode = false; //if a field is capturing input, JNativeHook ignores hotkey presses
     //----------------------------------------
     //constants
     public static final String APP_VERSION = "1.6.1";
@@ -192,10 +192,10 @@ public class ClickerConfig {
         this.updatingFromConfig = updatingFromConfig;
     }
 
-    public boolean isCapturingNativeKeyBind() {
-        return capturingNativeKeyBind;
+    public boolean isInputCaptureMode() {
+        return inputCaptureMode;
     }
-    public void setCapturingNativeKeyBind(boolean capturingNativeKeyBind) {
-        this.capturingNativeKeyBind = capturingNativeKeyBind;
+    public void setInputCaptureMode(boolean inputCaptureMode) {
+        this.inputCaptureMode = inputCaptureMode;
     }
 }

@@ -1,21 +1,18 @@
 package com.croissant.CroissantClicker;
 
-import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.util.function.IntConsumer;
 
-
-public class NativeKeyBindTextField extends JTextField implements NativeKeyListener, FocusListener {
+public class KeyBindTextField extends JTextField implements FocusListener {
 
     private int keyBind;
     private IntConsumer keyChangedListener;
-    private ClickerConfig config;
+    private final ClickerConfig config;
 
-    public NativeKeyBindTextField(int keyBind, ClickerConfig config){
+    public KeyBindTextField(int keyBind, ClickerConfig config){
         super();
         this.config = config;
 
@@ -27,7 +24,7 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
     }
 
     private String getKeyBindString(){
-        return (this.keyBind == -1 ? "None" : NativeKeyEvent.getKeyText(keyBind));
+        return (this.keyBind == -1 ? "None" : KeyEvent.getKeyText(keyBind));
     }
 
     public int getKeyBind(){
@@ -35,11 +32,10 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
     }
 
     public void setKeyBind(int keyBind){
-
-        if (keyBind == NativeKeyEvent.VC_DELETE || keyBind == NativeKeyEvent.VC_BACKSPACE) {
+        if (keyBind == KeyEvent.VK_DELETE || keyBind == KeyEvent.VK_BACK_SPACE){
             this.keyBind = -1;
         }
-        else if (keyBind == NativeKeyEvent.VC_ENTER){
+        else if (keyBind == KeyEvent.VK_ENTER){
             return;
         }
         else{
@@ -56,46 +52,28 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
     @Override
     public void focusGained(FocusEvent e) {
         config.setInputCaptureMode(true);
-
-        GlobalScreen.addNativeKeyListener(this);
         setText("<" + getKeyBindString() + ">");
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        GlobalScreen.removeNativeKeyListener(this);
         setText(getKeyBindString());
-
         config.setInputCaptureMode(false);
     }
 
     @Override
-    public void nativeKeyPressed(NativeKeyEvent nativeEvent) {
-        if (!hasFocus()){
-            return;
-        }
+    protected void processKeyEvent(KeyEvent e){
+        if (e.getID() == KeyEvent.KEY_PRESSED){
+            int inputKey = e.getKeyCode();
 
-        int inputKey = nativeEvent.getKeyCode();
-
-        SwingUtilities.invokeLater(() -> {
             setKeyBind(inputKey);
             transferFocus(); //exit field
-        });
+        }
+
+        e.consume(); //stop processing of event
     }
 
     public void setOnKeyChanged(IntConsumer listener){
         keyChangedListener = listener;
-    }
-
-    @Override
-    public void nativeKeyReleased(NativeKeyEvent e) {}
-    @Override
-    public void nativeKeyTyped(NativeKeyEvent e) {}
-
-    //remove NativeKeyListener when component leaves ui hierarchy
-    @Override
-    public void removeNotify() {
-        GlobalScreen.removeNativeKeyListener(this);
-        super.removeNotify();
     }
 }
