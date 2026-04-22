@@ -50,7 +50,7 @@ public class ClickerLogic {
         }
 
         //load config settings
-        int mouseButton = config.getClickedButton();
+        int mouseButton = config.getClickedButtonValue();
         int cps = config.getCps();
         int delay = config.getDelay();
         boolean delayMode = config.isDelayMode();
@@ -107,7 +107,7 @@ public class ClickerLogic {
         }
     }
     public void startHoldMode(){
-        int mouseButton = config.getClickedButton();
+        int mouseButton = config.getClickedButtonValue();
 
         robot.mousePress(mouseButton);
         config.incrementClickCount();

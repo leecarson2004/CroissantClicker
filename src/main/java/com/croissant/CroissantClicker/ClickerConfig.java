@@ -12,7 +12,7 @@ import java.util.Objects;
 public class ClickerConfig {
 
     //user selected options:
-    private int clickedButton; //button actually clicked by clicker
+    private Keybind clickedButton; //button actually clicked by clicker
 
     private boolean delayMode; //mode for click speed -- cps or delay
     private int cps; //clicks/sec
@@ -39,7 +39,7 @@ public class ClickerConfig {
     public static final int CLICK_LIMIT_MIN = 1;
     public static final int CLICK_LIMIT_MAX = 999_999;
     //default input values constants:
-    public static final int MOUSE_BUTTON_DEFAULT = InputEvent.BUTTON1_DOWN_MASK;
+    public static final Keybind CLICKED_BUTTON_DEFAULT = new Keybind(InputEvent.BUTTON1_DOWN_MASK, BindType.MOUSE);
     public static final boolean DELAY_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
     public static final int DELAY_DEFAULT = 200;
@@ -59,7 +59,7 @@ public class ClickerConfig {
     }
 
     public void setDefaultConfig(){
-        setClickedButton(MOUSE_BUTTON_DEFAULT);
+        setClickedButton(CLICKED_BUTTON_DEFAULT);
         setDelayMode(DELAY_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
         setDelay(DELAY_DEFAULT);
@@ -144,15 +144,26 @@ public class ClickerConfig {
         support.firePropertyChange("hotkey",old,hotkey);
     }
 
-    public int getClickedButton() {
-        return clickedButton;
+    public void setClickedButton(Keybind newClickedButton){
+        clickedButton = newClickedButton;
     }
-    public void setClickedButton(int clickedButton) {
-        if (this.clickedButton == clickedButton) return;
 
-        int old = this.clickedButton;
-        this.clickedButton = clickedButton;
-        support.firePropertyChange("mouseButton",old, clickedButton); //notify listeners
+    public int getClickedButtonValue() {
+        return clickedButton.getValue();
+    }
+    public void setClickedButtonValue(int newValue) {
+        if (clickedButton.getValue() == newValue) return;
+
+        int old = clickedButton.getValue();
+        clickedButton.setValue(newValue);
+        support.firePropertyChange("mouseButton",old, clickedButton.getValue()); //notify listeners
+    }
+
+    public BindType getClickedButtonType(){
+        return clickedButton.getType();
+    }
+    public void setClickedButtonType(BindType newType) {
+        clickedButton.setType(newType);
     }
 
     public int getClickLimit() {
