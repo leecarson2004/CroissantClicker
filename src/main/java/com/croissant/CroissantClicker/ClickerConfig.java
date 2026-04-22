@@ -12,7 +12,8 @@ import java.util.Objects;
 public class ClickerConfig {
 
     //user selected options:
-    private int mouseButton; //mouse button
+    private int clickedButton; //button actually clicked by clicker
+
     private boolean delayMode; //mode for click speed -- cps or delay
     private int cps; //clicks/sec
     private int delay; //delay between clicks
@@ -29,7 +30,7 @@ public class ClickerConfig {
     private volatile boolean inputCaptureMode = false; //if a field is capturing input, JNativeHook ignores hotkey presses
     //----------------------------------------
     //constants
-    public static final String APP_VERSION = "1.6.1";
+    public static final String APP_VERSION = "1.6.2";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
     public static final int DELAY_MAX = 10000;
@@ -52,12 +53,13 @@ public class ClickerConfig {
 
 
 
+
     public ClickerConfig(){
         setDefaultConfig();
     }
 
     public void setDefaultConfig(){
-        setMouseButton(MOUSE_BUTTON_DEFAULT);
+        setClickedButton(MOUSE_BUTTON_DEFAULT);
         setDelayMode(DELAY_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
         setDelay(DELAY_DEFAULT);
@@ -142,15 +144,15 @@ public class ClickerConfig {
         support.firePropertyChange("hotkey",old,hotkey);
     }
 
-    public int getMouseButton() {
-        return mouseButton;
+    public int getClickedButton() {
+        return clickedButton;
     }
-    public void setMouseButton(int mouseButton) {
-        if (this.mouseButton == mouseButton) return;
+    public void setClickedButton(int clickedButton) {
+        if (this.clickedButton == clickedButton) return;
 
-        int old = this.mouseButton;
-        this.mouseButton = mouseButton;
-        support.firePropertyChange("mouseButton",old,mouseButton); //notify listeners
+        int old = this.clickedButton;
+        this.clickedButton = clickedButton;
+        support.firePropertyChange("mouseButton",old, clickedButton); //notify listeners
     }
 
     public int getClickLimit() {

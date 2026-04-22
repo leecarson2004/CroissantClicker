@@ -372,7 +372,7 @@ public class ClickerUI extends JFrame {
 
         String[] mouseButtonStrings = {"Left Click", "Right Click"};
         mouseButtonSelector = new JComboBox<>(mouseButtonStrings);
-        if (config.getMouseButton() == InputEvent.BUTTON1_DOWN_MASK){
+        if (config.getClickedButton() == InputEvent.BUTTON1_DOWN_MASK){
             mouseButtonSelector.setSelectedIndex(0);
         }
         else{
@@ -381,10 +381,10 @@ public class ClickerUI extends JFrame {
         mouseButtonSelector.addActionListener(_ -> {
             if (!config.isUpdatingFromConfig()){
                 if(mouseButtonSelector.getSelectedIndex() == 0){
-                    config.setMouseButton(InputEvent.BUTTON1_DOWN_MASK);
+                    config.setClickedButton(InputEvent.BUTTON1_DOWN_MASK);
                 }
                 else{
-                    config.setMouseButton(InputEvent.BUTTON3_DOWN_MASK);
+                    config.setClickedButton(InputEvent.BUTTON3_DOWN_MASK);
                 }
             }
         });
