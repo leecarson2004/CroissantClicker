@@ -50,7 +50,7 @@ public class SaveDataManager {
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
             configProps.setProperty("clickMode",String.valueOf(config.getClickMode()));
-            configProps.setProperty("mouseButton",String.valueOf(config.getClickedButtonValue()));
+            configProps.setProperty("mouseButton",String.valueOf(config.getClickedButton()));
             configProps.setProperty("theme", config.getTheme());
 
             try (OutputStream output = Files.newOutputStream(filePath)) {
@@ -90,8 +90,8 @@ public class SaveDataManager {
                         ClickerConfig.CLICK_LIMIT_DEFAULT));
                 config.setClickMode(configProps.getProperty("clickMode",
                         ClickerConfig.CLICK_MODE_DEFAULT));
-                config.setClickedButtonValue(parseIntSafe(configProps.getProperty("mouseButton"),
-                        ClickerConfig.CLICKED_BUTTON_DEFAULT.getValue()));
+                config.setClickedButton(parseIntSafe(configProps.getProperty("mouseButton"),
+                        ClickerConfig.CLICKED_BUTTON_DEFAULT));
                 config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));
 
             }

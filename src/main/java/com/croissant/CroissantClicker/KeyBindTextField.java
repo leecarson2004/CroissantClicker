@@ -7,36 +7,36 @@ import java.util.function.IntConsumer;
 public class KeyBindTextField extends JTextField implements FocusListener, MouseListener {
 
     private int keyBind;
-    private BindType type;
     private IntConsumer keyChangedListener;
     private final ClickerConfig config;
 
-    public KeyBindTextField(int keyBind, BindType type, ClickerConfig config){
+    public KeyBindTextField(int keyBind, ClickerConfig config){
         super();
         this.config = config;
 
         setEditable(false);
         setHorizontalAlignment(JTextField.CENTER);
         setKeyBind(keyBind);
-        setType(type);
 
         addFocusListener(this);
         addMouseListener(this);
     }
 
     private String getKeyBindString(){
-        if (type == BindType.MOUSE) {
+        if (keyBind == ClickerConfig.NO_KEY_BIND_SET){
+            return "None";
+        }
 
+        if (keyBind < 0) {
             return switch (keyBind) {
-                case -1 -> "None";
-                case MouseEvent.BUTTON1_DOWN_MASK -> "Mouse Left";
-                case MouseEvent.BUTTON2_DOWN_MASK -> "Mouse Middle";
-                case MouseEvent.BUTTON3_DOWN_MASK -> "Mouse Right";
-                default -> "Mouse Button " + keyBind;
+                case -1 -> "Mouse Left";
+                case -2 -> "Mouse Middle";
+                case -3 -> "Mouse Right";
+                default -> "Mouse Button " + (-keyBind);
             };
         }
         else {
-            return (this.keyBind == -1 ? "None" : KeyEvent.getKeyText(keyBind));
+            return KeyEvent.getKeyText(keyBind);
         }
     }
 
@@ -44,13 +44,9 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
         return keyBind;
     }
 
-    public BindType getType(){
-        return type;
-    }
-
     public void setKeyBind(int keyBind){
         if (keyBind == KeyEvent.VK_DELETE || keyBind == KeyEvent.VK_BACK_SPACE){
-            this.keyBind = -1;
+            this.keyBind = ClickerConfig.NO_KEY_BIND_SET;
         }
         else if (keyBind == KeyEvent.VK_ENTER){
             return;
@@ -64,10 +60,6 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
         if (keyChangedListener != null){
             keyChangedListener.accept(this.keyBind);
         }
-    }
-
-    public void setType(BindType type){
-        this.type = type;
     }
 
     @Override
@@ -101,11 +93,11 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
     @Override
     public void mousePressed(MouseEvent e) {
         if (!config.isInputCaptureMode()) return;
-        if (!hasFocus()) return;
 
         int button = e.getButton();
+        if (button == MouseEvent.NOBUTTON) return;
 
-        setKeyBind(button);
+        setKeyBind(-button);
         transferFocus();
     }
 
