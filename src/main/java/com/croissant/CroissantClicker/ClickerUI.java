@@ -195,8 +195,13 @@ public class ClickerUI extends JFrame {
         } catch (ParseException e) {
             System.err.println("Parse Exception while validating spinner input: " + e.getMessage());
 
-            int value = Integer.parseInt(spinnerTextField.getText());
-            System.err.println(value);
+            int value = -1;
+
+            try {
+                value = Integer.parseInt(spinnerTextField.getText());
+            } catch (NumberFormatException ex){
+                System.err.println("Number Format Exception while parsing spinner input: " + ex.getMessage());
+            }
 
             if (value < minValue) {
                 spinnerTextField.setValue(minValue);
