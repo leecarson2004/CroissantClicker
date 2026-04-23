@@ -1,7 +1,7 @@
 package com.croissant.CroissantClicker;
 
 import java.awt.*;
-
+import java.awt.event.InputEvent;
 
 
 public class ClickerLogic {
@@ -50,7 +50,7 @@ public class ClickerLogic {
         }
 
         //load config settings
-        int mouseButton = config.getClickedButton();
+        int button = config.getClickedButton();
         int cps = config.getCps();
         int delay = config.getDelay();
         boolean delayMode = config.isDelayMode();
@@ -60,8 +60,7 @@ public class ClickerLogic {
             while (running) {
                 config.incrementClickCount();
 
-                robot.mousePress(mouseButton);
-                robot.mouseRelease(mouseButton);
+                executeClick(button);
 
                 //stop clicker if click limit reached
                 if (numRemainingClicks != -1){
@@ -85,8 +84,7 @@ public class ClickerLogic {
             while (running) {
                 config.incrementClickCount();
 
-                robot.mousePress(mouseButton);
-                robot.mouseRelease(mouseButton);
+                executeClick(button);
 
                 //stop clicker if click limit reached
                 if (numRemainingClicks != -1){
@@ -107,9 +105,9 @@ public class ClickerLogic {
         }
     }
     public void startHoldMode(){
-        int mouseButton = config.getClickedButton();
+        int button = config.getClickedButton();
 
-        robot.mousePress(mouseButton);
+        executeHold(button);
         config.incrementClickCount();
 
         try{
@@ -118,7 +116,7 @@ public class ClickerLogic {
             }
         } catch (InterruptedException _){
         } finally{
-            robot.mouseRelease(mouseButton);
+            robot.mouseRelease(button);
         }
 
     }
@@ -127,6 +125,37 @@ public class ClickerLogic {
         running = false;
         if (thread != null){
             thread.interrupt(); //wake up thread immediately (even if sleeping) and stop it from running
+        }
+    }
+
+    private void executeClick(int button) {
+        if (button == ClickerConfig.NO_KEY_BIND_SET) return;
+
+        //mouse
+        if (button < 0){
+            int maskedButton = InputEvent.getMaskForButton(-button);
+
+            robot.mousePress(maskedButton);
+            robot.mouseRelease(maskedButton);
+        }
+        //keyboard
+        else{
+            robot.keyPress(button);
+            robot.keyRelease(button);
+        }
+    }
+
+    private void executeHold(int button) {
+        if (button == ClickerConfig.NO_KEY_BIND_SET) return;
+
+        //mouse
+        if (button < 0){
+            int maskedButton = InputEvent.getMaskForButton(-button);
+            robot.mousePress(maskedButton);
+        }
+        //keyboard
+        else{
+            robot.keyPress(button);
         }
     }
 }

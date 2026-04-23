@@ -40,7 +40,7 @@ public class ClickerConfig {
 
     public static final int NO_KEY_BIND_SET = -999;
     //default input values constants:
-    public static final int CLICKED_BUTTON_DEFAULT = InputEvent.BUTTON1_DOWN_MASK;
+    public static final int CLICKED_BUTTON_DEFAULT = -1;
     public static final boolean DELAY_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
     public static final int DELAY_DEFAULT = 200;

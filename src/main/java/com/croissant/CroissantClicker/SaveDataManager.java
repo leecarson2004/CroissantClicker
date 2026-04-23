@@ -50,7 +50,7 @@ public class SaveDataManager {
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
             configProps.setProperty("clickMode",String.valueOf(config.getClickMode()));
-            configProps.setProperty("mouseButton",String.valueOf(config.getClickedButton()));
+            configProps.setProperty("clickedButton",String.valueOf(config.getClickedButton()));
             configProps.setProperty("theme", config.getTheme());
 
             try (OutputStream output = Files.newOutputStream(filePath)) {
@@ -62,8 +62,8 @@ public class SaveDataManager {
         }
     }
 
-    public static void load(ClickerConfig config, String configName){
-        try{
+    public static void load(ClickerConfig config, String configName) {
+        try {
             //get save directory of savedata
             Path saveDir = getSaveDirectory();
             Path filePath = saveDir.resolve(createFileName(configName));
@@ -74,7 +74,7 @@ public class SaveDataManager {
 
             Properties configProps = new Properties();
 
-            try (InputStream input = Files.newInputStream(filePath)){
+            try (InputStream input = Files.newInputStream(filePath)) {
                 configProps.load(input);
 
                 //load config values by keys and store in clickerconfig
@@ -90,12 +90,12 @@ public class SaveDataManager {
                         ClickerConfig.CLICK_LIMIT_DEFAULT));
                 config.setClickMode(configProps.getProperty("clickMode",
                         ClickerConfig.CLICK_MODE_DEFAULT));
-                config.setClickedButton(parseIntSafe(configProps.getProperty("mouseButton"),
+                config.setClickedButton(parseIntSafe(configProps.getProperty("clickedButton"),
                         ClickerConfig.CLICKED_BUTTON_DEFAULT));
                 config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));
 
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.err.println("Error loading config: " + e.getMessage());
         }
     }
