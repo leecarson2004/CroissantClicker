@@ -13,7 +13,6 @@ public class ClickerConfig {
 
     //user selected options:
     private Keybind clickedButton; //button actually clicked by clicker
-
     private boolean delayMode; //mode for click speed -- cps or delay
     private int cps; //clicks/sec
     private int delay; //delay between clicks
@@ -59,7 +58,7 @@ public class ClickerConfig {
     }
 
     public void setDefaultConfig(){
-        setClickedButton(CLICKED_BUTTON_DEFAULT);
+        setClickedButton(CLICKED_BUTTON_DEFAULT.getValue(), CLICKED_BUTTON_DEFAULT.getType());
         setDelayMode(DELAY_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
         setDelay(DELAY_DEFAULT);
@@ -144,8 +143,18 @@ public class ClickerConfig {
         support.firePropertyChange("hotkey",old,hotkey);
     }
 
-    public void setClickedButton(Keybind newClickedButton){
-        clickedButton = newClickedButton;
+    public void setClickedButton(int value, BindType type){
+        if (clickedButton == null){
+            clickedButton = new Keybind(value, type);
+        }
+        else if (clickedButton.getValue() == value) return;
+
+        int old = clickedButton.getValue();
+
+        clickedButton.setValue(value);
+        clickedButton.setType(type);
+
+        support.firePropertyChange("clickedButton",old, clickedButton.getValue()); //notify listeners
     }
 
     public int getClickedButtonValue() {
@@ -156,7 +165,7 @@ public class ClickerConfig {
 
         int old = clickedButton.getValue();
         clickedButton.setValue(newValue);
-        support.firePropertyChange("mouseButton",old, clickedButton.getValue()); //notify listeners
+        support.firePropertyChange("clickedButton",old, clickedButton.getValue()); //notify listeners
     }
 
     public BindType getClickedButtonType(){

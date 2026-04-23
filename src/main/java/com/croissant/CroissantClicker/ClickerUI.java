@@ -82,7 +82,7 @@ public class ClickerUI extends JFrame {
         else if ("clickLimit".equals(evt.getPropertyName())){
             clickLimitSpinner.setValue(evt.getNewValue());
         }
-        else if ("mouseButton".equals(evt.getPropertyName())){
+        else if ("clickedButton".equals(evt.getPropertyName())){
             int mouseButton = (int) evt.getNewValue();
 
             if (mouseButton == InputEvent.BUTTON1_DOWN_MASK) {

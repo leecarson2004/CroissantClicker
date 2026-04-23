@@ -27,7 +27,7 @@ public class Main {
         config.addPropertyChangeListener(evt -> {
             if ("clickLimit".equals(evt.getPropertyName())
                     || "cps".equals(evt.getPropertyName())
-                    || "mouseButton".equals(evt.getPropertyName())
+                    || "clickedButton".equals(evt.getPropertyName())
                     || "clickMode".equals(evt.getPropertyName())
                     || "theme".equals(evt.getPropertyName())
                     || "delay".equals(evt.getPropertyName())
