@@ -116,9 +116,12 @@ public class ClickerLogic {
             }
         } catch (InterruptedException _){
         } finally{
-            robot.mouseRelease(button);
+            if (button < 0){
+                robot.mouseRelease(button);
+            } else{
+                robot.keyRelease(button);
+            }
         }
-
     }
 
     public void stop(){
