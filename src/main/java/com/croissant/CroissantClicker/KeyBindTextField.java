@@ -14,9 +14,13 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
     public KeyBindTextField(int keyBind, ClickerConfig config){
         super();
         this.config = config;
-
+        
+        setCaretColor(new Color(0,0,0,0));
+        setSelectedTextColor(getForeground());
+        getCaret().setVisible(false);
         setCursor(Cursor.getDefaultCursor());
         setHorizontalAlignment(JTextField.LEFT);
+
         setKeyBind(keyBind);
 
         addFocusListener(this);
@@ -95,10 +99,10 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
     public void mousePressed(MouseEvent e) {
         if (!config.isInputCaptureMode()) return;
 
-        int button = e.getButton();
-        if (button == MouseEvent.NOBUTTON) return;
+        int inputButton = e.getButton();
+        if (inputButton == MouseEvent.NOBUTTON) return;
 
-        setKeyBind(-button);
+        setKeyBind(-inputButton);
         SwingUtilities.invokeLater((this::transferFocus));
     }
 

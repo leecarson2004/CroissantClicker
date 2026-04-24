@@ -134,7 +134,16 @@ public class ClickerConfig {
         return hotkey;
     }
     public String getHotkeyString(){
-        return hotkey == -1 ? "None" : NativeKeyEvent.getKeyText(hotkey);
+        if (hotkey == ClickerConfig.NO_KEY_BIND_SET){
+            return "None";
+        }
+
+        if (hotkey < 0) {
+            return "Mouse " + (-hotkey);
+        }
+        else{
+            return NativeKeyEvent.getKeyText(hotkey);
+        }
     }
     public void setHotkey(int hotkey) {
         if (this.hotkey == hotkey) return;

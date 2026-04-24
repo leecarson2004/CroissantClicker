@@ -104,9 +104,9 @@ public class ClickerUIDrawer extends JPanel {
         JLabel hotKeyLabel = new JLabel("Hotkey:");
 
         hotKeySelectionField = new NativeKeyBindTextField(config.getHotkey(), config);
-        hotKeySelectionField.setOnKeyChanged(key -> {
+        hotKeySelectionField.setOnKeyChanged(_ -> {
             if (!config.isUpdatingFromConfig()){
-                config.setHotkey(key);
+                config.setHotkey(hotKeySelectionField.getKeyBind());
             }
         });
 
