@@ -287,7 +287,7 @@ public class ClickerUI extends JFrame {
 
         mainPanelLeft.setLayout(new MigLayout(
                 "fillx, insets 10 20 20 10, wrap 2",
-                "[left]25[fill]",
+                "[left]30[fill]",
                 "15[]10[]10[]10[]15[]5[]5[]push"
         ));
 
@@ -368,7 +368,7 @@ public class ClickerUI extends JFrame {
             }
         });
 
-        JLabel mouseButtonLabel = new JLabel("Clicked Key:");
+        JLabel mouseButtonLabel = new JLabel("Key Bind:");
 
         clickedButtonSelector = new KeyBindTextField(config.getClickedButton(), config);
         clickedButtonSelector.setOnKeyChanged(_ -> {
