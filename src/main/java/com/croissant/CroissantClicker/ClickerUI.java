@@ -123,7 +123,7 @@ public class ClickerUI extends JFrame {
             toggleIndicatorButton.setText("ON");
 
             //ensure input valid
-            if (!commitAndValidateSpinnerInput()){
+            if (!validateUserInput()){
                 config.setEnabled(false);
                 return;
             }
@@ -152,6 +152,25 @@ public class ClickerUI extends JFrame {
 
     private void updateClickCount() {
         clickCounterLabel.setText("Click Count: " + config.getClickCount());
+    }
+
+    private boolean validateUserInput(){
+        boolean isInputValid = true;
+
+        if (!commitAndValidateSpinnerInput()){
+            isInputValid = false;
+        }
+
+        if (config.getClickedButton() == ClickerConfig.NO_KEY_BIND_SET){
+            spawnKeyBindTextFieldError(clickedButtonSelector);
+            isInputValid = false;
+        }
+        else{
+            clickedButtonSelector.putClientProperty("JComponent.outline", null);
+            clickedButtonSelector.setToolTipText(null);
+        }
+
+        return isInputValid;
     }
 
     //ensure any manually typed user input in spinners is updated in config
@@ -223,6 +242,10 @@ public class ClickerUI extends JFrame {
         spinner.setToolTipText("Input must be between " + minValue + " and " + maxValue);
     }
 
+    private void spawnKeyBindTextFieldError(KeyBindTextField field){
+        field.putClientProperty("JComponent.outline", "error");
+        field.setToolTipText("Provide a valid key bind!");
+    }
 
     private void initUI() {
         setTitle("Croissant Clicker v" + ClickerConfig.APP_VERSION);
