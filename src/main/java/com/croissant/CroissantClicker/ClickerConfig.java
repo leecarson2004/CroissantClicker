@@ -1,7 +1,6 @@
 package com.croissant.CroissantClicker;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import java.awt.event.InputEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.concurrent.atomic.AtomicInteger;

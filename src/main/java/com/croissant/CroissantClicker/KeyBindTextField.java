@@ -1,7 +1,5 @@
 package com.croissant.CroissantClicker;
 
-import com.formdev.flatlaf.ui.FlatButtonBorder;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
