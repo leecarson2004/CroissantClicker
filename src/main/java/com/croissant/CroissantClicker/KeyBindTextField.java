@@ -1,6 +1,7 @@
 package com.croissant.CroissantClicker;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.function.IntConsumer;
 
@@ -14,8 +15,8 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
         super();
         this.config = config;
 
-        setEditable(false);
-        setHorizontalAlignment(JTextField.CENTER);
+        setCursor(Cursor.getDefaultCursor());
+        setHorizontalAlignment(JTextField.LEFT);
         setKeyBind(keyBind);
 
         addFocusListener(this);
@@ -65,7 +66,7 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
     @Override
     public void focusGained(FocusEvent e) {
         config.setInputCaptureMode(true);
-        setText("<" + getKeyBindString() + ">");
+        setText("Press a key...");
     }
 
     @Override
@@ -98,7 +99,7 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
         if (button == MouseEvent.NOBUTTON) return;
 
         setKeyBind(-button);
-        transferFocus();
+        SwingUtilities.invokeLater((this::transferFocus));
     }
 
     //unused

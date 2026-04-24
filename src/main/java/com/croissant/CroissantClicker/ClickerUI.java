@@ -27,7 +27,7 @@ public class ClickerUI extends JFrame {
     private JSpinner delaySpinner;
     private JPanel delayTypePanel;
     private JSpinner clickLimitSpinner;
-    private JComboBox<String> mouseButtonSelector;
+    private KeyBindTextField clickedButtonSelector;
     private JComboBox<String> clickModeSelector;
     private JButton toggleIndicatorButton;
 
@@ -83,14 +83,9 @@ public class ClickerUI extends JFrame {
             clickLimitSpinner.setValue(evt.getNewValue());
         }
         else if ("clickedButton".equals(evt.getPropertyName())){
-            int mouseButton = (int) evt.getNewValue();
+            int clickedButton = (int) evt.getNewValue();
 
-            if (mouseButton == InputEvent.BUTTON1_DOWN_MASK) {
-                mouseButtonSelector.setSelectedIndex(0);
-            }
-            else {
-                mouseButtonSelector.setSelectedIndex(1);
-            }
+            clickedButtonSelector.setKeyBind(clickedButton);
         }
         else if ("clickMode".equals(evt.getPropertyName())){
             String clickMode = evt.getNewValue().toString();
@@ -292,7 +287,7 @@ public class ClickerUI extends JFrame {
 
         mainPanelLeft.setLayout(new MigLayout(
                 "fillx, insets 10 20 20 10, wrap 2",
-                "[left][fill]",
+                "[left]25[fill]",
                 "15[]10[]10[]10[]15[]5[]5[]push"
         ));
 
@@ -373,32 +368,19 @@ public class ClickerUI extends JFrame {
             }
         });
 
-        JLabel mouseButtonLabel = new JLabel("Mouse Button:");
+        JLabel mouseButtonLabel = new JLabel("Clicked Key:");
 
-        String[] mouseButtonStrings = {"Left Click", "Right Click"};
-        mouseButtonSelector = new JComboBox<>(mouseButtonStrings);
-        if (config.getClickedButton() == -1){
-            mouseButtonSelector.setSelectedIndex(0);
-        }
-        else{
-            mouseButtonSelector.setSelectedIndex(1);
-        }
-        mouseButtonSelector.addActionListener(_ -> {
+        clickedButtonSelector = new KeyBindTextField(config.getClickedButton(), config);
+        clickedButtonSelector.setOnKeyChanged(_ -> {
             if (!config.isUpdatingFromConfig()){
-                if(mouseButtonSelector.getSelectedIndex() == 0){
-                    config.setClickedButton(-1);
-                }
-                else{
-                    config.setClickedButton(-3);
-                }
+                config.setClickedButton(clickedButtonSelector.getKeyBind());
             }
         });
-
 
         mainPanelLeft.add(delayTypePanel, "span 2, growx");
 
         mainPanelLeft.add(mouseButtonLabel);
-        mainPanelLeft.add(mouseButtonSelector);
+        mainPanelLeft.add(clickedButtonSelector);
 
         mainPanelLeft.add(clickModeLabel);
         mainPanelLeft.add(clickModeSelector);
