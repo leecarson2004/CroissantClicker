@@ -19,6 +19,7 @@ public class ClickerUI extends JFrame {
     private Timer toggleCountDownTimer;
     private int countdown;
 
+    private JLabel mainImageLabel;
     private JLabel hotKeyLabel;
     private JLabel clickCounterLabel;
     private JLabel toggleIndicator;
@@ -121,6 +122,9 @@ public class ClickerUI extends JFrame {
             toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorGreen);
             toggleIndicatorButton.setText("ON");
 
+            mainImageLabel.setIcon(UIResources.WYNN_EMERALD_ENABLED);
+            updateTaskbarIcon(true);
+
             //ensure input valid
             if (!validateUserInput()){
                 config.setEnabled(false);
@@ -142,10 +146,22 @@ public class ClickerUI extends JFrame {
             toggleIndicator.putClientProperty("FlatLaf.style", "foreground: " + colorRed);
             toggleIndicatorButton.setText("OFF");
 
+            mainImageLabel.setIcon(UIResources.WYNN_EMERALD_IDLE);
+            updateTaskbarIcon(false);
+
             logic.stop();
 
             clickCountRefreshTimer.stop();
             updateClickCount(); //ensure clickCounter stops on correct final count
+        }
+    }
+
+    private void updateTaskbarIcon(boolean isEnabled) {
+        if (isEnabled){
+            this.setIconImage(UIResources.APP_ICON_ENABLED.getImage());
+        }
+        else{
+            this.setIconImage(UIResources.APP_ICON_IDLE.getImage());
         }
     }
 
@@ -252,6 +268,7 @@ public class ClickerUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
+        setIconImage(UIResources.APP_ICON_IDLE.getImage());
 
         //-----------------------------------------------------------------------------
         JPanel defaultPageContainer = new JPanel();
@@ -419,8 +436,8 @@ public class ClickerUI extends JFrame {
                 "fill, insets 20 20 20 20"
         ));
 
-        ImageIcon mainImage = UIResources.WYNN_EMERALD_ICON;
-        JLabel mainImageLabel = new JLabel(mainImage);
+        ImageIcon mainImage = UIResources.WYNN_EMERALD_IDLE;
+        mainImageLabel = new JLabel(mainImage);
 
         mainPanelRight.add(mainImageLabel);
 
