@@ -19,6 +19,8 @@ public class ClickerUI extends JFrame {
     private Timer toggleCountDownTimer;
     private int countdown;
 
+    private TrayIcon systemTrayIcon;
+
     private JLabel mainImageLabel;
     private JLabel hotKeyLabel;
     private JLabel clickCounterLabel;
@@ -123,7 +125,7 @@ public class ClickerUI extends JFrame {
             toggleIndicatorButton.setText("ON");
 
             mainImageLabel.setIcon(UIResources.WYNN_EMERALD_ENABLED);
-            updateTaskbarIcon(true);
+            updateSystemTray(true);
 
             //ensure input valid
             if (!validateUserInput()){
@@ -147,7 +149,7 @@ public class ClickerUI extends JFrame {
             toggleIndicatorButton.setText("OFF");
 
             mainImageLabel.setIcon(UIResources.WYNN_EMERALD_IDLE);
-            updateTaskbarIcon(false);
+            updateSystemTray(false);
 
             logic.stop();
 
@@ -156,12 +158,16 @@ public class ClickerUI extends JFrame {
         }
     }
 
-    private void updateTaskbarIcon(boolean isEnabled) {
+    private void updateSystemTray(boolean isEnabled) {
+        if (systemTrayIcon == null){
+            return;
+        }
+
         if (isEnabled){
-            this.setIconImage(UIResources.APP_ICON_ENABLED.getImage());
+            systemTrayIcon.setImage(UIResources.APP_ICON_ENABLED.getImage());
         }
         else{
-            this.setIconImage(UIResources.APP_ICON_IDLE.getImage());
+            systemTrayIcon.setImage(UIResources.APP_ICON_IDLE.getImage());
         }
     }
 
@@ -268,7 +274,6 @@ public class ClickerUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
-        setIconImage(UIResources.APP_ICON_IDLE.getImage());
 
         //-----------------------------------------------------------------------------
         JPanel defaultPageContainer = new JPanel();
@@ -468,6 +473,58 @@ public class ClickerUI extends JFrame {
         defaultPageContainer.add(mainPanel);
 
         //------------------------------------------------------------------------------
+        initSystemTrayIcon();
+    }
+
+    private void initSystemTrayIcon(){
+        if (!SystemTray.isSupported()){
+            return;
+        }
+
+        try {
+            PopupMenu menu = new PopupMenu();
+
+            MenuItem openItem = new MenuItem("Open");
+            openItem.addActionListener(_ -> {
+                setExtendedState(JFrame.NORMAL); //restore to maximized from minimized
+                toFront();
+                requestFocus();
+            });
+
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.addActionListener(_ -> {
+                SystemTray.getSystemTray().remove(systemTrayIcon);
+                dispose();
+                System.exit(0);
+            });
+
+            menu.add(openItem);
+            menu.addSeparator();
+            menu.add(exitItem);
+
+            systemTrayIcon = new TrayIcon(
+                    UIResources.APP_ICON_IDLE.getImage(),
+                    "Croissant Clicker",
+                    menu
+            );
+            systemTrayIcon.setImageAutoSize(true);
+
+            systemTrayIcon.addActionListener(_ -> {
+                if (getExtendedState() == JFrame.ICONIFIED) {
+                    setExtendedState(JFrame.NORMAL);
+                    toFront();
+                    requestFocus();
+                }
+                else{
+                    setExtendedState(JFrame.ICONIFIED);
+                }
+            });
+
+            SystemTray.getSystemTray().add(systemTrayIcon);
+
+        } catch (AWTException e){
+            System.err.println("Failed to initialize SystemTrayIcon: " + e.getMessage());
+        }
     }
 
     private void countDownAndStartClicker(){
