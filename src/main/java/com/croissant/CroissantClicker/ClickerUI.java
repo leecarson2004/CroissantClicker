@@ -486,7 +486,6 @@ public class ClickerUI extends JFrame {
 
             MenuItem openItem = new MenuItem("Open");
             openItem.addActionListener(_ -> {
-                setVisible(true);
                 setExtendedState(JFrame.NORMAL); //restore to maximized from minimized
                 toFront();
                 requestFocus();
@@ -512,14 +511,12 @@ public class ClickerUI extends JFrame {
 
             systemTrayIcon.addActionListener(_ -> {
                 if (getExtendedState() == JFrame.ICONIFIED || !isVisible()) {
-                    setVisible(true);
                     setExtendedState(JFrame.NORMAL);
                     toFront();
                     requestFocus();
                 }
                 else{
-                    setVisible(false);
-                    //setExtendedState(JFrame.ICONIFIED);
+                    setExtendedState(JFrame.ICONIFIED);
                 }
             });
 
