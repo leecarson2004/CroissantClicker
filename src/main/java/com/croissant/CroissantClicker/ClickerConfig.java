@@ -13,12 +13,14 @@ public class ClickerConfig {
     //user selected options:
     private int clickedButton; //button actually clicked by clicker -- negative indicates mouse buttons, positive indicates keyboard buttons
     private boolean delayMode; //mode for click speed -- cps or delay
+    private boolean timerMode; //mode for click limiter -- timed or click limit
     private int cps; //clicks/sec
     private int delay; //delay between clicks
     private String clickMode; //click mode
     private int clickLimit; //num mouse clicks run when turned on
+    private int timeLimit; //time limit before halting clicks when turned on
     private int hotkey; //hotkey
-    private String theme;
+    private String theme; //app color theme
     //----------------------------------------
     //clicker state:
     private boolean enabled = false; //whether clicker is enabled or not enabled
@@ -34,17 +36,22 @@ public class ClickerConfig {
     public static final int DELAY_MAX = 10000;
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
+
     public static final int CLICK_LIMIT_MIN = 1;
     public static final int CLICK_LIMIT_MAX = 999_999;
+    public static final int TIME_LIMIT_MIN = 1;
+    public static final int TIME_LIMIT_MAX = 999_999;
 
     public static final int NO_KEY_BIND_SET = -999;
     //default input values constants:
     public static final int CLICKED_BUTTON_DEFAULT = -1;
     public static final boolean DELAY_MODE_DEFAULT = false;
+    public static final boolean TIMER_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
     public static final int DELAY_DEFAULT = 200;
     public static final String CLICK_MODE_DEFAULT = "Unlimited Clicks";
     public static final int CLICK_LIMIT_DEFAULT = 50;
+    public static final int TIME_LIMIT_DEFAULT = 30;
     public static final int HOTKEY_DEFAULT =  NativeKeyEvent.VC_F8;
     public static final String THEME_DEFAULT = "Dark";
     //main JFrame dims:
@@ -61,10 +68,12 @@ public class ClickerConfig {
     public void setDefaultConfig(){
         setClickedButton(CLICKED_BUTTON_DEFAULT);
         setDelayMode(DELAY_MODE_DEFAULT);
+        setTimerMode(TIMER_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
         setDelay(DELAY_DEFAULT);
         setClickMode(CLICK_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
+        setTimeLimit(TIME_LIMIT_DEFAULT);
         setTheme(THEME_DEFAULT);
         setHotkey(HOTKEY_DEFAULT);
     }
@@ -108,6 +117,17 @@ public class ClickerConfig {
         boolean old = this.delayMode;
         this.delayMode = delayMode;
         support.firePropertyChange("delayMode",old,delayMode); //notify listeners
+    }
+
+    public boolean isTimerMode() {
+        return timerMode;
+    }
+    public void setTimerMode(boolean timerMode) {
+        if (this.timerMode == timerMode) return;
+
+        boolean old = this.timerMode;
+        this.timerMode = timerMode;
+        support.firePropertyChange("timerMode",old,timerMode); //notify listeners
     }
 
     public int getDelay() {
@@ -173,6 +193,17 @@ public class ClickerConfig {
         int old = this.clickLimit;
         this.clickLimit = clickLimit;
         support.firePropertyChange("clickLimit",old,clickLimit); //notify listeners
+    }
+
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+    public void setTimeLimit(int timeLimit) {
+        if (this.timeLimit == timeLimit) return;
+
+        int old = this.timeLimit;
+        this.timeLimit = timeLimit;
+        support.firePropertyChange("timeLimit",old,timeLimit); //notify listeners
     }
 
     public String getClickMode() {

@@ -26,6 +26,7 @@ public class ClickerUIDrawer extends JPanel {
     //settings components:
     private JComboBox<String> themeSelector;
     private JComboBox<String> delayModeSelector;
+    private JComboBox<String> limitModeSelector;
     private NativeKeyBindTextField hotKeySelectionField;
     //save components:
     private JButton savePageSaveButton;
@@ -98,7 +99,7 @@ public class ClickerUIDrawer extends JPanel {
         settingsPanel.setLayout(new MigLayout(
                 "fillx, insets 10 10 10 10, wrap 2",
                 "[left][fill]",
-                "[]10[]10[]"
+                "[]10[]10[]10[][grow]"
         ));
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
@@ -139,7 +140,25 @@ public class ClickerUIDrawer extends JPanel {
                 config.setDelayMode(isDelayMode);
             }
         });
-        delayModeSelector.setLightWeightPopupEnabled(false); //fixes cross device issues with glass pane
+        delayModeSelector.setLightWeightPopupEnabled(false);
+
+
+        JLabel limitModeLabel = new JLabel("Limit Mode:");
+
+        String[] limitModeStrings = {"Clicks", "Timer"};
+        limitModeSelector = new JComboBox<>(limitModeStrings);
+        if (config.isTimerMode()){
+            limitModeSelector.setSelectedItem("Timer");
+        } else{
+            limitModeSelector.setSelectedItem("Clicks");
+        }
+        limitModeSelector.addActionListener(_ -> {
+            if (!config.isUpdatingFromConfig()){
+                boolean isTimerMode = (limitModeSelector.getSelectedIndex() != 0);
+                config.setTimerMode(isTimerMode);
+            }
+        });
+        limitModeSelector.setLightWeightPopupEnabled(false);
 
 
         JButton doneButton = new JButton("Done");
@@ -151,8 +170,10 @@ public class ClickerUIDrawer extends JPanel {
         settingsPanel.add(themeSelector);
         settingsPanel.add(delayModeLabel);
         settingsPanel.add(delayModeSelector);
+        settingsPanel.add(limitModeLabel);
+        settingsPanel.add(limitModeSelector);
 
-        settingsPanel.add(new JPanel(), "span 2, pushy");
+        settingsPanel.add(new JPanel(), "span 2");
         settingsPanel.add(new JSeparator(), "growx, span 2");
         settingsPanel.add(doneButton, "span 2, align right");
 
@@ -465,11 +486,19 @@ public class ClickerUIDrawer extends JPanel {
         themeSelector.setSelectedItem(theme);
     }
 
-    public void setDisplayedDelayMode(boolean delayMode) {
-        if (delayMode){
+    public void setDisplayedDelayMode(boolean isDelayMode) {
+        if (isDelayMode){
             delayModeSelector.setSelectedItem("Delay");
         } else{
             delayModeSelector.setSelectedItem("CPS");
+        }
+    }
+
+    public void setDisplayedTimerMode(boolean isTimerMode) {
+        if (isTimerMode){
+            limitModeSelector.setSelectedItem("Timer");
+        } else{
+            limitModeSelector.setSelectedItem("Clicks");
         }
     }
 

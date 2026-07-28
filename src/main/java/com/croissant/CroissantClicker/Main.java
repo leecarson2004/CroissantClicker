@@ -24,12 +24,14 @@ public class Main {
         //autosave user data on config change
         config.addPropertyChangeListener(evt -> {
             if ("clickLimit".equals(evt.getPropertyName())
+                    || "timeLimit".equals(evt.getPropertyName())
                     || "cps".equals(evt.getPropertyName())
                     || "clickedButton".equals(evt.getPropertyName())
                     || "clickMode".equals(evt.getPropertyName())
                     || "theme".equals(evt.getPropertyName())
                     || "delay".equals(evt.getPropertyName())
                     || "delayMode".equals(evt.getPropertyName())
+                    || "timerMode".equals(evt.getPropertyName())
                     || "hotkey".equals(evt.getPropertyName())
             ){
                 SaveDataManager.save(config, "_current");

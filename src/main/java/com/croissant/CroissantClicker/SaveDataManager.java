@@ -46,6 +46,7 @@ public class SaveDataManager {
 
             configProps.setProperty("hotkey", String.valueOf(config.getHotkey()));
             configProps.setProperty("delayMode", String.valueOf(config.isDelayMode()));
+            configProps.setProperty("timerMode", String.valueOf(config.isTimerMode()));
             configProps.setProperty("delay", String.valueOf(config.getDelay()));
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
@@ -82,6 +83,8 @@ public class SaveDataManager {
                         ClickerConfig.HOTKEY_DEFAULT));
                 config.setDelayMode(Boolean.parseBoolean(configProps.getProperty("delayMode",
                         String.valueOf(ClickerConfig.DELAY_MODE_DEFAULT))));
+                config.setTimerMode(Boolean.parseBoolean(configProps.getProperty("timerMode",
+                        String.valueOf(ClickerConfig.TIMER_MODE_DEFAULT))));
                 config.setDelay(parseIntSafe(configProps.getProperty("delay"),
                         ClickerConfig.DELAY_DEFAULT));
                 config.setCps(parseIntSafe(configProps.getProperty("cps"),
