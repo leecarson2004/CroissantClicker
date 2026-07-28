@@ -5,7 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Objects;
-
+import java.util.concurrent.atomic.AtomicLong;
 
 
 public class ClickerConfig {
@@ -25,6 +25,7 @@ public class ClickerConfig {
     //clicker state:
     private boolean enabled = false; //whether clicker is enabled or not enabled
     private final AtomicInteger clickCount = new AtomicInteger(0); //num clicks ran in current run of autoclicker
+    private final AtomicLong elapsedTime = new AtomicLong(0); //elapsed time since clicker logic start
     //data update states:
     private boolean updatingFromConfig = false; //flag indicating whether clicker ui is currently being updated with new config data
     private volatile boolean inputCaptureMode = false; //if a field is capturing input, JNativeHook ignores hotkey presses
@@ -225,6 +226,13 @@ public class ClickerConfig {
     }
     public void incrementClickCount() {
         clickCount.getAndIncrement();
+    }
+
+    public long getElapsedTime() {
+        return elapsedTime.get();
+    }
+    public void setElapsedTime(long value) {
+        elapsedTime.set(value);
     }
 
     public boolean isUpdatingFromConfig() {

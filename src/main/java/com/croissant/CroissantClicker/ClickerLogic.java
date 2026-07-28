@@ -22,6 +22,7 @@ public class ClickerLogic {
 
         running = true;
         config.setClickCount(0);
+        config.setElapsedTime(0);
 
         thread = new Thread(()->{
             try {
@@ -54,9 +55,11 @@ public class ClickerLogic {
         //check click limiters
         int numRemainingClicks = -1;
         long endTime = 0;
+        long startTime = System.nanoTime();
+        long elapsedSeconds = 0;
 
         if (isTimerMode){
-            endTime = System.nanoTime() + (config.getTimeLimit()*1_000_000_000L);
+            endTime = startTime + (config.getTimeLimit()*1_000_000_000L);
         }
         else if (clickMode.equals("Limited Clicks")){
             numRemainingClicks = config.getClickLimit();
@@ -64,7 +67,7 @@ public class ClickerLogic {
 
 
         long interval = isDelayMode ? delay*1_000_000L : 1_000_000_000L/cps;
-        long nextClick = System.nanoTime();
+        long nextClick = startTime;
 
         while (running) {
             if (isTimerMode && timeLimitExpired(endTime)){
@@ -72,6 +75,9 @@ public class ClickerLogic {
             }
 
             long now = System.nanoTime();
+
+            elapsedSeconds = now - startTime;
+            config.setElapsedTime(elapsedSeconds);
 
             if (now >= nextClick) {
                 executeClick(button);
@@ -105,9 +111,12 @@ public class ClickerLogic {
         int button = config.getClickedButton();
         boolean isTimerMode = config.isTimerMode();
 
+        long startTime = System.nanoTime();
+        long elapsedSeconds = 0;
+
         long endTime = 0;
         if (isTimerMode){
-            endTime = System.nanoTime() + (config.getTimeLimit()*1_000_000_000L);
+            endTime = startTime + (config.getTimeLimit()*1_000_000_000L);
         }
 
         executeHold(button);
@@ -116,6 +125,9 @@ public class ClickerLogic {
         try{
             while (running) {
                 Thread.sleep(50);
+
+                elapsedSeconds = System.nanoTime() - startTime;
+                config.setElapsedTime(elapsedSeconds);
 
                 if (isTimerMode && timeLimitExpired(endTime)){
                     break;
@@ -148,7 +160,7 @@ public class ClickerLogic {
     }
 
     public boolean timeLimitExpired(long endTime){
-        if (System.nanoTime() > endTime){
+        if (System.nanoTime() >= endTime){
             config.setEnabled(false);
             return true;
         }

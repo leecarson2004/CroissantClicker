@@ -13,10 +13,10 @@ public class ClickerUI extends JFrame {
     private final ClickerLogic logic;
     private final ClickerUIDrawer drawer;
 
-    //Timer updating click count 20 times/sec in UI
-    private final Timer clickCountRefreshTimer = new Timer(50, _->updateClickCount());
-    //Timer for toggle count down when toggle button is clicked
-    private Timer toggleCountDownTimer;
+    //Timer updating click count & time 20 times/sec in UI
+    private final Timer clickerStatsRefreshTimer = new Timer(50, _-> updateClickerStats());
+
+    private Timer toggleCountDownTimer; //Timer for toggle count down when toggle button is clicked
     private int countdown;
 
     private TrayIcon systemTrayIcon;
@@ -24,6 +24,7 @@ public class ClickerUI extends JFrame {
     private JLabel mainImageLabel;
     private JLabel hotKeyLabel;
     private JLabel clickCounterLabel;
+    private JLabel timeCounterLabel;
     private JLabel toggleIndicator;
     private JSpinner cpsSpinner;
     private JSpinner delaySpinner;
@@ -151,14 +152,9 @@ public class ClickerUI extends JFrame {
                 return;
             }
 
-            clickCountRefreshTimer.start();
+            clickerStatsRefreshTimer.start();
 
             logic.start();
-
-            //TODO:
-            Timer timer = new Timer(1000, _ -> {
-
-            });
         }
         //turn off clicker
         else {
@@ -170,8 +166,8 @@ public class ClickerUI extends JFrame {
 
             logic.stop();
 
-            clickCountRefreshTimer.stop();
-            updateClickCount(); //ensure clickCounter stops on correct final count
+            clickerStatsRefreshTimer.stop();
+            updateClickerStats(); //ensure clickCounter stops on correct final count
         }
     }
 
@@ -188,8 +184,9 @@ public class ClickerUI extends JFrame {
         }
     }
 
-    private void updateClickCount() {
+    private void updateClickerStats() {
         clickCounterLabel.setText("Click Count: " + config.getClickCount());
+        timeCounterLabel.setText("Elapsed Time: " + String.format("%.1f sec", (double) config.getElapsedTime() / 1_000_000_000.0));
     }
 
     private boolean validateUserInput(){
@@ -407,20 +404,23 @@ public class ClickerUI extends JFrame {
         JPanel mainPanelSouth = new JPanel();
 
         mainPanelSouth.setLayout(new MigLayout(
-                "fillx, insets 10 20 10 20, wrap 2",
-                "[left][right]"
+                "fillx, insets 10 20 10 20, wrap 3",
+                "[left]15[left][right, grow]"
         ));
 
         clickCounterLabel = new JLabel("Click Count: " + config.getClickCount());
+
+        timeCounterLabel = new JLabel("Elapsed Time: " + String.format("%.1f sec", (double) config.getElapsedTime() / 1_000_000_000.0));
 
         toggleIndicatorButton = new JButton("OFF");
         toggleIndicatorButton.putClientProperty("JButton.buttonType", "roundRect");
         toggleIndicatorButton.addActionListener(_ -> countDownAndStartClicker());
 
-        mainPanelSouth.add(new JSeparator(), "growx, span 2");
+        mainPanelSouth.add(new JSeparator(), "growx, span 3");
         mainPanelSouth.add(clickCounterLabel);
+        mainPanelSouth.add(timeCounterLabel);
         mainPanelSouth.add(toggleIndicatorButton);
-        mainPanelSouth.add(new JSeparator(), "growx, span 2");
+        mainPanelSouth.add(new JSeparator(), "growx, span 3");
 
         mainPanel.add(mainPanelSouth, BorderLayout.SOUTH);
 

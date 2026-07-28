@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+//TODO: add options for taskbar image
 
 public class Main {
     public static void main(String[] args) throws AWTException {
