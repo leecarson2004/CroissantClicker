@@ -488,7 +488,7 @@ public class ClickerUI extends JFrame {
     private void buildLimitTypePanel(){
         JPanel clickLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left][fill]"
+                "[left, 72!][fill]"
         ));
         JLabel clickLimitLabel = new JLabel("Click Limit:");
 
@@ -508,7 +508,7 @@ public class ClickerUI extends JFrame {
 
         JPanel timeLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left][fill]"
+                "[left, 72!][fill]"
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
         SpinnerNumberModel timeLimitNumberModel = new SpinnerNumberModel(config.getTimeLimit(), ClickerConfig.TIME_LIMIT_MIN, ClickerConfig.TIME_LIMIT_MAX, 1);
@@ -540,7 +540,7 @@ public class ClickerUI extends JFrame {
     private void buildDelayTypePanel(){
         JPanel cpsPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left][fill]"
+                "[left, 72!][fill]"
         ));
         JLabel cpsLabel = new JLabel("CPS:");
 
@@ -560,7 +560,7 @@ public class ClickerUI extends JFrame {
 
         JPanel delayPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left][fill]"
+                "[left, 72!][fill]"
         ));
         JLabel delayLabel = new JLabel("Delay (ms):");
 
