@@ -62,28 +62,41 @@ public class ClickerLogic {
             numRemainingClicks = config.getClickLimit();
         }
 
-        int sleepTime = isDelayMode ? delay : 1000/cps;
+
+        long interval = isDelayMode ? delay*1_000_000L : 1_000_000_000L/cps;
+        long nextClick = System.nanoTime();
 
         while (running) {
             if (isTimerMode && timeLimitExpired(endTime)){
                 break;
             }
 
-            executeClick(button);
-            config.incrementClickCount();
+            long now = System.nanoTime();
 
-            if (numRemainingClicks != -1){
-                numRemainingClicks--;
+            if (now >= nextClick) {
+                executeClick(button);
+                config.incrementClickCount();
 
-                if (clickLimitExpired(numRemainingClicks)){
+                nextClick += interval;
+
+                //if a program stall occurs, prevent simultaneous clicks.
+                if (nextClick < now) {
+                    nextClick = now + interval;
+                }
+
+                if (numRemainingClicks != -1){
+                    numRemainingClicks--;
+
+                    if (clickLimitExpired(numRemainingClicks)){
+                        break;
+                    }
+                }
+            } else {
+                try {
+                    Thread.sleep(1);
+                } catch(InterruptedException e){
                     break;
                 }
-            }
-
-            try {
-                Thread.sleep(sleepTime);
-            } catch(InterruptedException e){
-                break;
             }
         }
     }
@@ -112,7 +125,7 @@ public class ClickerLogic {
         } finally{
             if (button < 0){
                 int maskedButton = InputEvent.getMaskForButton(-button);
-                robot.mousePress(maskedButton);
+                robot.mouseRelease(maskedButton);
             } else{
                 robot.keyRelease(button);
             }
