@@ -50,6 +50,7 @@ public class SaveDataManager {
             configProps.setProperty("delay", String.valueOf(config.getDelay()));
             configProps.setProperty("cps",String.valueOf(config.getCps()));
             configProps.setProperty("clickLimit",String.valueOf(config.getClickLimit()));
+            configProps.setProperty("timeLimit",String.valueOf(config.getTimeLimit()));
             configProps.setProperty("clickMode",String.valueOf(config.getClickMode()));
             configProps.setProperty("clickedButton",String.valueOf(config.getClickedButton()));
             configProps.setProperty("theme", config.getTheme());
@@ -91,6 +92,8 @@ public class SaveDataManager {
                         ClickerConfig.CPS_DEFAULT));
                 config.setClickLimit(parseIntSafe(configProps.getProperty("clickLimit"),
                         ClickerConfig.CLICK_LIMIT_DEFAULT));
+                config.setTimeLimit(parseIntSafe(configProps.getProperty("timeLimit"),
+                        ClickerConfig.TIME_LIMIT_DEFAULT));
                 config.setClickMode(configProps.getProperty("clickMode",
                         ClickerConfig.CLICK_MODE_DEFAULT));
                 config.setClickedButton(parseIntSafe(configProps.getProperty("clickedButton"),

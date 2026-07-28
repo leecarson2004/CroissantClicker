@@ -153,13 +153,12 @@ public class ClickerUI extends JFrame {
 
             clickCountRefreshTimer.start();
 
-            try {
-                logic.start();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.err.println("Failed to start autoclicker logic: " + e.getMessage());
-                config.setEnabled(false);
-            }
+            logic.start();
+
+            //TODO:
+            Timer timer = new Timer(1000, _ -> {
+
+            });
         }
         //turn off clicker
         else {
@@ -511,7 +510,7 @@ public class ClickerUI extends JFrame {
                 "fillx, insets 0, wrap 2",
                 "[left][fill]"
         ));
-        JLabel timeLimitLabel = new JLabel("Time Limit:");
+        JLabel timeLimitLabel = new JLabel("Time (sec):");
         SpinnerNumberModel timeLimitNumberModel = new SpinnerNumberModel(config.getTimeLimit(), ClickerConfig.TIME_LIMIT_MIN, ClickerConfig.TIME_LIMIT_MAX, 1);
         timeLimitSpinner = new JSpinner(timeLimitNumberModel);
         setSpinnerFocusLostBehavior(timeLimitSpinner);
@@ -530,11 +529,11 @@ public class ClickerUI extends JFrame {
         limitTypePanel.add(clickLimitPanel, "clickLimit");
         limitTypePanel.add(timeLimitPanel, "timeLimit");
 
-        CardLayout limitTypeCardLayout = (CardLayout) limitTypePanel.getLayout();
+        CardLayout cardLayout = (CardLayout) limitTypePanel.getLayout();
         if (config.isTimerMode()){
-            limitTypeCardLayout.show(limitTypePanel, "timeLimit");
+            cardLayout.show(limitTypePanel, "timeLimit");
         } else{
-            limitTypeCardLayout.show(limitTypePanel, "clickLimit");
+            cardLayout.show(limitTypePanel, "clickLimit");
         }
     }
 
@@ -583,11 +582,11 @@ public class ClickerUI extends JFrame {
         delayTypePanel.add(cpsPanel, "cps");
         delayTypePanel.add(delayPanel, "delay");
 
-        CardLayout delayTypeCardLayout = (CardLayout) delayTypePanel.getLayout();
+        CardLayout cardLayout = (CardLayout) delayTypePanel.getLayout();
         if (config.isDelayMode()){
-            delayTypeCardLayout.show(delayTypePanel, "delay");
+            cardLayout.show(delayTypePanel, "delay");
         } else{
-            delayTypeCardLayout.show(delayTypePanel, "cps");
+            cardLayout.show(delayTypePanel, "cps");
         }
     }
 

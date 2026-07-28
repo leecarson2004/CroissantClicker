@@ -18,94 +18,84 @@ public class ClickerLogic {
 
     }
 
-    public void start() throws InterruptedException {
-        if (thread != null && thread.isAlive()){
-            return;
-        }
+    public void start(){
 
         running = true;
         config.setClickCount(0);
 
         thread = new Thread(()->{
-            //check modes:
-            String mode = config.getClickMode();
+            try {
+                //check modes:
+                String mode = config.getClickMode();
 
-            if (mode.equals("Hold")){
-                startHoldMode();
+                if (mode.equals("Hold")){
+                    startHoldMode();
+                }
+                else{ //click mode
+                    startClickMode(mode);
+                }
+            } finally {
+                thread = null;
             }
-            //CLICK MODE:
-            else{
-                startClickMode(mode);
-            }
-        });
+
+        }, "ClickerLogicThread");
 
         thread.start();
     }
 
     public void startClickMode(String clickMode){
-        //check click mode:
-        int numRemainingClicks = -1;
-        if (clickMode.equals("Limited Clicks")){
-            numRemainingClicks = config.getClickLimit();
-        }
-
         //load config settings
         int button = config.getClickedButton();
         int cps = config.getCps();
         int delay = config.getDelay();
-        boolean delayMode = config.isDelayMode();
+        boolean isDelayMode = config.isDelayMode();
+        boolean isTimerMode = config.isTimerMode();
 
-        //Check delay mode & run appropriate clicking loop
-        if (delayMode){
-            while (running) {
-                config.incrementClickCount();
+        //check click limiters
+        int numRemainingClicks = -1;
+        long endTime = 0;
 
-                executeClick(button);
+        if (isTimerMode){
+            endTime = System.nanoTime() + (config.getTimeLimit()*1_000_000_000L);
+        }
+        else if (clickMode.equals("Limited Clicks")){
+            numRemainingClicks = config.getClickLimit();
+        }
 
-                //stop clicker if click limit reached
-                if (numRemainingClicks != -1){
-                    numRemainingClicks--;
+        int sleepTime = isDelayMode ? delay : 1000/cps;
 
-                    if (numRemainingClicks <= 0){
-                        config.setEnabled(false);
-                        break;
-                    }
-                }
+        while (running) {
+            if (isTimerMode && timeLimitExpired(endTime)){
+                break;
+            }
 
-                try {
-                    Thread.sleep(delay);
-                } catch(InterruptedException e){
+            executeClick(button);
+            config.incrementClickCount();
+
+            if (numRemainingClicks != -1){
+                numRemainingClicks--;
+
+                if (clickLimitExpired(numRemainingClicks)){
                     break;
                 }
             }
-        }
-        //CPS MODE:
-        else {
-            while (running) {
-                config.incrementClickCount();
 
-                executeClick(button);
-
-                //stop clicker if click limit reached
-                if (numRemainingClicks != -1){
-                    numRemainingClicks--;
-
-                    if (numRemainingClicks <= 0){
-                        config.setEnabled(false);
-                        break;
-                    }
-                }
-
-                try {
-                    Thread.sleep(1000/cps); //convert cps to ms of delay
-                } catch(InterruptedException e){
-                    break;
-                }
+            try {
+                Thread.sleep(sleepTime);
+            } catch(InterruptedException e){
+                break;
             }
         }
     }
+
     public void startHoldMode(){
         int button = config.getClickedButton();
+        boolean isTimerMode = config.isTimerMode();
+
+        long endTime = 0;
+        if (isTimerMode){
+            endTime = System.nanoTime() + (config.getTimeLimit()*1_000_000_000L);
+        }
 
         executeHold(button);
         config.incrementClickCount();
@@ -113,11 +103,16 @@ public class ClickerLogic {
         try{
             while (running) {
                 Thread.sleep(50);
+
+                if (isTimerMode && timeLimitExpired(endTime)){
+                    break;
+                }
             }
         } catch (InterruptedException _){
         } finally{
             if (button < 0){
-                robot.mouseRelease(button);
+                int maskedButton = InputEvent.getMaskForButton(-button);
+                robot.mousePress(maskedButton);
             } else{
                 robot.keyRelease(button);
             }
@@ -129,6 +124,22 @@ public class ClickerLogic {
         if (thread != null){
             thread.interrupt(); //wake up thread immediately (even if sleeping) and stop it from running
         }
+    }
+
+    public boolean clickLimitExpired(int numRemainingClicks){
+        if (numRemainingClicks <= 0){
+            config.setEnabled(false);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean timeLimitExpired(long endTime){
+        if (System.nanoTime() > endTime){
+            config.setEnabled(false);
+            return true;
+        }
+        return false;
     }
 
     private void executeClick(int button) {
