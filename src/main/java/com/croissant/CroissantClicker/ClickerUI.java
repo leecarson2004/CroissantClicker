@@ -274,6 +274,7 @@ public class ClickerUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
+        //setIconImage(UIResources.APP_ICON_ENABLED.getImage());
 
         //-----------------------------------------------------------------------------
         JPanel defaultPageContainer = new JPanel();
