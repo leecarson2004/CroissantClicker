@@ -17,9 +17,23 @@ public class UIResources {
             "areYouSure.png"
     );
     public static final ImageIcon APP_ICON_IDLE = ImageIconLoader.loadIcon(
-            "appIconIdle.png"
+            "trayIconIdle.png"
     );
     public static final ImageIcon APP_ICON_ENABLED = ImageIconLoader.loadIcon(
-            "appIconEnabled.png"
+            "trayIconEnabled.png"
+    );
+
+
+    public static final ImageIcon APP_ICON_128 = ImageIconLoader.loadIcon(
+            "appIcon128.png"
+    );
+    public static final ImageIcon APP_ICON_48 = ImageIconLoader.loadIcon(
+            "appIcon48.png"
+    );
+    public static final ImageIcon APP_ICON_32 = ImageIconLoader.loadIcon(
+            "appIcon32.png"
+    );
+    public static final ImageIcon APP_ICON_16 = ImageIconLoader.loadIcon(
+            "appIcon16.png"
     );
 }

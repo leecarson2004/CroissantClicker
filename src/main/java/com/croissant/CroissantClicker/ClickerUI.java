@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ClickerUI extends JFrame {
@@ -288,7 +290,14 @@ public class ClickerUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
-        //setIconImage(UIResources.APP_ICON_ENABLED.getImage());
+
+        List<Image> appIcons = List.of(
+                UIResources.APP_ICON_128.getImage(),
+                UIResources.APP_ICON_48.getImage(),
+                UIResources.APP_ICON_32.getImage(),
+                UIResources.APP_ICON_16.getImage()
+        );
+        setIconImages(appIcons);
 
         //-----------------------------------------------------------------------------
         JPanel defaultPageContainer = new JPanel();
