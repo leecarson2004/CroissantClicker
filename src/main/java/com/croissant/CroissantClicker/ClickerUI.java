@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -526,7 +525,7 @@ public class ClickerUI extends JFrame {
                 "[left, 72!][fill]"
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
-        
+
         SpinnerNumberModel timeLimitNumberModel = new SpinnerNumberModel(config.getTimeLimit(), ClickerConfig.TIME_LIMIT_MIN, ClickerConfig.TIME_LIMIT_MAX, 1);
         timeLimitSpinner = new JSpinner(timeLimitNumberModel);
         setSpinnerFocusLostBehavior(timeLimitSpinner);
