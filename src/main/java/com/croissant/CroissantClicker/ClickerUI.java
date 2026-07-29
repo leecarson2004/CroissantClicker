@@ -232,6 +232,12 @@ public class ClickerUI extends JFrame {
                 ClickerConfig.DELAY_MAX))){
             isInputValid = false;
         }
+        else if (!(commitAndValidateSpinnerInputHelper(timeLimitSpinner,
+                config.getTimeLimit(),
+                ClickerConfig.TIME_LIMIT_MIN,
+                ClickerConfig.TIME_LIMIT_MAX))){
+            isInputValid = false;
+        }
 
         return isInputValid;
     }
@@ -520,6 +526,7 @@ public class ClickerUI extends JFrame {
                 "[left, 72!][fill]"
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
+        
         SpinnerNumberModel timeLimitNumberModel = new SpinnerNumberModel(config.getTimeLimit(), ClickerConfig.TIME_LIMIT_MIN, ClickerConfig.TIME_LIMIT_MAX, 1);
         timeLimitSpinner = new JSpinner(timeLimitNumberModel);
         setSpinnerFocusLostBehavior(timeLimitSpinner);
