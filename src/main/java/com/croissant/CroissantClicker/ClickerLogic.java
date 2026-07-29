@@ -50,7 +50,8 @@ public class ClickerLogic {
         int cps = config.getCps();
         int delay = config.getDelay();
         boolean isDelayMode = config.isDelayMode();
-        boolean isTimerMode = config.isTimerMode();
+        boolean isTimerMode = config.isTimerMode() && !clickMode.equals("Unlimited Clicks");
+        boolean isLimitedClicksMode = clickMode.equals("Limited Clicks") && !isTimerMode;
 
         //check click limiters
         int numRemainingClicks = -1;
@@ -61,7 +62,7 @@ public class ClickerLogic {
         if (isTimerMode){
             endTime = startTime + (config.getTimeLimit()*1_000_000_000L);
         }
-        else if (clickMode.equals("Limited Clicks")){
+        else if (isLimitedClicksMode){
             numRemainingClicks = config.getClickLimit();
         }
 
