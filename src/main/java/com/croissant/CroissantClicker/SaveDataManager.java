@@ -33,11 +33,14 @@ public class SaveDataManager {
         return saveDir;
     }
 
+    private static Path getSaveFilePath(String configName) throws IOException{
+        Path saveDir = getSaveDirectory();
+        return saveDir.resolve(createFileName(configName));
+    }
+
     public static void save(ClickerConfig config, String configName){
         try{
-            //get save file path
-            Path saveDir = getSaveDirectory();
-            Path filePath = saveDir.resolve(createFileName(configName));
+            Path filePath = getSaveFilePath(configName);
 
             //save new config data into properties
             Properties configProps = new Properties();
@@ -66,12 +69,10 @@ public class SaveDataManager {
 
     public static void load(ClickerConfig config, String configName) {
         try {
-            //get save directory of savedata
-            Path saveDir = getSaveDirectory();
-            Path filePath = saveDir.resolve(createFileName(configName));
+            Path filePath = getSaveFilePath(configName);
 
             if (!Files.exists(filePath)) {
-                return; //specified file does not exist, use defaults already in ClickerConfig
+                return; //use defaults already in ClickerConfig
             }
 
             Properties configProps = new Properties();
@@ -103,6 +104,30 @@ public class SaveDataManager {
             }
         } catch (IOException e) {
             System.err.println("Error loading config: " + e.getMessage());
+        }
+    }
+
+    public static void toggleFavorite(String configName, boolean isFavorite){
+        try{
+            Path filePath = getSaveFilePath(configName);
+
+            if (!Files.exists(filePath)) {
+                System.err.println("No file with name: " + configName + " located to favorite.");
+                return;
+            }
+
+            Properties configProps = new Properties();
+
+            try (InputStream input = Files.newInputStream(filePath)) {
+                configProps.load(input);
+            } catch (IOException e) {
+                System.err.println("Error loading config: " + e.getMessage());
+            }
+
+            configProps.setProperty("favorite", String.valueOf(isFavorite));
+
+        }catch(IOException e) {
+            System.err.println("Error while favouring config: " + e.getMessage());
         }
     }
 
