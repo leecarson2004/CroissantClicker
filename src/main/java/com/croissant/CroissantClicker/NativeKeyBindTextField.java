@@ -131,6 +131,7 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
     @Override
     public void removeNotify() {
         GlobalScreen.removeNativeKeyListener(this);
+        GlobalScreen.removeNativeMouseListener(this);
         super.removeNotify();
     }
 }

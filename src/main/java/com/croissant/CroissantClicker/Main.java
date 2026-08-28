@@ -7,7 +7,8 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+//TODO: globalscreen remove nativemouselistener, remove duplicate invoke later, switch to clearfocus
+//TODO: same for normal keybindfield
 
 public class Main {
     public static void main(String[] args) throws AWTException {
