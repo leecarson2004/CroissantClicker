@@ -273,7 +273,7 @@ public class ClickerUIDrawer extends JPanel {
     private void buildSavedConfigsPanel() {
         scrollablePanel = new JPanel(new MigLayout(
                 "insets 5 5 5 5, fillx",
-                "fill"
+                "[left,fill][right]"
         ));
 
         loadPageScrollPane.setViewportView(scrollablePanel);
@@ -286,7 +286,7 @@ public class ClickerUIDrawer extends JPanel {
         loadedConfigButtons.clear();
 
         //current config is for the currently loaded config -- don't display in load menu
-        ArrayList<String> savedConfigs = SaveDataManager.loadAllConfigTemplateNames();
+        Map<String, Boolean> savedConfigs = SaveDataManager.loadAllConfigNames();
         savedConfigs.remove("_current");
 
         if (savedConfigs.isEmpty()){
@@ -297,10 +297,10 @@ public class ClickerUIDrawer extends JPanel {
 
             scrollablePanel.add(emptyConfigsLabel);
         }
-        else{
+        else{//Build Button
             int scrollPaneWidth = loadPageScrollPane.getViewport().getWidth();
 
-            for (String configName : savedConfigs){
+            for (String configName : savedConfigs.keySet()){
                 JButton configNameButton;
 
                 if (configName.length() == 1){
@@ -317,8 +317,27 @@ public class ClickerUIDrawer extends JPanel {
                     updateSavedConfigButtonSelection();
                 });
 
+
+                boolean isFavorite = savedConfigs.get(configName);
+                JButton favoriteButton = new JButton("★");
+                favoriteButton.setFont(favoriteButton.getFont().deriveFont(Font.PLAIN, 16f));
+
+
+                if (isFavorite){
+                    favoriteButton.setForeground(Color.red);
+                } else{
+                    favoriteButton.setForeground(Color.green);
+                }
+
+                favoriteButton.addActionListener(_ -> {
+                    SaveDataManager.toggleFavorite(configName, !isFavorite);
+                    refreshSavedConfigs();
+                    System.err.println("favorited");
+                });
+
                 loadedConfigButtons.put(configName, configNameButton);
-                scrollablePanel.add(configNameButton, "span");
+                scrollablePanel.add(configNameButton);
+                scrollablePanel.add(favoriteButton, "span");
             }
         }
 

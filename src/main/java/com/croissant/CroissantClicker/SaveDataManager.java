@@ -4,9 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 
 public class SaveDataManager {
@@ -131,9 +129,10 @@ public class SaveDataManager {
         }
     }
 
-    public static ArrayList<String> loadAllConfigTemplateNames(){
+    public static Map<String, Boolean> loadAllConfigNames(){
 
-        ArrayList<String> configTemplateNames = new ArrayList<>();
+        //treemap auto sorts by key
+        Map<String, Boolean> loadedConfigs = new TreeMap<>();
         Properties configProps = new Properties();
 
         try {
@@ -141,7 +140,7 @@ public class SaveDataManager {
             File[] configFiles = saveDir.toFile().listFiles((_, name) -> name.endsWith(".properties"));
 
             if (configFiles == null || configFiles.length == 0){ //no stored save data
-                return new ArrayList<>();
+                return new TreeMap<>();
             }
 
             //load all config names into array
@@ -151,17 +150,21 @@ public class SaveDataManager {
                 try (InputStream input = Files.newInputStream(filePath)){
                     configProps.load(input);
 
-                    configTemplateNames.add(configProps.getProperty("configName","NAME_MISSING"));
+                    String configName = configProps.getProperty("configName","NAME_MISSING");
+                    Boolean isFavorite = Boolean.parseBoolean(configProps.getProperty("isFavorite", String.valueOf(false)));
+
+                    loadedConfigs.put(configName, isFavorite);
+
                 } catch (IOException e){
                     System.err.println("Failed to load configFile " + configFile.getName() + ": " + e.getMessage());
                 }
             }
-            Collections.sort(configTemplateNames);
-            return configTemplateNames;
+
+            return loadedConfigs;
 
         } catch (IOException e) {
             System.err.println("Error loading all config template names: " + e.getMessage());
-            return new ArrayList<>();
+            return new TreeMap<>();
         }
     }
 
