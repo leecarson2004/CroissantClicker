@@ -34,7 +34,7 @@ public class ClickerConfig {
     public static final String APP_VERSION = "1.6.6";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
-    public static final int DELAY_MAX = 999999;
+    public static final int DELAY_MAX = 9_999_999;
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
 
