@@ -4,10 +4,12 @@
 - Configurable modes (Unlimited clicks, Limited clicks, or Hold)
 - Configurable Hotkey for starting the Clicker
 - Ability to customize, save, and load existing Clicker Configurations
+- Choice between time limit or click limit
+- Windows system tray compatibility
 - Light and Dark Mode
 
 **System Requirements:**
-- OS: windows, mac, or linux
+- OS: Windows, Mac, or Linux
 - Hardware: Potato
 
 **Installation & Run Instructions:**
