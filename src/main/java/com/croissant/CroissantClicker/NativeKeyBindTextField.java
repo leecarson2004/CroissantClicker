@@ -98,7 +98,7 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
 
         SwingUtilities.invokeLater(() -> {
             setKeyBind(inputKey);
-            transferFocus();
+            clearFocus();
         });
     }
 
@@ -114,12 +114,16 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
 
         SwingUtilities.invokeLater(() -> {
             setKeyBind(-inputButton);
-            SwingUtilities.invokeLater(this::transferFocus);
+            clearFocus();
         });
     }
 
     public void setOnKeyChanged(IntConsumer listener){
         keyChangedListener = listener;
+    }
+
+    private void clearFocus() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
     }
 
     @Override

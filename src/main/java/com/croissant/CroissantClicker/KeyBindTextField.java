@@ -85,7 +85,7 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
             int inputKey = e.getKeyCode();
 
             setKeyBind(inputKey);
-            transferFocus(); //exit field
+            SwingUtilities.invokeLater(this::clearFocus);
         }
 
         e.consume(); //stop processing of event
@@ -103,7 +103,11 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
         if (inputButton == MouseEvent.NOBUTTON) return;
 
         setKeyBind(-inputButton);
-        SwingUtilities.invokeLater((this::transferFocus));
+        SwingUtilities.invokeLater((this::clearFocus));
+    }
+
+    private void clearFocus() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
     }
 
     //unused
