@@ -31,7 +31,7 @@ public class ClickerConfig {
     private volatile boolean inputCaptureMode = false; //if a field is capturing input, JNativeHook ignores hotkey presses
     //----------------------------------------
     //constants
-    public static final String APP_VERSION = "1.6.6";
+    public static final String APP_VERSION = "1.6.7";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
     public static final int DELAY_MAX = 9_999_999;
