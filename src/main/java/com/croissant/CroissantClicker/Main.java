@@ -7,8 +7,7 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//TODO: globalscreen remove nativemouselistener, remove duplicate invoke later, switch to clearfocus
-//TODO: same for normal keybindfield
+
 
 public class Main {
     public static void main(String[] args) throws AWTException {
@@ -24,16 +23,16 @@ public class Main {
 
         //autosave user data on config change
         config.addPropertyChangeListener(evt -> {
-            if ("clickLimit".equals(evt.getPropertyName())
-                    || "timeLimit".equals(evt.getPropertyName())
-                    || "cps".equals(evt.getPropertyName())
-                    || "clickedButton".equals(evt.getPropertyName())
-                    || "clickMode".equals(evt.getPropertyName())
-                    || "theme".equals(evt.getPropertyName())
-                    || "delay".equals(evt.getPropertyName())
-                    || "delayMode".equals(evt.getPropertyName())
-                    || "timerMode".equals(evt.getPropertyName())
-                    || "hotkey".equals(evt.getPropertyName())
+            if (ConfigProps.CLICK_LIMIT.equals(evt.getPropertyName())
+                    || ConfigProps.TIME_LIMIT.equals(evt.getPropertyName())
+                    || ConfigProps.CPS.equals(evt.getPropertyName())
+                    || ConfigProps.CLICKED_BUTTON.equals(evt.getPropertyName())
+                    || ConfigProps.CLICK_MODE.equals(evt.getPropertyName())
+                    || ConfigProps.THEME.equals(evt.getPropertyName())
+                    || ConfigProps.DELAY.equals(evt.getPropertyName())
+                    || ConfigProps.DELAY_MODE.equals(evt.getPropertyName())
+                    || ConfigProps.TIMER_MODE.equals(evt.getPropertyName())
+                    || ConfigProps.HOTKEY.equals(evt.getPropertyName())
             ){
                 SaveDataManager.save(config, "_current");
             }
