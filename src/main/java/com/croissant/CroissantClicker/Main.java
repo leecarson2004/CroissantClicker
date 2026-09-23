@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 //adjust main method propertychangelistener
 //make save/load use new configprops class constants
 //adjust ui image?
+//move timer to right
 
 public class Main {
     public static void main(String[] args) throws AWTException {
@@ -24,19 +25,8 @@ public class Main {
         SaveDataManager.load(config, "_current");
 
         //autosave user data on config change
-        config.addPropertyChangeListener(evt -> { //just check the props that ARENT here? May be cleaner
-            if (ConfigProps.CLICK_LIMIT.equals(evt.getPropertyName())
-                    || ConfigProps.TIME_LIMIT.equals(evt.getPropertyName())
-                    || ConfigProps.CPS.equals(evt.getPropertyName())
-                    || ConfigProps.CLICKED_BUTTON.equals(evt.getPropertyName())
-                    || ConfigProps.CLICK_MODE.equals(evt.getPropertyName())
-                    || ConfigProps.THEME.equals(evt.getPropertyName())
-                    || ConfigProps.DELAY.equals(evt.getPropertyName())
-                    || ConfigProps.CLICK_LENGTH.equals(evt.getPropertyName())
-                    || ConfigProps.DELAY_MODE.equals(evt.getPropertyName())
-                    || ConfigProps.TIMER_MODE.equals(evt.getPropertyName())
-                    || ConfigProps.HOTKEY.equals(evt.getPropertyName())
-            ){
+        config.addPropertyChangeListener(evt -> {
+            if (!ConfigProps.ENABLED.equals(evt.getPropertyName())) {
                 SaveDataManager.save(config, "_current");
             }
         });
