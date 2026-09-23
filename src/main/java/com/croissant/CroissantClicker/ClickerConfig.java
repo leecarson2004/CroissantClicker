@@ -42,9 +42,9 @@ public class ClickerConfig {
     public static final int CLICK_LENGTH_MIN = 0;
 
     public static final int CLICK_LIMIT_MIN = 1;
-    public static final int CLICK_LIMIT_MAX = 999_999;
+    public static final int CLICK_LIMIT_MAX = 9_999_999;
     public static final int TIME_LIMIT_MIN = 1;
-    public static final int TIME_LIMIT_MAX = 999_999;
+    public static final int TIME_LIMIT_MAX = 9_999_999;
 
     public static final int NO_KEY_BIND_SET = -999;
     //default input values constants:
