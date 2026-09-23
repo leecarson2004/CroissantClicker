@@ -102,8 +102,10 @@ public class SaveDataManager {
                         ClickerConfig.CLICK_MODE_DEFAULT));
                 config.setClickedButton(parseIntSafe(configProps.getProperty("clickedButton"),
                         ClickerConfig.CLICKED_BUTTON_DEFAULT));
-                config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));
 
+                if (configName.equals("_current")){
+                    config.setTheme(configProps.getProperty("theme", ClickerConfig.THEME_DEFAULT));
+                }
             }
         } catch (IOException e) {
             System.err.println("Error loading config: " + e.getMessage());

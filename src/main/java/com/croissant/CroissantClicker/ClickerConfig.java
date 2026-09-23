@@ -79,7 +79,7 @@ public class ClickerConfig {
         setClickMode(CLICK_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
         setTimeLimit(TIME_LIMIT_DEFAULT);
-        setTheme(THEME_DEFAULT);
+        setTheme(theme == null ? THEME_DEFAULT : theme);
         setHotkey(HOTKEY_DEFAULT);
     }
 
