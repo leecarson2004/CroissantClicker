@@ -49,6 +49,8 @@ public class ClickerLogic {
         int button = config.getClickedButton();
         int cps = config.getCps();
         int delay = config.getDelay();
+        long clickLength = config.getClickLength()*1_000_000L;
+
         boolean isDelayMode = config.isDelayMode();
         boolean isTimerMode = config.isTimerMode() && !clickMode.equals(ClickMode.UNLIMITED.getName());
         boolean isLimitedClicksMode = clickMode.equals(ClickMode.LIMITED.getName()) && !isTimerMode;
@@ -57,7 +59,7 @@ public class ClickerLogic {
         int numRemainingClicks = -1;
         long endTime = 0;
         long startTime = System.nanoTime();
-        long elapsedSeconds = 0;
+        long elapsedTime = 0;
 
         if (isTimerMode){
             endTime = startTime + (config.getTimeLimit()*1_000_000_000L);
@@ -65,6 +67,7 @@ public class ClickerLogic {
         else if (isLimitedClicksMode){
             numRemainingClicks = config.getClickLimit();
         }
+
 
 
         long interval = isDelayMode ? delay*1_000_000L : 1_000_000_000L/cps;
@@ -77,18 +80,38 @@ public class ClickerLogic {
 
             long now = System.nanoTime();
 
-            elapsedSeconds = now - startTime;
-            config.setElapsedTime(elapsedSeconds);
+            elapsedTime = now - startTime;
+            config.setElapsedTime(elapsedTime);
 
             if (now >= nextClick) {
-                executeClick(button);
+                pressClick(button);
+
+                long releaseTime = now + clickLength;
+
+                while (running && now < releaseTime) {
+                    now = System.nanoTime();
+
+                    elapsedTime = now - startTime;
+                    config.setElapsedTime(elapsedTime);
+
+                    try{
+                        Thread.sleep(1);
+                    } catch (InterruptedException _){
+                        break;
+                    }
+                }
+
+                releaseClick(button);
+
                 config.incrementClickCount();
 
                 nextClick += interval;
 
-                //if a program stall occurs, prevent simultaneous clicks.
-                if (nextClick < now) {
-                    nextClick = now + interval;
+                long afterRelease = System.nanoTime();
+
+                //prevent simultaneous clicks due to falling behind or program stall
+                if (nextClick < afterRelease) {
+                    nextClick = afterRelease + interval;
                 }
 
                 if (numRemainingClicks != -1){
@@ -120,7 +143,7 @@ public class ClickerLogic {
             endTime = startTime + (config.getTimeLimit()*1_000_000_000L);
         }
 
-        executeHold(button);
+        pressClick(button);
         config.incrementClickCount();
 
         try{
@@ -136,12 +159,7 @@ public class ClickerLogic {
             }
         } catch (InterruptedException _){
         } finally{
-            if (button < 0){
-                int maskedButton = InputEvent.getMaskForButton(-button);
-                robot.mouseRelease(maskedButton);
-            } else{
-                robot.keyRelease(button);
-            }
+            releaseClick(button);
         }
     }
 
@@ -168,34 +186,31 @@ public class ClickerLogic {
         return false;
     }
 
-    private void executeClick(int button) {
+    private void pressClick(int button) {
         if (button == ClickerConfig.NO_KEY_BIND_SET) return;
 
         //mouse
         if (button < 0){
             int maskedButton = InputEvent.getMaskForButton(-button);
-
             robot.mousePress(maskedButton);
+        }
+        //keyboard
+        else{
+            robot.keyPress(button);
+        }
+    }
+
+    private void releaseClick(int button) {
+        if (button == ClickerConfig.NO_KEY_BIND_SET) return;
+
+        //mouse
+        if (button < 0){
+            int maskedButton = InputEvent.getMaskForButton(-button);
             robot.mouseRelease(maskedButton);
         }
         //keyboard
         else{
-            robot.keyPress(button);
             robot.keyRelease(button);
-        }
-    }
-
-    private void executeHold(int button) {
-        if (button == ClickerConfig.NO_KEY_BIND_SET) return;
-
-        //mouse
-        if (button < 0){
-            int maskedButton = InputEvent.getMaskForButton(-button);
-            robot.mousePress(maskedButton);
-        }
-        //keyboard
-        else{
-            robot.keyPress(button);
         }
     }
 }
