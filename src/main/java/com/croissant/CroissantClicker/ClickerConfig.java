@@ -15,7 +15,8 @@ public class ClickerConfig {
     private boolean delayMode; //mode for click speed -- cps or delay
     private boolean timerMode; //mode for click limiter -- timed or click limit
     private int cps; //clicks/sec
-    private int delay; //delay between clicks
+    private int delay; //delay between clicks (ms)
+    private int clickLength; //length click is held (ms)
     private String clickMode; //click mode
     private int clickLimit; //num mouse clicks run when turned on
     private int timeLimit; //time limit before halting clicks when turned on
@@ -37,6 +38,8 @@ public class ClickerConfig {
     public static final int DELAY_MAX = 9_999_999;
     public static final int CPS_MIN = 1;
     public static final int CPS_MAX = 50;
+    public static final int CLICK_LENGTH_MAX = 9_999_999;
+    public static final int CLICK_LENGTH_MIN = 0;
 
     public static final int CLICK_LIMIT_MIN = 1;
     public static final int CLICK_LIMIT_MAX = 999_999;
@@ -50,14 +53,15 @@ public class ClickerConfig {
     public static final boolean TIMER_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
     public static final int DELAY_DEFAULT = 200;
-    public static final String CLICK_MODE_DEFAULT = "Unlimited Clicks";
+    public static final int CLICK_LENGTH_DEFAULT = 0;
+    public static final String CLICK_MODE_DEFAULT = ClickMode.UNLIMITED.getName();
     public static final int CLICK_LIMIT_DEFAULT = 50;
     public static final int TIME_LIMIT_DEFAULT = 30;
     public static final int HOTKEY_DEFAULT =  NativeKeyEvent.VC_F8;
     public static final String THEME_DEFAULT = "Dark";
     //main JFrame dims:
-    public static final int WINDOW_WIDTH = 430; //originally 400
-    public static final int WINDOW_HEIGHT = 310; //originally 290
+    public static final int WINDOW_WIDTH = 430;
+    public static final int WINDOW_HEIGHT = 310;
 
 
 
@@ -71,6 +75,7 @@ public class ClickerConfig {
         setTimerMode(TIMER_MODE_DEFAULT);
         setCps(CPS_DEFAULT);
         setDelay(DELAY_DEFAULT);
+        setClickLength(CLICK_LENGTH_DEFAULT);
         setClickMode(CLICK_MODE_DEFAULT);
         setClickLimit(CLICK_LIMIT_DEFAULT);
         setTimeLimit(TIME_LIMIT_DEFAULT);
@@ -139,6 +144,17 @@ public class ClickerConfig {
         int old = this.delay;
         this.delay = delay;
         support.firePropertyChange(ConfigProps.DELAY,old,delay);
+    }
+
+    public int getClickLength() {
+        return clickLength;
+    }
+    public void setClickLength(int clickLength) {
+        if (this.clickLength == clickLength) return;
+
+        int old = this.clickLength;
+        this.clickLength = clickLength;
+        support.firePropertyChange(ConfigProps.CLICK_LENGTH,old,clickLength);
     }
 
     public boolean isEnabled() {

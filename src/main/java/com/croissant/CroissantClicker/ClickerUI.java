@@ -85,6 +85,9 @@ public class ClickerUI extends JFrame {
                 case ConfigProps.DELAY ->
                         delaySpinner.setValue(evt.getNewValue());
 
+                case ConfigProps.CLICK_LENGTH ->
+                        clickLengthSpinner.setValue(evt.getNewValue());
+
                 case ConfigProps.DELAY_MODE -> {
                     boolean isDelayMode = (boolean) evt.getNewValue();
 
@@ -121,9 +124,10 @@ public class ClickerUI extends JFrame {
                     clickLimitSpinner.setEnabled(!clickMode.equals(ClickMode.HOLD.getName()) && !clickMode.equals(ClickMode.UNLIMITED.getName()));
                     timeLimitSpinner.setEnabled(!clickMode.equals(ClickMode.UNLIMITED.getName()));
 
-                    cpsSpinner.setEnabled(!clickMode.equals(ClickMode.HOLD.getName()));
-                    delaySpinner.setEnabled(!clickMode.equals(ClickMode.HOLD.getName()));
-
+                    boolean isHoldMode = clickMode.equals(ClickMode.HOLD.getName());
+                    cpsSpinner.setEnabled(!isHoldMode);
+                    delaySpinner.setEnabled(!isHoldMode);
+                    clickLengthSpinner.setEnabled(!isHoldMode);
 
                     clickModeSelector.setSelectedItem(clickMode);
                 }
@@ -380,7 +384,7 @@ public class ClickerUI extends JFrame {
         limitCardLayout = (CardLayout) limitTypePanel.getLayout();
         delayCardLayout = (CardLayout) delayTypePanel.getLayout();
 
-        JLabel clickModeLabel = new JLabel("Mode:");
+        JLabel clickModeLabel = new JLabel("Click Mode:");
 
         String[] modeStrings = ClickMode.getNames();
         clickModeSelector = new JComboBox<>(modeStrings);
@@ -403,15 +407,15 @@ public class ClickerUI extends JFrame {
 
         JLabel clickLengthLabel = new JLabel("Click Length (ms):");
 
-        SpinnerNumberModel clickLengthSpinnerModel = new SpinnerNumberModel(config.getClickLimit(), ClickerConfig.CLICK_LIMIT_MIN, ClickerConfig.CLICK_LIMIT_MAX, 1);
+        SpinnerNumberModel clickLengthSpinnerModel = new SpinnerNumberModel(config.getClickLength(), ClickerConfig.CLICK_LENGTH_MIN, ClickerConfig.CLICK_LENGTH_MAX, 10);
         clickLengthSpinner = new JSpinner(clickLengthSpinnerModel);
         setSpinnerFocusLostBehavior(clickLengthSpinner);
         clickLengthSpinner.addChangeListener(_ -> {
             if (!config.isUpdatingFromConfig()) {
-                //config.setClickLimit((int)clickLimitSpinner.getValue());
+                config.setClickLength((int)clickLengthSpinner.getValue());
             }
         });
-        clickLengthSpinner.setEnabled(!config.getClickMode().equals("Hold") && !config.getClickMode().equals("Unlimited Clicks"));
+        clickLengthSpinner.setEnabled(!config.getClickMode().equals(ClickMode.HOLD.getName()));
 
         mainPanelLeft.add(delayTypePanel, "span 2, growx");
 
@@ -552,7 +556,7 @@ public class ClickerUI extends JFrame {
 
         JPanel timeLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]" //was 72!
+                "[left, 116!][fill]"
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
 
@@ -585,7 +589,7 @@ public class ClickerUI extends JFrame {
     private void buildDelayTypePanel(){
         JPanel cpsPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]" //was 72!
+                "[left, 116!][fill]"
         ));
         JLabel cpsLabel = new JLabel("CPS:");
 
@@ -607,7 +611,7 @@ public class ClickerUI extends JFrame {
                 "fillx, insets 0, wrap 2",
                 "[left, 116!][fill]"
         ));
-        JLabel delayLabel = new JLabel("Delay (ms):");
+        JLabel delayLabel = new JLabel("Click Delay (ms):");
 
         SpinnerNumberModel delaySpinnerModel = new SpinnerNumberModel(config.getDelay(), ClickerConfig.DELAY_MIN, ClickerConfig.DELAY_MAX, 10);
         delaySpinner = new JSpinner(delaySpinnerModel);

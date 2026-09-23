@@ -5,6 +5,7 @@ public final class ConfigProps {
 
     public static final String CPS = "cps";
     public static final String DELAY = "delay";
+    public static final String CLICK_LENGTH = "clickLength";
     public static final String DELAY_MODE = "delayMode";
     public static final String TIMER_MODE = "timerMode";
     public static final String CLICK_LIMIT = "clickLimit";
