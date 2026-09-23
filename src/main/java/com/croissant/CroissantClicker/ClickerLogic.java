@@ -29,7 +29,7 @@ public class ClickerLogic {
                 //check modes:
                 String mode = config.getClickMode();
 
-                if (mode.equals("Hold")){
+                if (mode.equals(ClickMode.HOLD.getName())){
                     startHoldMode();
                 }
                 else{ //click mode
@@ -50,8 +50,8 @@ public class ClickerLogic {
         int cps = config.getCps();
         int delay = config.getDelay();
         boolean isDelayMode = config.isDelayMode();
-        boolean isTimerMode = config.isTimerMode() && !clickMode.equals("Unlimited Clicks");
-        boolean isLimitedClicksMode = clickMode.equals("Limited Clicks") && !isTimerMode;
+        boolean isTimerMode = config.isTimerMode() && !clickMode.equals(ClickMode.UNLIMITED.getName());
+        boolean isLimitedClicksMode = clickMode.equals(ClickMode.LIMITED.getName()) && !isTimerMode;
 
         //check click limiters
         int numRemainingClicks = -1;

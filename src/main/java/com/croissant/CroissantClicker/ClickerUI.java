@@ -114,11 +114,11 @@ public class ClickerUI extends JFrame {
                 case ConfigProps.CLICK_MODE -> {
                     String clickMode = evt.getNewValue().toString();
 
-                    clickLimitSpinner.setEnabled(!clickMode.equals("Hold") && !clickMode.equals("Unlimited Clicks"));
-                    timeLimitSpinner.setEnabled(!clickMode.equals("Unlimited Clicks"));
+                    clickLimitSpinner.setEnabled(!clickMode.equals(ClickMode.HOLD.getName()) && !clickMode.equals(ClickMode.UNLIMITED.getName()));
+                    timeLimitSpinner.setEnabled(!clickMode.equals(ClickMode.UNLIMITED.getName()));
 
-                    cpsSpinner.setEnabled(!clickMode.equals("Hold"));
-                    delaySpinner.setEnabled(!clickMode.equals("Hold"));
+                    cpsSpinner.setEnabled(!clickMode.equals(ClickMode.HOLD.getName()));
+                    delaySpinner.setEnabled(!clickMode.equals(ClickMode.HOLD.getName()));
 
 
                     clickModeSelector.setSelectedItem(clickMode);
@@ -378,7 +378,7 @@ public class ClickerUI extends JFrame {
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
-        String[] modeStrings = {"Unlimited Clicks", "Limited Clicks", "Hold"};
+        String[] modeStrings = ClickMode.getNames();
         clickModeSelector = new JComboBox<>(modeStrings);
         clickModeSelector.setSelectedItem(config.getClickMode());
 
