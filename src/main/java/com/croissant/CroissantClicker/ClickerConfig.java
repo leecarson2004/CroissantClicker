@@ -31,7 +31,7 @@ public class ClickerConfig {
     private volatile boolean inputCaptureMode = false; //if a field is capturing input, JNativeHook ignores hotkey presses
     //----------------------------------------
     //constants
-    public static final String APP_VERSION = "1.6.7";
+    public static final String APP_VERSION = "1.6.8";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
     public static final int DELAY_MAX = 9_999_999;
@@ -58,7 +58,6 @@ public class ClickerConfig {
     //main JFrame dims:
     public static final int WINDOW_WIDTH = 400;
     public static final int WINDOW_HEIGHT = 290;
-
 
 
 
@@ -95,7 +94,7 @@ public class ClickerConfig {
 
         String old = this.theme;
         this.theme = theme;
-        support.firePropertyChange("theme",old,theme);
+        support.firePropertyChange(ConfigProps.THEME,old,theme);
     }
 
     public int getCps() {
@@ -106,7 +105,7 @@ public class ClickerConfig {
 
         int old = this.cps;
         this.cps = cps;
-        support.firePropertyChange("cps",old,cps); //notify listeners
+        support.firePropertyChange(ConfigProps.CPS,old,cps);
     }
 
     public boolean isDelayMode() {
@@ -117,7 +116,7 @@ public class ClickerConfig {
 
         boolean old = this.delayMode;
         this.delayMode = delayMode;
-        support.firePropertyChange("delayMode",old,delayMode); //notify listeners
+        support.firePropertyChange(ConfigProps.DELAY_MODE,old,delayMode);
     }
 
     public boolean isTimerMode() {
@@ -128,7 +127,7 @@ public class ClickerConfig {
 
         boolean old = this.timerMode;
         this.timerMode = timerMode;
-        support.firePropertyChange("timerMode",old,timerMode); //notify listeners
+        support.firePropertyChange(ConfigProps.TIMER_MODE,old,timerMode);
     }
 
     public int getDelay() {
@@ -139,7 +138,7 @@ public class ClickerConfig {
 
         int old = this.delay;
         this.delay = delay;
-        support.firePropertyChange("delay",old,delay); //notify listeners
+        support.firePropertyChange(ConfigProps.DELAY,old,delay);
     }
 
     public boolean isEnabled() {
@@ -148,7 +147,7 @@ public class ClickerConfig {
     public void setEnabled(boolean enabled) {
         boolean old = this.enabled;
         this.enabled = enabled;
-        support.firePropertyChange("enabled",old,enabled); //notify listeners
+        support.firePropertyChange(ConfigProps.ENABLED,old,enabled);
     }
 
     public int getHotkey() {
@@ -171,7 +170,7 @@ public class ClickerConfig {
 
         int old = this.hotkey;
         this.hotkey = hotkey;
-        support.firePropertyChange("hotkey",old,hotkey);
+        support.firePropertyChange(ConfigProps.HOTKEY,old,hotkey);
     }
 
     public int getClickedButton() {
@@ -182,7 +181,7 @@ public class ClickerConfig {
 
         int old = this.clickedButton;
         this.clickedButton = clickedButton;
-        support.firePropertyChange("clickedButton",old, clickedButton); //notify listeners
+        support.firePropertyChange(ConfigProps.CLICKED_BUTTON,old, clickedButton);
     }
 
     public int getClickLimit() {
@@ -193,7 +192,7 @@ public class ClickerConfig {
 
         int old = this.clickLimit;
         this.clickLimit = clickLimit;
-        support.firePropertyChange("clickLimit",old,clickLimit); //notify listeners
+        support.firePropertyChange(ConfigProps.CLICK_LIMIT,old,clickLimit);
     }
 
     public int getTimeLimit() {
@@ -204,7 +203,7 @@ public class ClickerConfig {
 
         int old = this.timeLimit;
         this.timeLimit = timeLimit;
-        support.firePropertyChange("timeLimit",old,timeLimit); //notify listeners
+        support.firePropertyChange(ConfigProps.TIME_LIMIT,old,timeLimit);
     }
 
     public String getClickMode() {
@@ -215,7 +214,7 @@ public class ClickerConfig {
 
         String old = this.clickMode;
         this.clickMode = clickMode;
-        support.firePropertyChange("clickMode",old, clickMode); //notify listeners
+        support.firePropertyChange(ConfigProps.CLICK_MODE,old, clickMode);
     }
 
     public int getClickCount() {

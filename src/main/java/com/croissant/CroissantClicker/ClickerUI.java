@@ -1,6 +1,8 @@
 package com.croissant.CroissantClicker;
 
 import net.miginfocom.swing.MigLayout;
+
+import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -37,6 +39,9 @@ public class ClickerUI extends JFrame {
     private JComboBox<String> clickModeSelector;
     private JButton toggleIndicatorButton;
 
+    private CardLayout delayCardLayout;
+    private CardLayout limitCardLayout;
+
     String colorGreen = "#388e3c";
     String colorRed = "#d32f2f";
 
@@ -53,7 +58,7 @@ public class ClickerUI extends JFrame {
         config.addPropertyChangeListener(evt -> {
             //update UI on swing thread:
             SwingUtilities.invokeLater(()->{
-                if ("enabled".equals(evt.getPropertyName())){
+                if (ConfigProps.ENABLED.equals(evt.getPropertyName())){
                     updateStatus();
                 }
                 else{
@@ -68,74 +73,75 @@ public class ClickerUI extends JFrame {
     private void refreshData(PropertyChangeEvent evt) {
         config.setUpdatingFromConfig(true);
 
-        if ("cps".equals(evt.getPropertyName())){
-            cpsSpinner.setValue(evt.getNewValue());
-        }
-        else if ("delay".equals(evt.getPropertyName())){
-            delaySpinner.setValue(evt.getNewValue());
-        }
-        else if ("delayMode".equals(evt.getPropertyName())){
-            boolean isDelayMode = (boolean) evt.getNewValue();
+        try {
+            switch(evt.getPropertyName()) {
+                case ConfigProps.CPS ->
+                        cpsSpinner.setValue(evt.getNewValue());
 
-            drawer.setDisplayedDelayMode(isDelayMode);
-            CardLayout cardLayout = (CardLayout) delayTypePanel.getLayout();
-            if (isDelayMode){
-                cardLayout.show(delayTypePanel, "delay");
-            } else{
-                cardLayout.show(delayTypePanel, "cps");
+                case ConfigProps.DELAY ->
+                        delaySpinner.setValue(evt.getNewValue());
+
+                case ConfigProps.DELAY_MODE -> {
+                    boolean isDelayMode = (boolean) evt.getNewValue();
+
+                    drawer.setDisplayedDelayMode(isDelayMode);
+                    if (isDelayMode){
+                        delayCardLayout.show(delayTypePanel, "delay");
+                    } else{
+                        delayCardLayout.show(delayTypePanel, "cps");
+                    }
+                }
+                case ConfigProps.TIMER_MODE -> {
+                    boolean isTimerMode = (boolean) evt.getNewValue();
+
+                    drawer.setDisplayedTimerMode(isTimerMode);
+                    if (isTimerMode){
+                        limitCardLayout.show(limitTypePanel, "timeLimit");
+                    } else{
+                        limitCardLayout.show(limitTypePanel, "clickLimit");
+                    }
+                }
+                case ConfigProps.CLICK_LIMIT ->
+                        clickLimitSpinner.setValue(evt.getNewValue());
+
+                case ConfigProps.TIME_LIMIT ->
+                        timeLimitSpinner.setValue(evt.getNewValue());
+
+                case ConfigProps.CLICKED_BUTTON -> {
+                    int clickedButton = (int) evt.getNewValue();
+                    clickedButtonSelector.setKeyBind(clickedButton);
+                }
+                case ConfigProps.CLICK_MODE -> {
+                    String clickMode = evt.getNewValue().toString();
+
+                    clickLimitSpinner.setEnabled(!clickMode.equals("Hold") && !clickMode.equals("Unlimited Clicks"));
+                    timeLimitSpinner.setEnabled(!clickMode.equals("Unlimited Clicks"));
+
+                    cpsSpinner.setEnabled(!clickMode.equals("Hold"));
+                    delaySpinner.setEnabled(!clickMode.equals("Hold"));
+
+
+                    clickModeSelector.setSelectedItem(clickMode);
+                }
+                case ConfigProps.THEME -> {
+                    String theme = (String) evt.getNewValue();
+
+                    drawer.setDisplayedTheme(theme);
+                    ThemeManager.setTheme(theme, this);
+                }
+                case ConfigProps.HOTKEY -> {
+                    String hotkeyString = config.getHotkeyString();
+
+                    drawer.setDisplayedHotkey(hotkeyString);
+                    hotKeyLabel.setText("[" + hotkeyString + "]");
+                }
+
+                default ->
+                    System.err.println("Unknown Property: " + evt.getPropertyName());
             }
+        } finally {
+            config.setUpdatingFromConfig(false);
         }
-        else if ("timerMode".equals(evt.getPropertyName())){
-            boolean isTimerMode = (boolean) evt.getNewValue();
-
-            drawer.setDisplayedTimerMode(isTimerMode);
-            CardLayout cardLayout = (CardLayout) limitTypePanel.getLayout();
-            if (isTimerMode){
-                cardLayout.show(limitTypePanel, "timeLimit");
-            } else{
-                cardLayout.show(limitTypePanel, "clickLimit");
-            }
-        }
-        else if ("clickLimit".equals(evt.getPropertyName())){
-            clickLimitSpinner.setValue(evt.getNewValue());
-        }
-        else if ("timeLimit".equals(evt.getPropertyName())){
-            timeLimitSpinner.setValue(evt.getNewValue());
-        }
-        else if ("clickedButton".equals(evt.getPropertyName())){
-            int clickedButton = (int) evt.getNewValue();
-
-            clickedButtonSelector.setKeyBind(clickedButton);
-        }
-        else if ("clickMode".equals(evt.getPropertyName())){
-            String clickMode = evt.getNewValue().toString();
-
-            clickLimitSpinner.setEnabled(!clickMode.equals("Hold") && !clickMode.equals("Unlimited Clicks"));
-            timeLimitSpinner.setEnabled(!clickMode.equals("Unlimited Clicks"));
-
-            cpsSpinner.setEnabled(!clickMode.equals("Hold"));
-            delaySpinner.setEnabled(!clickMode.equals("Hold"));
-
-
-            clickModeSelector.setSelectedItem(clickMode);
-        }
-        else if ("theme".equals(evt.getPropertyName())){
-            String theme = (String) evt.getNewValue();
-
-            drawer.setDisplayedTheme(theme);
-            ThemeManager.setTheme(theme, this);
-        }
-        else if ("hotkey".equals(evt.getPropertyName())){
-            String hotkeyString = config.getHotkeyString();
-
-            drawer.setDisplayedHotkey(hotkeyString);
-            hotKeyLabel.setText("[" + hotkeyString + "]");
-        }
-        else{
-            System.err.println("Event name non-existent!");
-        }
-
-        config.setUpdatingFromConfig(false);
     }
 
     private void updateStatus(){
@@ -366,6 +372,9 @@ public class ClickerUI extends JFrame {
 
         buildLimitTypePanel();
         buildDelayTypePanel();
+
+        limitCardLayout = (CardLayout) limitTypePanel.getLayout();
+        delayCardLayout = (CardLayout) delayTypePanel.getLayout();
 
         JLabel clickModeLabel = new JLabel("Mode:");
 
