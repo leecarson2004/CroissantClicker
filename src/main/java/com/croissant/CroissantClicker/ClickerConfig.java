@@ -31,7 +31,7 @@ public class ClickerConfig {
     private volatile boolean inputCaptureMode = false; //if a field is capturing input, JNativeHook ignores hotkey presses
     //----------------------------------------
     //constants
-    public static final String APP_VERSION = "1.6.8";
+    public static final String APP_VERSION = "1.7.0";
     //User input bounds constants:
     public static final int DELAY_MIN = 20;
     public static final int DELAY_MAX = 9_999_999;
@@ -56,8 +56,8 @@ public class ClickerConfig {
     public static final int HOTKEY_DEFAULT =  NativeKeyEvent.VC_F8;
     public static final String THEME_DEFAULT = "Dark";
     //main JFrame dims:
-    public static final int WINDOW_WIDTH = 400;
-    public static final int WINDOW_HEIGHT = 290;
+    public static final int WINDOW_WIDTH = 435; //originally 400
+    public static final int WINDOW_HEIGHT = 320; //originally 290
 
 
 
