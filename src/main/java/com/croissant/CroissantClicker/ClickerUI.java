@@ -371,7 +371,7 @@ public class ClickerUI extends JFrame {
         mainPanelLeft.setLayout(new MigLayout(
                 "fillx, insets 10 20 20 10, wrap 2",
                 "[left]30[fill]",
-                "10[]10[]10[]10[]10[]10[]5[]5[]push"
+                "12[]8[]8[]8[]8[]12[]5[]5[]push"
         ));
 
         buildLimitTypePanel();

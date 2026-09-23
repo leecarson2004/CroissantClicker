@@ -56,8 +56,8 @@ public class ClickerConfig {
     public static final int HOTKEY_DEFAULT =  NativeKeyEvent.VC_F8;
     public static final String THEME_DEFAULT = "Dark";
     //main JFrame dims:
-    public static final int WINDOW_WIDTH = 435; //originally 400
-    public static final int WINDOW_HEIGHT = 320; //originally 290
+    public static final int WINDOW_WIDTH = 430; //originally 400
+    public static final int WINDOW_HEIGHT = 310; //originally 290
 
 
 
