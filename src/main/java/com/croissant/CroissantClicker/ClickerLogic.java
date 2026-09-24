@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 
 
+
 public class ClickerLogic {
 
     private final ClickerConfig config;
@@ -22,7 +23,6 @@ public class ClickerLogic {
 
         running = true;
         config.setClickCount(0);
-        config.setElapsedTime(0);
 
         thread = new Thread(()->{
             try {
@@ -59,7 +59,6 @@ public class ClickerLogic {
         int numRemainingClicks = -1;
         long endTime = 0;
         long startTime = System.nanoTime();
-        long elapsedTime = 0;
 
         if (isTimerMode){
             endTime = startTime + (config.getTimeLimit()*1_000_000_000L);
@@ -68,8 +67,7 @@ public class ClickerLogic {
             numRemainingClicks = config.getClickLimit();
         }
 
-
-
+        //Begin click loop
         long interval = isDelayMode ? delay*1_000_000L : 1_000_000_000L/cps;
         long nextClick = startTime;
 
@@ -80,21 +78,13 @@ public class ClickerLogic {
 
             long now = System.nanoTime();
 
-            elapsedTime = now - startTime;
-            config.setElapsedTime(elapsedTime);
-
             if (now >= nextClick) {
                 pressClick(button);
 
                 long releaseTime = now + clickLength;
 
                 try {
-                    while (running && now < releaseTime) {
-                        now = System.nanoTime();
-
-                        elapsedTime = now - startTime;
-                        config.setElapsedTime(elapsedTime);
-
+                    while (running && System.nanoTime() < releaseTime) {
                         Thread.sleep(1);
                     }
                 } catch (InterruptedException _){
@@ -135,7 +125,6 @@ public class ClickerLogic {
         boolean isTimerMode = config.isTimerMode();
 
         long startTime = System.nanoTime();
-        long elapsedSeconds = 0;
 
         long endTime = 0;
         if (isTimerMode){
@@ -148,9 +137,6 @@ public class ClickerLogic {
         try{
             while (running) {
                 Thread.sleep(50);
-
-                elapsedSeconds = System.nanoTime() - startTime;
-                config.setElapsedTime(elapsedSeconds);
 
                 if (isTimerMode && timeLimitExpired(endTime)){
                     break;

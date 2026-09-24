@@ -7,7 +7,6 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//adjust main method propertychangelistener
 //make save/load use new configprops class constants
 //adjust ui image?
 //move timer to right

@@ -18,6 +18,7 @@ public class ClickerUI extends JFrame {
 
     //Timer updating click count & time 20 times/sec in UI
     private final Timer clickerStatsRefreshTimer = new Timer(50, _-> updateClickerStats());
+    private long startTime;
 
     private Timer toggleCountDownTimer; //Timer for toggle count down when toggle button is clicked
     private int countdown;
@@ -170,6 +171,7 @@ public class ClickerUI extends JFrame {
             clickerStatsRefreshTimer.start();
 
             logic.start();
+            startTime = System.nanoTime();
         }
         //turn off clicker
         else {
@@ -186,6 +188,13 @@ public class ClickerUI extends JFrame {
         }
     }
 
+    private void updateClickerStats() {
+        clickCounterLabel.setText("Click Count: " + config.getClickCount());
+
+        long currentTime = System.nanoTime() - startTime;
+        timeCounterLabel.setText("Elapsed Time: " + String.format("%.1f sec", (double) currentTime / 1_000_000_000.0));
+    }
+
     private void updateSystemTray(boolean isEnabled) {
         if (systemTrayIcon == null){
             return;
@@ -197,11 +206,6 @@ public class ClickerUI extends JFrame {
         else{
             systemTrayIcon.setImage(UIResources.APP_ICON_IDLE.getImage());
         }
-    }
-
-    private void updateClickerStats() {
-        clickCounterLabel.setText("Click Count: " + config.getClickCount());
-        timeCounterLabel.setText("Elapsed Time: " + String.format("%.1f sec", (double) config.getElapsedTime() / 1_000_000_000.0));
     }
 
     private boolean validateUserInput(){
@@ -262,7 +266,6 @@ public class ClickerUI extends JFrame {
     }
 
     private boolean commitAndValidateSpinnerInputHelper(JSpinner spinner, int currValue, int minValue, int maxValue){
-
         JFormattedTextField spinnerTextField = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
 
         try {
@@ -270,7 +273,6 @@ public class ClickerUI extends JFrame {
 
         } catch (ParseException e) {
             System.err.println("Parse Exception while validating spinner input: " + e.getMessage());
-
             int value = -1;
 
             try {
@@ -283,10 +285,12 @@ public class ClickerUI extends JFrame {
                 spinnerTextField.setValue(minValue);
                 spawnSpinnerInputError(spinner, minValue, maxValue);
                 return false;
+
             } else if (value > maxValue) {
                 spinnerTextField.setValue(maxValue);
                 spawnSpinnerInputError(spinner, minValue, maxValue);
                 return false;
+
             } else{
                 spinnerTextField.setValue(currValue);
                 spawnSpinnerInputError(spinner,minValue,maxValue);
@@ -462,7 +466,7 @@ public class ClickerUI extends JFrame {
 
         clickCounterLabel = new JLabel("Click Count: " + config.getClickCount());
 
-        timeCounterLabel = new JLabel("Elapsed Time: " + String.format("%.1f sec", (double) config.getElapsedTime() / 1_000_000_000.0));
+        timeCounterLabel = new JLabel("Elapsed Time: " + String.format("%.1f sec", 0.0));
 
         toggleIndicatorButton = new JButton("OFF");
         toggleIndicatorButton.putClientProperty("JButton.buttonType", "roundRect");
