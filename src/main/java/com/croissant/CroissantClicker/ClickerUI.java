@@ -251,6 +251,12 @@ public class ClickerUI extends JFrame {
                 ClickerConfig.TIME_LIMIT_MAX))){
             isInputValid = false;
         }
+        else if (!(commitAndValidateSpinnerInputHelper(clickLengthSpinner,
+                config.getClickLength(),
+                ClickerConfig.CLICK_LENGTH_MIN,
+                ClickerConfig.CLICK_LENGTH_MAX))){
+            isInputValid = false;
+        }
 
         return isInputValid;
     }
@@ -534,7 +540,7 @@ public class ClickerUI extends JFrame {
     private void buildLimitTypePanel(){
         JPanel clickLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                "[left, 119!][fill]"
         ));
         JLabel clickLimitLabel = new JLabel("Click Limit:");
 
@@ -556,7 +562,7 @@ public class ClickerUI extends JFrame {
 
         JPanel timeLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                "[left, 119!][fill]"
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
 
@@ -589,7 +595,7 @@ public class ClickerUI extends JFrame {
     private void buildDelayTypePanel(){
         JPanel cpsPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                "[left, 119!][fill]"
         ));
         JLabel cpsLabel = new JLabel("CPS:");
 
@@ -609,7 +615,7 @@ public class ClickerUI extends JFrame {
 
         JPanel delayPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                "[left, 119!][fill]"
         ));
         JLabel delayLabel = new JLabel("Click Delay (ms):");
 
