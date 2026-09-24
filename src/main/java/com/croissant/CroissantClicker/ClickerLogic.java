@@ -88,29 +88,28 @@ public class ClickerLogic {
 
                 long releaseTime = now + clickLength;
 
-                while (running && now < releaseTime) {
-                    now = System.nanoTime();
+                try {
+                    while (running && now < releaseTime) {
+                        now = System.nanoTime();
 
-                    elapsedTime = now - startTime;
-                    config.setElapsedTime(elapsedTime);
+                        elapsedTime = now - startTime;
+                        config.setElapsedTime(elapsedTime);
 
-                    try{
                         Thread.sleep(1);
-                    } catch (InterruptedException _){
-                        break;
                     }
+                } catch (InterruptedException _){
+                    break;
+                } finally {
+                    releaseClick(button);
                 }
-
-                releaseClick(button);
 
                 config.incrementClickCount();
 
                 nextClick += interval;
-
                 long afterRelease = System.nanoTime();
 
-                //prevent simultaneous clicks due to falling behind or program stall
-                if (nextClick < afterRelease) {
+                //prevent simultaneous clicks due to click delay > click length or due to program stall
+                if (nextClick <= afterRelease) {
                     nextClick = afterRelease + interval;
                 }
 

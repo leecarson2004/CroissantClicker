@@ -53,7 +53,7 @@ public class ClickerConfig {
     public static final boolean TIMER_MODE_DEFAULT = false;
     public static final int CPS_DEFAULT = 5;
     public static final int DELAY_DEFAULT = 200;
-    public static final int CLICK_LENGTH_DEFAULT = 0;
+    public static final int CLICK_LENGTH_DEFAULT = 20;
     public static final String CLICK_MODE_DEFAULT = ClickMode.UNLIMITED.getName();
     public static final int CLICK_LIMIT_DEFAULT = 50;
     public static final int TIME_LIMIT_DEFAULT = 30;
