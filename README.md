@@ -5,6 +5,7 @@
 - Configurable Hotkey for starting the Clicker
 - Ability to customize, save, and load existing Clicker Configurations
 - Choice between time limit or click limit
+- Configurable Click Length between click start and stop.
 - Windows system tray compatibility
 - Light and Dark Mode
 
