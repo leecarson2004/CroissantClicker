@@ -7,9 +7,7 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//make save/load use new configprops class constants
-//adjust ui image?
-//move timer to right
+
 
 public class Main {
     public static void main(String[] args) throws AWTException {

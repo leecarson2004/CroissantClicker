@@ -2,7 +2,6 @@ package com.croissant.CroissantClicker;
 
 import net.miginfocom.swing.MigLayout;
 
-import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -343,15 +342,15 @@ public class ClickerUI extends JFrame {
 
         JButton loadButton = new JButton("⇑");
         setHeaderStyle(loadButton, "Load");
-        loadButton.addActionListener(_ -> drawer.showSelectedDrawerPanel("Load"));
+        loadButton.addActionListener(_ -> drawer.showSelectedDrawerPanel(ClickerUIDrawer.loadPanelName));
 
         JButton saveButton = new JButton("⇓");
         setHeaderStyle(saveButton, "Save");
-        saveButton.addActionListener(_ -> drawer.showSelectedDrawerPanel("Save"));
+        saveButton.addActionListener(_ -> drawer.showSelectedDrawerPanel(ClickerUIDrawer.savePanelName));
 
         JButton settingsButton = new JButton("⚙");
         setHeaderStyle(settingsButton, "Settings");
-        settingsButton.addActionListener(_ -> drawer.showSelectedDrawerPanel("Settings"));
+        settingsButton.addActionListener(_ -> drawer.showSelectedDrawerPanel(ClickerUIDrawer.settingsPanelName));
 
         JButton resetConfigButton = new JButton("↻");
         setHeaderStyle(resetConfigButton, "Reset");
@@ -385,7 +384,7 @@ public class ClickerUI extends JFrame {
         mainPanelLeft.setLayout(new MigLayout(
                 "fillx, insets 10 20 20 10, wrap 2",
                 "[left]30[fill]",
-                "12[]8[]8[]8[]8[]12[]5[]5[]push"
+                "12[]8[]8[]8[]8[]push"
         ));
 
         buildLimitTypePanel();
@@ -461,12 +460,12 @@ public class ClickerUI extends JFrame {
 
         mainPanelSouth.setLayout(new MigLayout(
                 "fillx, insets 10 20 10 20, wrap 3",
-                "[left]15[left][right, grow]"
+                "[left]20[left][right, grow]"
         ));
 
-        clickCounterLabel = new JLabel("Click Count: " + config.getClickCount());
+        clickCounterLabel = new JLabel("● Click Count: " + config.getClickCount());
 
-        timeCounterLabel = new JLabel("Elapsed Time: " + String.format("%.1f sec", 0.0));
+        timeCounterLabel = new JLabel("● Elapsed Time: " + String.format("%.1f sec", 0.0));
 
         toggleIndicatorButton = new JButton("OFF");
         toggleIndicatorButton.putClientProperty("JButton.buttonType", "roundRect");
@@ -544,7 +543,7 @@ public class ClickerUI extends JFrame {
     private void buildLimitTypePanel(){
         JPanel clickLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 119!][fill]"
+                "[left, 116!][fill]"
         ));
         JLabel clickLimitLabel = new JLabel("Click Limit:");
 
@@ -566,7 +565,7 @@ public class ClickerUI extends JFrame {
 
         JPanel timeLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 119!][fill]"
+                "[left, 116!][fill]"
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
 
@@ -599,7 +598,7 @@ public class ClickerUI extends JFrame {
     private void buildDelayTypePanel(){
         JPanel cpsPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 119!][fill]"
+                "[left, 116!][fill]"
         ));
         JLabel cpsLabel = new JLabel("CPS:");
 
@@ -619,7 +618,7 @@ public class ClickerUI extends JFrame {
 
         JPanel delayPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 119!][fill]"
+                "[left, 116!][fill]"
         ));
         JLabel delayLabel = new JLabel("Click Delay (ms):");
 

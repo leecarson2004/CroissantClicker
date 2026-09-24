@@ -18,19 +18,24 @@ public class ClickerUIDrawer extends JPanel {
     //overlay drawer panel
     private JPanel drawerCardContainer;
     private boolean drawerContainerVisible = false;
+
     //drawer components:
     private JLabel titleLabel;
     private JButton loadButton;
     private JButton saveButton;
     private JButton settingsButton;
+
     //settings components:
     private JComboBox<String> themeSelector;
     private JComboBox<String> delayModeSelector;
     private JComboBox<String> limitModeSelector;
     private NativeKeyBindTextField hotKeySelectionField;
+
     //save components:
     private JButton savePageSaveButton;
     private JTextField saveConfigNameField;
+    private final int saveConfigNameFieldLength = 30;
+
     //load components:
     private JButton loadPageLoadButton;
     private JButton loadPageDeleteButton;
@@ -40,6 +45,11 @@ public class ClickerUIDrawer extends JPanel {
     private final Map<String, JButton> loadedConfigButtons = new HashMap<>();
     private String selectedConfig = "";
     private String prevSelectedConfig = "";
+
+    public static final String settingsPanelName = "Settings";
+    public static final String loadPanelName = "Load";
+    public static final String savePanelName = "Save";
+
 
 
     public ClickerUIDrawer(ClickerConfig config){
@@ -68,7 +78,7 @@ public class ClickerUIDrawer extends JPanel {
 
         //entire drawer page container
         JPanel drawerContainer = new JPanel(new BorderLayout());
-        drawerContainer.setPreferredSize(new Dimension(ClickerConfig.WINDOW_WIDTH/2,ClickerConfig.WINDOW_HEIGHT));
+        drawerContainer.setPreferredSize(new Dimension((int) (ClickerConfig.WINDOW_WIDTH * 0.5),ClickerConfig.WINDOW_HEIGHT));
         add(drawerContainer,BorderLayout.WEST);
 
         //block mouse events as glass pane overlay stopping input from reaching lower layer covered by open drawer.
@@ -99,7 +109,7 @@ public class ClickerUIDrawer extends JPanel {
         settingsPanel.setLayout(new MigLayout(
                 "fillx, insets 10 10 10 10, wrap 2",
                 "[left][fill]",
-                "[]10[]10[]10[][grow]"
+                "10[]10[]10[]10[]push[]10[]10"
         ));
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
@@ -180,15 +190,16 @@ public class ClickerUIDrawer extends JPanel {
         //------------------------------------------------------------------------------
         JPanel saveConfigPanel = new JPanel();
         saveConfigPanel.setLayout(new MigLayout(
-                "insets 10 10 20 10, wrap 2, align center",
-                "",
+                "insets 10 20 20 20, wrap 2, align center",
+                "[grow,fill][grow,fill]",
                 "10[]10[][]10[]"
         ));
 
-        JLabel saveInstructionLabel = new JLabel("Enter Configuration Name:");
+        JLabel saveInstructionLabel = new JLabel("● Enter Configuration Name: ●");
+        saveInstructionLabel.setHorizontalAlignment(JLabel.CENTER);
 
         saveConfigNameField = new JTextField();
-        saveConfigNameField.setDocument(new TextFieldLimit(20));
+        saveConfigNameField.setDocument(new TextFieldLimit(saveConfigNameFieldLength));
 
         savePageSaveButton = new JButton("Save");
         savePageSaveButton.addActionListener(_ -> {
@@ -206,9 +217,9 @@ public class ClickerUIDrawer extends JPanel {
         savePageDoneButton.addActionListener(_ -> closeDrawer());
 
         saveConfigPanel.add(saveInstructionLabel, "span 2");
-        saveConfigPanel.add(saveConfigNameField, "span 2, grow");
+        saveConfigPanel.add(saveConfigNameField, "span 2");
         saveConfigPanel.add(new JPanel(), "span 2, pushy");
-        saveConfigPanel.add(new JSeparator(), "growx, span 2");
+        saveConfigPanel.add(new JSeparator(), "span 2");
         saveConfigPanel.add(savePageSaveButton);
         saveConfigPanel.add(savePageDoneButton);
 
@@ -263,9 +274,9 @@ public class ClickerUIDrawer extends JPanel {
         loadConfigPanel.add(loadPageDeleteButton);
 
         //------------------------------------------------------------------------------
-        drawerCardContainer.add(settingsPanel, "Settings");
-        drawerCardContainer.add(saveConfigPanel, "Save");
-        drawerCardContainer.add(loadConfigPanel, "Load");
+        drawerCardContainer.add(settingsPanel, settingsPanelName);
+        drawerCardContainer.add(saveConfigPanel, savePanelName);
+        drawerCardContainer.add(loadConfigPanel, loadPanelName);
 
         drawerContainer.add(drawerCardContainer, BorderLayout.CENTER);
     }
@@ -303,11 +314,7 @@ public class ClickerUIDrawer extends JPanel {
             for (String configName : savedConfigs){
                 JButton configNameButton;
 
-                if (configName.length() == 1){
-                    configNameButton = new JButton(configName + " ");
-                } else{
-                    configNameButton = new JButton(configName);
-                }
+                configNameButton = new JButton("● " + configName);
 
                 configNameButton.setHorizontalAlignment(SwingConstants.LEFT);
                 configNameButton.setMaximumSize(new Dimension(scrollPaneWidth-10, Integer.MAX_VALUE));
@@ -383,7 +390,7 @@ public class ClickerUIDrawer extends JPanel {
         cardLayout.show(drawerCardContainer,panelName);
 
         //refresh loaded configs
-        if (panelName.equals("Load")){
+        if (panelName.equals(loadPanelName)){
             resetLoadPage();
             refreshSavedConfigs();
         }
@@ -399,13 +406,13 @@ public class ClickerUIDrawer extends JPanel {
     private void setPanelButtonSelected(String panelName){
 
         switch (panelName){
-            case "Save":
+            case savePanelName:
                 setStyleSelected(saveButton);
                 setStyleUnselected(loadButton);
                 setStyleUnselected(settingsButton);
                 break;
 
-            case "Load":
+            case loadPanelName:
                 setStyleUnselected(saveButton);
                 setStyleSelected(loadButton);
                 setStyleUnselected(settingsButton);
@@ -446,15 +453,15 @@ public class ClickerUIDrawer extends JPanel {
 
         loadButton = new JButton("⇑");
         setHeaderStyle(loadButton, "Load");
-        loadButton.addActionListener(_ -> showSelectedDrawerPanel("Load"));
+        loadButton.addActionListener(_ -> showSelectedDrawerPanel(loadPanelName));
 
         saveButton = new JButton("⇓");
         setHeaderStyle(saveButton, "Save");
-        saveButton.addActionListener(_ -> showSelectedDrawerPanel("Save"));
+        saveButton.addActionListener(_ -> showSelectedDrawerPanel(savePanelName));
 
         settingsButton = new JButton("⚙");
         setHeaderStyle(settingsButton, "Settings");
-        settingsButton.addActionListener(_ -> showSelectedDrawerPanel("Settings"));
+        settingsButton.addActionListener(_ -> showSelectedDrawerPanel(settingsPanelName));
 
 
 
