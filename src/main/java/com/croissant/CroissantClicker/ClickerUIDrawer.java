@@ -107,9 +107,9 @@ public class ClickerUIDrawer extends JPanel {
         //overlay drawer subpanels:
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new MigLayout(
-                "fillx, insets 10 10 10 10, wrap 2",
+                "fillx, insets 10lp 10lp 10lp 10lp, wrap 2",
                 "[left][fill]",
-                "10[]10[]10[]10[]push[]10[]10"
+                "10lp[]10lp[]10lp[]10lp[]push[]10lp[]10lp"
         ));
 
         JLabel hotKeyLabel = new JLabel("Hotkey:");
@@ -190,9 +190,9 @@ public class ClickerUIDrawer extends JPanel {
         //------------------------------------------------------------------------------
         JPanel saveConfigPanel = new JPanel();
         saveConfigPanel.setLayout(new MigLayout(
-                "insets 10 20 20 20, wrap 2, align center",
+                "insets 10lp 20lp 20lp 20lp, wrap 2, align center",
                 "[grow,fill][grow,fill]",
-                "10[]10[][]10[]"
+                "10lp[]10lp[][]10lp[]"
         ));
 
         JLabel saveInstructionLabel = new JLabel("● Enter Configuration Name: ●");
@@ -226,9 +226,9 @@ public class ClickerUIDrawer extends JPanel {
         //------------------------------------------------------------------------------
         JPanel loadConfigPanel = new JPanel();
         loadConfigPanel.setLayout(new MigLayout(
-                "insets 10 10 20 10, wrap 2, fillx",
+                "insets 10lp 10lp 20lp 10lp, wrap 2, fillx",
                 "",
-                "[grow]10[]10[]"
+                "[grow]10lp[]10lp[]"
         ));
 
         loadPageScrollPane = new JScrollPane();
@@ -269,7 +269,7 @@ public class ClickerUIDrawer extends JPanel {
         buildSavedConfigsPanel();
 
         loadConfigPanel.add(loadPageScrollPane, "span, grow");
-        loadConfigPanel.add(new JSeparator(), "growx, span 2, h 5!");
+        loadConfigPanel.add(new JSeparator(), "growx, span 2, h 5lp!");
         loadConfigPanel.add(loadPageLoadButton, "split 2, span 2, center");
         loadConfigPanel.add(loadPageDeleteButton);
 
@@ -283,7 +283,7 @@ public class ClickerUIDrawer extends JPanel {
 
     private void buildSavedConfigsPanel() {
         scrollablePanel = new JPanel(new MigLayout(
-                "insets 5 5 5 5, fillx",
+                "insets 5lp 5lp 5lp 5lp, fillx",
                 "fill"
         ));
 
@@ -444,7 +444,7 @@ public class ClickerUIDrawer extends JPanel {
         JPanel headerPanel = new JPanel();
 
         headerPanel.setLayout(new MigLayout(
-                "fill, insets 10 10 10 10",
+                "fill, insets 10lp 10lp 10lp 10lp",
                 "[left][grow, right][right][right]"
         ));
 

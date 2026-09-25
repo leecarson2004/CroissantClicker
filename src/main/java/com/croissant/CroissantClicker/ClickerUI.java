@@ -50,6 +50,7 @@ public class ClickerUI extends JFrame {
     String colorRed = "#d32f2f";
 
 
+
     public ClickerUI(ClickerConfig config, ClickerLogic logic) {
         this.config = config;
         this.logic = logic;
@@ -188,10 +189,10 @@ public class ClickerUI extends JFrame {
     }
 
     private void updateClickerStats() {
-        clickCounterLabel.setText("Click Count: " + config.getClickCount());
+        clickCounterLabel.setText("● Click Count: " + config.getClickCount());
 
         long currentTime = System.nanoTime() - startTime;
-        timeCounterLabel.setText("Elapsed Time: " + String.format("%.1f sec", (double) currentTime / 1_000_000_000.0));
+        timeCounterLabel.setText("● Elapsed Time: " + String.format("%.1f sec", (double) currentTime / 1_000_000_000.0));
     }
 
     private void updateSystemTray(boolean isEnabled) {
@@ -336,7 +337,7 @@ public class ClickerUI extends JFrame {
         JPanel headerPanel = new JPanel();
 
         headerPanel.setLayout(new MigLayout(
-                "fill, insets 10 15 10 15",
+                "fill, insets 10lp 15lp 10lp 15lp",
                 "[left][left][left][left][grow,right][right]"
         ));
 
@@ -381,14 +382,16 @@ public class ClickerUI extends JFrame {
         //------------------------------------------------------------------------------
         JPanel mainPanelLeft = new JPanel();
 
+        String mainPanelLeftColConstraints = "[left, 115lp!][fill]";
+
         mainPanelLeft.setLayout(new MigLayout(
-                "fillx, insets 10 20 20 10, wrap 2",
-                "[left]30[fill]",
-                "12[]8[]8[]8[]8[]push"
+                "fillx, insets 10lp 20lp 20lp 10lp, wrap 2",
+                mainPanelLeftColConstraints,
+                "12lp[]8lp[]8lp[]8lp[]8lp[]push"
         ));
 
-        buildLimitTypePanel();
-        buildDelayTypePanel();
+        buildLimitTypePanel(mainPanelLeftColConstraints);
+        buildDelayTypePanel(mainPanelLeftColConstraints);
 
         limitCardLayout = (CardLayout) limitTypePanel.getLayout();
         delayCardLayout = (CardLayout) delayTypePanel.getLayout();
@@ -445,13 +448,13 @@ public class ClickerUI extends JFrame {
         JPanel mainPanelRight = new JPanel();
 
         mainPanelRight.setLayout(new MigLayout(
-                "fill, insets 20 20 20 20"
+                "fill, insets 20lp 20lp 20lp 20lp"
         ));
 
         ImageIcon mainImage = UIResources.WYNN_EMERALD_IDLE;
         mainImageLabel = new JLabel(mainImage);
 
-        mainPanelRight.add(mainImageLabel);
+        mainPanelRight.add(mainImageLabel, "center");
 
         mainPanel.add(mainPanelRight, BorderLayout.EAST);
 
@@ -459,8 +462,8 @@ public class ClickerUI extends JFrame {
         JPanel mainPanelSouth = new JPanel();
 
         mainPanelSouth.setLayout(new MigLayout(
-                "fillx, insets 10 20 10 20, wrap 3",
-                "[left]20[left][right, grow]"
+                "fillx, insets 10lp 20lp 10lp 20lp, wrap 3",
+                "[left]20lp[left][right, grow]"
         ));
 
         clickCounterLabel = new JLabel("● Click Count: " + config.getClickCount());
@@ -540,10 +543,10 @@ public class ClickerUI extends JFrame {
         }
     }
 
-    private void buildLimitTypePanel(){
+    private void buildLimitTypePanel(String colConstraints){
         JPanel clickLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                colConstraints
         ));
         JLabel clickLimitLabel = new JLabel("Click Limit:");
 
@@ -565,7 +568,7 @@ public class ClickerUI extends JFrame {
 
         JPanel timeLimitPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                colConstraints
         ));
         JLabel timeLimitLabel = new JLabel("Time (sec):");
 
@@ -595,10 +598,10 @@ public class ClickerUI extends JFrame {
         }
     }
 
-    private void buildDelayTypePanel(){
+    private void buildDelayTypePanel(String colConstraints){
         JPanel cpsPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                colConstraints
         ));
         JLabel cpsLabel = new JLabel("CPS:");
 
@@ -618,7 +621,7 @@ public class ClickerUI extends JFrame {
 
         JPanel delayPanel = new JPanel(new MigLayout(
                 "fillx, insets 0, wrap 2",
-                "[left, 116!][fill]"
+                colConstraints
         ));
         JLabel delayLabel = new JLabel("Click Delay (ms):");
 
