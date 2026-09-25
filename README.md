@@ -16,7 +16,7 @@
 **Installation & Run Instructions:**
 - Navigate to 'Releases' on the right side of the page.
 - Navigate to 'Assets' at the bottom of the latest release.
-- Download the CroissantClicker1.x zip file.
+- Download the CroissantClicker1.x.x zip file.
 - Find your downloaded zip file, and unzip it to your desired location (e.g. downloads).
 - Navigate through the unzipped CroissantClicker1.x file until you find CroissantClicker.exe.
 - Right click and create shortcut on desktop.
