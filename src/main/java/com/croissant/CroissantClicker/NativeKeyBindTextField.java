@@ -8,12 +8,11 @@ import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.util.function.IntConsumer;
 
 
-public class NativeKeyBindTextField extends JTextField implements NativeKeyListener, FocusListener, NativeMouseListener {
+public class NativeKeyBindTextField extends JTextField implements NativeKeyListener, FocusListener, NativeMouseListener, MouseListener {
 
     private int keyBind;
     private IntConsumer keyChangedListener;
@@ -32,6 +31,7 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
         setKeyBind(keyBind);
 
         addFocusListener(this);
+        addMouseListener(this);
     }
 
     private String getKeyBindString(){
@@ -70,14 +70,7 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
     }
 
     @Override
-    public void focusGained(FocusEvent e) {
-        config.setInputCaptureMode(true);
-
-        GlobalScreen.addNativeKeyListener(this);
-        GlobalScreen.addNativeMouseListener(this);
-
-        setText("<" + getKeyBindString() + ">");
-    }
+    public void focusGained(FocusEvent e) {}
 
     @Override
     public void focusLost(FocusEvent e) {
@@ -90,46 +83,52 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeEvent) {
-        if (!hasFocus()){
-            return;
-        }
+        if (!config.isInputCaptureMode()) { return; }
 
         int inputKey = nativeEvent.getKeyCode();
 
-        SwingUtilities.invokeLater(() -> {
-            setKeyBind(inputKey);
-            clearFocus();
-        });
+        setKeyBind(inputKey);
+        clearFocus();
     }
 
     @Override
     public void nativeMousePressed(NativeMouseEvent nativeEvent) {
-        if (!hasFocus()){
-            return;
-        }
+        if (!config.isInputCaptureMode()) { return; }
 
         int inputButton = nativeEvent.getButton();
-        if (inputButton == NativeMouseEvent.NOBUTTON) return;
 
-
-        SwingUtilities.invokeLater(() -> {
+        if (inputButton != NativeMouseEvent.NOBUTTON){
             setKeyBind(-inputButton);
             clearFocus();
-        });
+        }
     }
+
+    //activate capturing mode if user clicks field
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (e.getButton() == 1 && !config.isInputCaptureMode()){
+            config.setInputCaptureMode(true);
+
+            GlobalScreen.addNativeKeyListener(this);
+            GlobalScreen.addNativeMouseListener(this);
+
+            setText("<" + getKeyBindString() + ">");
+        }
+    }
+
+    //ignore normal swing keyboard input
+    @Override
+    protected void processKeyEvent(KeyEvent e) {}
 
     public void setOnKeyChanged(IntConsumer listener){
         keyChangedListener = listener;
     }
 
     private void clearFocus() {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
+        SwingUtilities.invokeLater(() -> {
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
+        });
     }
-
-    @Override
-    public void nativeKeyReleased(NativeKeyEvent e) {}
-    @Override
-    public void nativeKeyTyped(NativeKeyEvent e) {}
 
     //remove NativeKeyListener when component leaves ui hierarchy
     @Override
@@ -138,4 +137,18 @@ public class NativeKeyBindTextField extends JTextField implements NativeKeyListe
         GlobalScreen.removeNativeMouseListener(this);
         super.removeNotify();
     }
+
+    @Override
+    public void nativeKeyReleased(NativeKeyEvent e) {}
+    @Override
+    public void nativeKeyTyped(NativeKeyEvent e) {}
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }

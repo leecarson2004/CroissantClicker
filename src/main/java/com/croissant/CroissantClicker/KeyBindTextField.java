@@ -14,7 +14,7 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
     public KeyBindTextField(int keyBind, ClickerConfig config){
         super();
         this.config = config;
-        
+
         setCaretColor(new Color(0,0,0,0));
         setSelectedTextColor(getForeground());
         getCaret().setVisible(false);
@@ -68,10 +68,7 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
     }
 
     @Override
-    public void focusGained(FocusEvent e) {
-        config.setInputCaptureMode(true);
-        setText("Press a key...");
-    }
+    public void focusGained(FocusEvent e) {}
 
     @Override
     public void focusLost(FocusEvent e) {
@@ -81,11 +78,13 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
 
     @Override
     protected void processKeyEvent(KeyEvent e){
+        if (!config.isInputCaptureMode()) { return; }
+
         if (e.getID() == KeyEvent.KEY_PRESSED){
             int inputKey = e.getKeyCode();
 
             setKeyBind(inputKey);
-            SwingUtilities.invokeLater(this::clearFocus);
+            clearFocus();
         }
 
         e.consume(); //stop processing of event
@@ -97,17 +96,25 @@ public class KeyBindTextField extends JTextField implements FocusListener, Mouse
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (!config.isInputCaptureMode()) return;
+        if (!config.isInputCaptureMode()) {
+            config.setInputCaptureMode(true);
+
+            setText("Press a key...");
+            return;
+        }
 
         int inputButton = e.getButton();
-        if (inputButton == MouseEvent.NOBUTTON) return;
 
-        setKeyBind(-inputButton);
-        SwingUtilities.invokeLater((this::clearFocus));
+        if (inputButton != MouseEvent.NOBUTTON){
+            setKeyBind(-inputButton);
+            clearFocus();
+        }
     }
 
     private void clearFocus() {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
+        SwingUtilities.invokeLater(() -> {
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
+        });
     }
 
     //unused

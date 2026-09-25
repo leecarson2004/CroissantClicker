@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.List;
 
 
+
 public class ClickerUI extends JFrame {
 
     private final ClickerConfig config;
